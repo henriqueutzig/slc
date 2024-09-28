@@ -20,8 +20,6 @@ TARGET = etapa1
 # Default target
 all: $(TARGET)
 
-# flex --header-file=includes/flex/lex.yy.h includes/flex/scanner.l
-
 # Build the final executable
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^

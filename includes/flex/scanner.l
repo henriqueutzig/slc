@@ -8,8 +8,7 @@
 /* Regular expression definitions */
 digit        [0-9]
 number       [0-9]+
-char         [a-zA-Z_]
-alphanumeric  [a-zA-Z0-9_]
+lower_char	 [a-z]
 
 %x COMMENT
 
@@ -29,8 +28,14 @@ alphanumeric  [a-zA-Z0-9_]
 "&"							{ return TK_OC_AND; }
 "|"							{ return TK_OC_OR; }
 
-'\n'                        { line_number++; } // LineCounter
+[-!*/%+-<>{}()=,;]			{ return (int)yytext[0]; }
 
+({lower_char}|_)({lower_char}|_|{digit})* { return TK_IDENTIFICADOR; }
+
+{number}								{ return TK_LIT_INT; }
+{number}?\.{digit}+	{return TK_LIT_FLOAT; }
+
+\n                        { line_number++; } // LineCounter
 %% /* C functions */
 
 int get_line_number(void) {

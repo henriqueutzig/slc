@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -std=c11 -Wall -Iinclude
+FLEX_LIB_PATH = $(shell find /opt/homebrew -name "libfl.a" | awk -F'/' '{sub("/" $$NF, ""); print}')
+CFLAGS = -std=c11 -Wall -Iinclude -lfl -L$(FLEX_LIB_PATH) #-v
 
 # Directories
 SRCDIR = src
@@ -14,10 +15,12 @@ SRCS = $(shell find $(SRCDIR) -name '*.c')
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 # Target executable name
-TARGET = program
+TARGET = etapa1
 
 # Default target
 all: $(TARGET)
+
+# flex --header-file=includes/flex/lex.yy.h includes/flex/scanner.l
 
 # Build the final executable
 $(TARGET): $(OBJS)
@@ -40,4 +43,6 @@ $(OBJDIR)/%.d: $(SRCDIR)/%.c
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
-	rm includes/flex/lex.yy.h
+	if [ cat includes/flex/lex.yy.h ]; then 
+		rm includes/flex/lex.yy.h
+	fi

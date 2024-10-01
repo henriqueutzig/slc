@@ -29,16 +29,16 @@ lower_char	 [a-z]
 "&"											{ return TK_OC_AND; }
 "|"											{ return TK_OC_OR; }
 
-[!*/%+-<>{}()=,;]							{ return (int)yytext[0]; }
-
 ({lower_char}|_)({lower_char}|_|{digit})* 	{ return TK_IDENTIFICADOR; }
 
 {number}									{ return TK_LIT_INT; }
 {number}?\.{number}							{ return TK_LIT_FLOAT; }
 
-\n                        					{ line_number++; } // LineCounter
+[!*/%+-<>{}()=,;]							{ return (int)yytext[0]; }
 
+\n                        					{ line_number++; } // LineCounter
 .											{ /*return TK_ERRO;*/ }
+
 %% /* C functions */
 
 int get_line_number(void) {

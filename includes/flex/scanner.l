@@ -34,10 +34,10 @@ lower_char	 [a-z]
 {number}									{ return TK_LIT_INT; }
 {number}?\.{number}							{ return TK_LIT_FLOAT; }
 
-[!*/%+-<>{}()=,;]							{ return (int)yytext[0]; }
+[\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]							{ return (int)yytext[0]; }
 
 \n                        					{ line_number++; } // LineCounter
-.											{ /*return TK_ERRO;*/ }
+.											{ return TK_ERRO; }
 
 %% /* C functions */
 

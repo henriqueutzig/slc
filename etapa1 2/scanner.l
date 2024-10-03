@@ -1,5 +1,5 @@
 %{
-	#include "tokens/tokens.h"
+	#include "tokens.h"
 
 	static int line_number = 1;
 	int get_line_number (void); 

@@ -1,46 +1,46 @@
-# Compiler and flags
+# Define paths
+SRC_DIR = ./src
+INCLUDE_DIR = ./src/includes
+FLEX_DIR = $(INCLUDE_DIR)/flex
+TOKENS_DIR = $(INCLUDE_DIR)/tokens
+
+# Define sources and targets
+MAIN_SRC = $(SRC_DIR)/main.c
+LEX_SRC = $(FLEX_DIR)/scanner.l
+TOKENS_H = $(TOKENS_DIR)/tokens.h
+LEX_OUT = lex.yy.c
+BINARY = etapa4
+
+# Compilation commands
 CC = gcc
-FLEX_LIB_PATH = $(shell find /opt/homebrew -name "libfl.a" | awk -F'/' '{sub("/" $$NF, ""); print}')
-CFLAGS = -std=c11 -Wall -Iinclude -lfl -L$(FLEX_LIB_PATH) #-v
+LEX = flex
+BISON = bison
 
-# Directories
-SRCDIR = src
-INCDIR = include
-OBJDIR = obj
+# Output files
+TAR_FILE = etapa4.tgz
 
-# Find all .c files in the src directory and its subdirectories
-SRCS = $(shell find $(SRCDIR) -name '*.c')
+# Default target: compile and run
+all: $(BINARY)
 
-# Convert the .c source files to corresponding .o object files in obj directory
-OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+# Rule to create the final binary
+$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H)
+	$(CC) -I$(INCLUDE_DIR) $(MAIN_SRC) $(LEX_OUT) -o $(BINARY)
 
-# Target executable name
-TARGET = etapa1
+# Rule to generate lex.yy.c using flex
+$(LEX_OUT): $(LEX_SRC)
+	$(LEX) $(LEX_SRC)
 
-# Default target
-all: $(TARGET)
+# Rule to run the program
+run: $(BINARY)
+	./$(BINARY)
 
-# Build the final executable
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+# Rule to create a .tgz file for submission
+tar: $(BINARY)
+	tar cvzf $(TAR_FILE) .
 
-# Rule for building .o files from .c files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(dir $@)  # Ensure the directory exists
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Include dependency files, if they exist
--include $(OBJS:.o=.d)
-
-# Generate dependency files for each .c file
-$(OBJDIR)/%.d: $(SRCDIR)/%.c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
-
-# Clean up the build
-.PHONY: clean
+# Clean up the generated files
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
-	if [ cat includes/flex/lex.yy.h ]; then 
-		rm includes/flex/lex.yy.h
-	fi
+	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE)
+
+# Phony targets
+.PHONY: all run clean tar

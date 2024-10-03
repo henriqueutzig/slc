@@ -9,7 +9,7 @@ MAIN_SRC = $(SRC_DIR)/main.c
 LEX_SRC = $(FLEX_DIR)/scanner.l
 TOKENS_H = $(TOKENS_DIR)/tokens.h
 LEX_OUT = lex.yy.c
-BINARY = etapa4
+BINARY = etapa1
 
 # Compilation commands
 CC = gcc
@@ -17,7 +17,7 @@ LEX = flex
 BISON = bison
 
 # Output files
-TAR_FILE = etapa4.tgz
+TAR_FILE = etapa1.tgz
 
 # Default target: compile and run
 all: $(BINARY)

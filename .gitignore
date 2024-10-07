@@ -53,3 +53,7 @@ dkms.conf
 .vscode/
 .DS_Store
 ./etapa*
+
+*.txt
+*.tesh
+tests/*

@@ -35,17 +35,17 @@ all: $(BINARY)
 $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_H_OUT) $(BISON_C_OUT)
 	$(CC) -I$(SRC_DIR) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(BISON_C_OUT) -o $(BINARY)
 
-# Rule to generate lex.yy.c using flex
-$(LEX_OUT): $(LEX_SRC)
-	$(LEX) -o $(LEX_OUT) $(LEX_SRC)
-
 # Rule to generate  using bison 
 $(BISON_H_OUT): $(BISON_SRC)
-	$(BISON) -o  -o $(BISON_H_OUT) -d $(BISON_SRC)
+	$(BISON) -o $(BISON_H_OUT) -d $(BISON_SRC)
 
 # # Rule to generate  using bison 
 $(BISON_C_OUT): $(BISON_SRC)
 	$(BISON) -o $(BISON_C_OUT) -d $(BISON_SRC)
+
+# Rule to generate lex.yy.c using flex
+$(LEX_OUT): $(LEX_SRC)
+	$(LEX) -o $(LEX_OUT) $(LEX_SRC)
 
 # Rule to run the program
 run: $(BINARY)
@@ -56,12 +56,11 @@ tar: $(BINARY)
 	mkdir -p temp_dir
 	cp $(LEX_SRC) $(MAIN_SRC) $(TOKENS_H) Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
-	rm -f $(LEX_OUT) $(BISON_C_OUT $(BISON_H_OUT)
 	rm -rf temp_dir
 
 # Clean up the generated files
 clean:
-	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE)
+	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT)
 
 # Phony targets
 .PHONY: all run clean tar

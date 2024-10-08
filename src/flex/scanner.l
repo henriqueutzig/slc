@@ -1,5 +1,5 @@
 %{
-	#include "includes/tokens.h"
+	#include "bison/parser.tab.h"
 
 	static int line_number = 1;
 	int get_line_number (void); 

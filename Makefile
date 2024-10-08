@@ -9,14 +9,16 @@ endif
 
 # Define sources and targets
 MAIN_SRC = $(SRC_DIR)/main.c
-LEX_SRC = $(SRC_DIR)/flex/scanner.l
-BISON_SRC = $(SRC_DIR)/bison/parser.y
-TOKENS_H = $(SRC_DIR)/includes/tokens.h
-LEX_OUT = $(SRC_DIR)/flex/lex.yy.c
+MAIN_OBJ = main.o
 
+LEX_SRC = $(SRC_DIR)/flex/scanner.l
+LEX_OUT = $(SRC_DIR)/flex/lex.yy.c
+LEX_OBJ = lex.yy.o
+
+BISON_SRC = $(SRC_DIR)/bison/parser.y
 BISON_H_OUT = $(SRC_DIR)/bison/parser.tab.h
 BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
-
+BISON_OBJ = parser.tab.o 
 
 BINARY = etapa2
 
@@ -32,16 +34,17 @@ TAR_FILE = $(BINARY).tgz
 all: $(BINARY)
 
 # Rule to create the final binary
-$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_H_OUT) $(BISON_C_OUT)
-	$(CC) -I$(SRC_DIR) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) -o $(BINARY)
+$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_C_OUT) $(BISON_H_OUT)
+	$(CC) -I $(SRC_DIR) -c $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT)
+	$(CC) $(MAIN_OBJ) $(LEX_OBJ) $(BISON_OBJ) -o $(BINARY)
 
-# Rule to generate  using bison 
+# Rule to generate parser.tab.h using bison 
 $(BISON_H_OUT): $(BISON_SRC)
 	$(BISON) -o $(BISON_H_OUT) -d $(BISON_SRC)
-
-# # Rule to generate  using bison 
+	
+# Rule to generate parser.tab.c using bison 
 $(BISON_C_OUT): $(BISON_SRC)
-	$(BISON) -o $(BISON_C_OUT) -d $(BISON_SRC)
+	$(BISON) -o $(BISON_C_OUT) -d $(BISON_SRC)	
 
 # Rule to generate lex.yy.c using flex
 $(LEX_OUT): $(LEX_SRC)
@@ -54,13 +57,13 @@ run: $(BINARY)
 # Rule to create a .tgz file with the correct structure
 tar: $(BINARY)
 	mkdir -p temp_dir
-	cp $(LEX_SRC) $(MAIN_SRC) $(TOKENS_H) Makefile temp_dir/
+	cp $(LEX_SRC) $(MAIN_SRC) Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
 	rm -rf temp_dir
 
 # Clean up the generated files
 clean:
-	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT)
+	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT) *.o
 
 # Phony targets
 .PHONY: all run clean tar

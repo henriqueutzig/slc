@@ -3,6 +3,7 @@
 int yylex(void);
 void yyerror (char const *mensagem);
 %}
+%error-verbose
 
 %token TK_PR_INT
 %token TK_PR_FLOAT

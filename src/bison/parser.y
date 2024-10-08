@@ -1,4 +1,5 @@
 %{
+    #include<stdio.h>
 int yylex(void);
 void yyerror (char const *mensagem);
 %}
@@ -22,6 +23,12 @@ void yyerror (char const *mensagem);
 
 %%
 
-programa:
+programa:lista_de_funcoes | /*Isso aqui é vazio */ ;
+lista_de_funcoes: lista_de_funcoes funcao | funcao ;
+funcao : TK_PR_INT
 
 %%
+
+void yyerror(char const *mensagem){
+    fprintf(stderr,"%s \n",mensagem);
+}

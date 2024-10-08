@@ -33,7 +33,7 @@ all: $(BINARY)
 
 # Rule to create the final binary
 $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_H_OUT) $(BISON_C_OUT)
-	$(CC) -I$(SRC_DIR) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(BISON_C_OUT) -o $(BINARY)
+	$(CC) -I$(SRC_DIR) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) -o $(BINARY)
 
 # Rule to generate  using bison 
 $(BISON_H_OUT): $(BISON_SRC)

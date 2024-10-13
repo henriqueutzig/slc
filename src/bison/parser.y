@@ -3,6 +3,7 @@
 int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
+int get_column_number(void);
 %}
 %error-verbose
 
@@ -85,5 +86,5 @@ Fator tem mais precencia que term, que tem mais precedencia expr
 %%
 
 void yyerror(char const *mensagem){
-    fprintf(stderr,"%s at line %d\n",mensagem,get_line_number());
+    fprintf(stderr,"%s at line %d\n column %d/n",mensagem,get_line_number(),get_column_number());
 }

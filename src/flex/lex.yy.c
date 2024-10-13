@@ -483,10 +483,12 @@ char *yytext;
 	#include "bison/parser.tab.h"
 
 	static int line_number = 1;
+	static int column_number = 1;
 	int get_line_number (void); 
-#line 487 "./src/flex/lex.yy.c"
-/* Regular expression definitions */
+	int get_column_number(void);
 #line 489 "./src/flex/lex.yy.c"
+/* Regular expression definitions */
+#line 491 "./src/flex/lex.yy.c"
 
 #define INITIAL 0
 
@@ -703,10 +705,10 @@ YY_DECL
 		}
 
 	{
-#line 15 "./src/flex/scanner.l"
+#line 17 "./src/flex/scanner.l"
 
 
-#line 709 "./src/flex/lex.yy.c"
+#line 711 "./src/flex/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -765,111 +767,111 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "./src/flex/scanner.l"
-{ }
+#line 19 "./src/flex/scanner.l"
+{  }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "./src/flex/scanner.l"
-{ }
+#line 20 "./src/flex/scanner.l"
+{ column_number += yyleng; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "./src/flex/scanner.l"
-{ return TK_PR_INT; }
+#line 22 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_INT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 21 "./src/flex/scanner.l"
-{ return TK_PR_FLOAT; }
+#line 23 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_FLOAT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 22 "./src/flex/scanner.l"
-{ return TK_PR_IF; }
+#line 24 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "./src/flex/scanner.l"
-{ return TK_PR_ELSE; }
+#line 25 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_ELSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 24 "./src/flex/scanner.l"
-{ return TK_PR_WHILE; }
+#line 26 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_WHILE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 25 "./src/flex/scanner.l"
-{ return TK_PR_RETURN; }
+#line 27 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_PR_RETURN; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 27 "./src/flex/scanner.l"
-{ return TK_OC_LE; }
+#line 29 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_LE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 28 "./src/flex/scanner.l"
-{ return TK_OC_GE; }
+#line 30 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_GE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 29 "./src/flex/scanner.l"
-{ return TK_OC_EQ; }
+#line 31 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_EQ; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 30 "./src/flex/scanner.l"
-{ return TK_OC_NE; }
+#line 32 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_NE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 31 "./src/flex/scanner.l"
-{ return TK_OC_AND; }
+#line 33 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_AND; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 32 "./src/flex/scanner.l"
-{ return TK_OC_OR; }
+#line 34 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_OC_OR; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 34 "./src/flex/scanner.l"
-{ return TK_IDENTIFICADOR; }
+#line 36 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_IDENTIFICADOR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 36 "./src/flex/scanner.l"
-{ return TK_LIT_INT; }
+#line 38 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_LIT_INT; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 37 "./src/flex/scanner.l"
-{ return TK_LIT_FLOAT; }
+#line 39 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_LIT_FLOAT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 39 "./src/flex/scanner.l"
-{ return (int)yytext[0]; }
+#line 41 "./src/flex/scanner.l"
+{ column_number += yyleng; return (int)yytext[0]; }
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 41 "./src/flex/scanner.l"
-{ line_number++; } // LineCounter
+#line 43 "./src/flex/scanner.l"
+{ line_number++; column_number = 1; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 42 "./src/flex/scanner.l"
-{ return TK_ERRO; }
+#line 44 "./src/flex/scanner.l"
+{ column_number += yyleng; return TK_ERRO; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 44 "./src/flex/scanner.l"
+#line 46 "./src/flex/scanner.l"
 ECHO;
 	YY_BREAK
-#line 872 "./src/flex/lex.yy.c"
+#line 874 "./src/flex/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1874,10 +1876,13 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 44 "./src/flex/scanner.l"
+#line 46 "./src/flex/scanner.l"
 
 
 int get_line_number(void) {
 	return line_number;
 }
 
+int get_column_number(void) {
+	return column_number;
+}

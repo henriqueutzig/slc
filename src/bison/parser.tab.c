@@ -112,6 +112,7 @@
 int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
+int get_column_number(void);
 
 
 /* Enabling traces.  */
@@ -145,7 +146,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 149 "./src/bison/parser.tab.c"
+#line 150 "./src/bison/parser.tab.c"
 
 #ifdef short
 # undef short
@@ -433,8 +434,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    32,    32,    32,    34,    34,    38,    44,    48,    48,
-      48,    52,    55,    55,    58,    62,    67,    67,    67,    69
+       0,    33,    33,    33,    35,    35,    39,    45,    49,    49,
+      49,    53,    56,    56,    59,    63,    68,    68,    68,    70
 };
 #endif
 
@@ -1353,7 +1354,7 @@ yyreduce:
     {
       
 /* Line 1267 of yacc.c.  */
-#line 1357 "./src/bison/parser.tab.c"
+#line 1358 "./src/bison/parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1567,9 +1568,9 @@ yyreturn:
 }
 
 
-#line 85 "./src/bison/parser.y"
+#line 86 "./src/bison/parser.y"
 
 
 void yyerror(char const *mensagem){
-    fprintf(stderr,"%s at line %d\n",mensagem,get_line_number());
+    fprintf(stderr,"%s at line %d\n column %d/n",mensagem,get_line_number(),get_column_number());
 }

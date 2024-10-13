@@ -46,7 +46,7 @@ cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipo_de_retorno
 
 /* A lista de parâmetros é composta por zero ou mais parâmetros de
 entrada, separados por TK_OC_OR*/
-lista_de_parametros: parametro | parametro TK_OC_OR parametro | /*Isso aqui é vazio*/;
+lista_de_parametros: parametro | lista_de_parametros TK_OC_OR parametro | /*Isso aqui é vazio*/;
 
 /* Cada parâmetro é definido pelo seu nome seguido do 
 caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  */
@@ -67,6 +67,12 @@ recursivamente, e pode ser utilizado em qualquer construção que aceite
 um comando simples.*/
 comando : bloco_de_comandos | comando_simples | /*Isso aqui é vazio*/;
 
+/*
+Os comandos simples da linguagem podem ser:
+declaração de variável, atribuição, construções de
+fluxo de controle, operação de retorno, um bloco
+de comandos, e chamadas de função.
+*/
 comando_simples : TK_PR_INT
 
 /*

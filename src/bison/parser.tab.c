@@ -426,7 +426,7 @@ static const yytype_int8 yyrhs[] =
 {
       26,     0,    -1,    27,    -1,    -1,    27,    28,    -1,    28,
       -1,    29,    33,    -1,    15,    19,    30,    20,    32,    -1,
-      31,    -1,    31,    14,    31,    -1,    -1,    15,    21,    22,
+      31,    -1,    30,    14,    31,    -1,    -1,    15,    21,    22,
       32,    -1,     3,    -1,     4,    -1,    34,    -1,    23,    35,
       24,    -1,    34,    -1,    36,    -1,    -1,     3,    -1
 };
@@ -435,7 +435,7 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    33,    33,    33,    35,    35,    39,    45,    49,    49,
-      49,    53,    56,    56,    59,    63,    68,    68,    68,    70
+      49,    53,    56,    56,    59,    63,    68,    68,    68,    76
 };
 #endif
 
@@ -486,31 +486,31 @@ static const yytype_uint8 yydefact[] =
 {
        3,     0,     0,     2,     5,     0,    10,     1,     4,    18,
        6,    14,     0,     0,     8,    19,    16,     0,    17,     0,
-       0,     0,    15,     0,    12,    13,     7,     9,    11
+       0,     0,    15,     0,     9,    12,    13,     7,    11
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,     5,    13,    14,    26,    10,    11,
+      -1,     2,     3,     4,     5,    13,    14,    27,    10,    11,
       17,    18
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -18
+#define YYPACT_NINF -16
 static const yytype_int8 yypact[] =
 {
-     -12,   -15,     5,   -12,   -18,   -17,    -8,   -18,   -18,    -3,
-     -18,   -18,   -13,   -11,    -4,   -18,   -18,   -10,   -18,    -9,
-      -2,    -8,   -18,    -2,   -18,   -18,   -18,   -18,   -18
+     -11,   -14,     6,   -11,   -16,   -15,    -6,   -16,   -16,    -3,
+     -16,   -16,   -10,   -13,   -16,   -16,   -16,   -12,   -16,    -9,
+      -6,    -1,   -16,    -1,   -16,   -16,   -16,   -16,   -16
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -18,   -18,   -18,     8,   -18,   -18,    -6,    -7,   -18,     3,
-     -18,   -18
+     -16,   -16,   -16,     7,   -16,   -16,    -5,    -7,   -16,     5,
+     -16,   -16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -520,15 +520,15 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      15,    24,    25,     1,     6,     7,     9,    12,    19,    20,
-      21,     8,    16,    23,    22,    27,    28,     0,     0,     0,
+      15,    20,    25,    26,     1,     6,     7,    21,     9,    12,
+       8,    19,    22,    23,    16,    24,    28,     0,     0,     0,
        9
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     3,     4,    15,    19,     0,    23,    15,    21,    20,
-      14,     3,     9,    22,    24,    21,    23,    -1,    -1,    -1,
+       3,    14,     3,     4,    15,    19,     0,    20,    23,    15,
+       3,    21,    24,    22,     9,    20,    23,    -1,    -1,    -1,
       23
 };
 
@@ -538,7 +538,7 @@ static const yytype_uint8 yystos[] =
 {
        0,    15,    26,    27,    28,    29,    19,     0,    28,    23,
       33,    34,    15,    30,    31,     3,    34,    35,    36,    21,
-      20,    14,    24,    22,     3,     4,    32,    31,    32
+      14,    20,    24,    22,    31,     3,     4,    32,    32
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1568,7 +1568,7 @@ yyreturn:
 }
 
 
-#line 86 "./src/bison/parser.y"
+#line 92 "./src/bison/parser.y"
 
 
 void yyerror(char const *mensagem){

@@ -31,15 +31,15 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: lista_de_funcoes 
-    | /*Isso aqui é vazio */ ;
+    | /*Isso aqui é vazio */;
 
 lista_de_funcoes: lista_de_funcoes funcao 
-    | funcao ;
+    | funcao;
 
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo
+funcao: cabecalho corpo;
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -47,36 +47,39 @@ funcao: cabecalho corpo
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel;
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro | lista_de_parametros TK_OC_OR parametro | /*Isso aqui é vazio*/;
+lista_de_parametros: parametro 
+    | lista_de_parametros TK_OC_OR parametro 
+    | /*Isso aqui é vazio*/;
 
 /* 
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel;
 
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT | TK_PR_FLOAT
+tipos_de_variavel: TK_PR_INT 
+    | TK_PR_FLOAT;
 
 /*
     O corpo da função é um bloco de comandos.
 */
-corpo: bloco_de_comandos
+corpo: bloco_de_comandos;
 
 /*
     Um bloco de comandos é definido entre chaves, e consiste em uma 
     sequência, possivelmente vazia, de comandos simples cada um 
     expressao_2inado por ponto-e-vírgula. 
 */
-bloco_de_comandos: '{' comando '}'
+bloco_de_comandos: '{' comando '}';
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
@@ -108,7 +111,7 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis
+declaracao_variavel: tipos_de_variavel lista_de_variaveis;
 lista_de_variaveis: variavel 
     | variavel ',' lista_de_variaveis;
 variavel: TK_IDENTIFICADOR 
@@ -120,14 +123,14 @@ literal: TK_LIT_FLOAT
     O comando de atribuição consiste em um identificador seguido 
     pelo caractere de igualdade seguido por uma expressão
 */
-atribuicao_variavel: TK_IDENTIFICADOR '=' expressao
+atribuicao_variavel: TK_IDENTIFICADOR '=' expressao;
 
 /*
     Uma chamada de função consiste no nome da função, seguida de 
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')'
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')';
 argumento: argumento ',' argumento 
     | expressao 
     | /*Isso é o vazio*/;
@@ -135,7 +138,7 @@ argumento: argumento ',' argumento
 /*
     Trata-se do token return seguido de uma expressão
 */
-comando_de_retorno: TK_PR_RETURN expressao
+comando_de_retorno: TK_PR_RETURN expressao;
 
 /*
     A condicional consiste no token if seguido de uma 
@@ -146,13 +149,13 @@ comando_de_retorno: TK_PR_RETURN expressao
     obrigatório caso o else seja empregado.
 */
 fluxo_if: TK_PR_IF '(' expressao ')' bloco_de_comandos 
-    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos
+    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos;
 
 /*
     Temos apenas uma construção de repetição que é o token while seguido
     de uma expressão entre parênteses e de um bloco de comandos
 */
-fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos
+fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos;
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2

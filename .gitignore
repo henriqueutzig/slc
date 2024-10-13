@@ -55,5 +55,7 @@ dkms.conf
 ./etapa*
 
 *.txt
-*.tesh
 output/*
+parser.tab.*
+lex.yy.*
+etapa*

@@ -1,9 +1,9 @@
 %{
     #include<stdio.h>
-int yylex(void);
-void yyerror (char const *mensagem);
-int get_line_number(void);
-int get_column_number(void);
+    int yylex(void);
+    void yyerror (char const *mensagem);
+    int get_line_number(void);
+    int get_column_number(void);
 %}
 %error-verbose
 

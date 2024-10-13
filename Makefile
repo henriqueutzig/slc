@@ -22,6 +22,9 @@ BISON_OBJ = parser.tab.o
 
 BINARY = etapa2
 
+TEST = test.sh
+TEST_OUT = output/
+
 # Compilation commands
 CC = gcc
 LEX = flex
@@ -65,5 +68,8 @@ tar: $(BINARY)
 clean:
 	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT) *.o
 
+test: $(BINARY)
+	rm -rf ${TEST_OUT} 
+	bash ${TEST}
 # Phony targets
 .PHONY: all run clean tar

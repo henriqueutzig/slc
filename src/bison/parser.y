@@ -2,6 +2,7 @@
     #include<stdio.h>
 int yylex(void);
 void yyerror (char const *mensagem);
+int get_line_number(void);
 %}
 %error-verbose
 
@@ -26,16 +27,46 @@ void yyerror (char const *mensagem);
 
 //Organizar isso aqui
 
+/* Um programa na linguagem é composto por uma
+lista de funções, sendo esta lista opcional */
 programa:lista_de_funcoes | /*Isso aqui é vazio */ ;
+
 lista_de_funcoes: lista_de_funcoes funcao | funcao ;
+
+/* Cada função é definida por um cabeçalho e um
+corpo.*/
 funcao : cabecalho corpo
+
+/* O cabeçalho consiste no nome da função,
+o caractere igual ’=’, uma lista de parâmetros, o
+operador maior ’>’ e o tipo de retorno. O tipo da
+função pode ser float ou int */
 cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipo_de_retorno
-lista_de_parametros: parametro | parametro TK_OC_OR parametro
+
+/* A lista de parâmetros é composta por zero ou mais parâmetros de
+entrada, separados por TK_OC_OR*/
+lista_de_parametros: parametro | parametro TK_OC_OR parametro | /*Isso aqui é vazio*/;
+
+/* Cada parâmetro é definido pelo seu nome seguido do 
+caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  */
 parametro: TK_IDENTIFICADOR '<' '-' tipo_de_retorno
+
+/*O tipo da função pode ser float ou int*/
 tipo_de_retorno: TK_PR_INT | TK_PR_FLOAT
+
+/*O corpo da função é um bloco de comandos.*/
 corpo :  bloco_de_comandos
+
+/*Um bloco de comandos é definido entre chaves,e consiste em uma sequência, possivelmente vazia, 
+de comandos simples cada um terminado por ponto-e-vírgula. */
 bloco_de_comandos : '{' comando '}'
-comando : bloco_de_comandos | TK_PR_INT
+
+/*Um bloco de comandos é considerado como um comando único simples, 
+recursivamente, e pode ser utilizado em qualquer construção que aceite 
+um comando simples.*/
+comando : bloco_de_comandos | comando_simples | /*Isso aqui é vazio*/;
+
+comando_simples : TK_PR_INT
 
 /*
 
@@ -54,5 +85,5 @@ Fator tem mais precencia que term, que tem mais precedencia expr
 %%
 
 void yyerror(char const *mensagem){
-    fprintf(stderr,"%s \n",mensagem);
+    fprintf(stderr,"%s at line %d\n",mensagem,get_line_number());
 }

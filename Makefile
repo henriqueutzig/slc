@@ -72,4 +72,4 @@ test: $(BINARY)
 	rm -rf ${TEST_OUT} 
 	bash ${TEST}
 # Phony targets
-.PHONY: all run clean tar
+.PHONY: all run clean tar test

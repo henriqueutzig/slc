@@ -1,10 +1,10 @@
-funcaoSoma = param1 <- int | param2 <- int | param3 <- int > int
+funcao_soma = param1 <- int | param2 <- int | param3 <- int > int
 {
     int x,y;
     int z <= 100;
 
     x = param1;
-    y = funcaoSoma(x,y,z);
+    y = funcao_soma(x,y,z);
 
     if(param1){
         z=100;

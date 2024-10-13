@@ -22,7 +22,7 @@ BISON_OBJ = parser.tab.o
 
 BINARY = etapa2
 
-TEST = test.sh
+TEST = tests/test.sh
 TEST_OUT = output/
 
 # Compilation commands

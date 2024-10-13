@@ -1,3 +1,9 @@
+#####################################
+# 		Authors - Grupo J:			#
+# 	Henrique Utzig - 00319043		#
+# 	João Pedro Cosme - 00314792		#
+#####################################
+
 # Define sources and targets
 SRC_DIR = ./src
 
@@ -14,9 +20,10 @@ BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
 BISON_OBJ = parser.tab.o 
 
 # Output files
-TAR_FILE = $(BINARY).tgz
 BINARY = etapa2
+TAR_FILE = $(BINARY).tgz
 
+# Automated test paths
 TEST = tests/test.sh
 TEST_OUT = output/
 
@@ -56,7 +63,6 @@ tar: $(BINARY)
 	cp Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
 	rm -rf temp_dir
-	
 
 # Clean up the generated files
 clean:

@@ -1,13 +1,6 @@
-# Check for the existence of the 'src' directory
-ifeq ($(wildcard src),)
-    # If 'src' directory does not exist, use flat structure
-    SRC_DIR = .
-else
-    # If 'src' directory exists, use structured organization
-    SRC_DIR = ./src
-endif
-
 # Define sources and targets
+SRC_DIR = ./src
+
 MAIN_SRC = $(SRC_DIR)/main.c
 MAIN_OBJ = main.o
 
@@ -20,6 +13,8 @@ BISON_H_OUT = $(SRC_DIR)/bison/parser.tab.h
 BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
 BISON_OBJ = parser.tab.o 
 
+# Output files
+TAR_FILE = $(BINARY).tgz
 BINARY = etapa2
 
 TEST = tests/test.sh
@@ -29,9 +24,6 @@ TEST_OUT = output/
 CC = gcc
 LEX = flex
 BISON = bison
-
-# Output files
-TAR_FILE = $(BINARY).tgz
 
 # Default target: compile and run
 all: $(BINARY)
@@ -62,14 +54,16 @@ tar: $(BINARY)
 	mkdir -p temp_dir
 	cp $(LEX_SRC) $(MAIN_SRC) Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
-	rm -rf temp_dir
+	# rm -rf temp_dir
 
 # Clean up the generated files
 clean:
 	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT) *.o
 
+# Run automated tests
 test: $(BINARY)
 	rm -rf ${TEST_OUT} 
 	bash ${TEST}
+
 # Phony targets
 .PHONY: all run clean tar test

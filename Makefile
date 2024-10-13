@@ -51,10 +51,12 @@ run: $(BINARY)
 
 # Rule to create a .tgz file with the correct structure
 tar: $(BINARY)
-	mkdir -p temp_dir
-	cp $(LEX_SRC) $(MAIN_SRC) Makefile temp_dir/
+	mkdir -p temp_dir/src
+	cp -r $(SRC_DIR)/* temp_dir/src
+	cp Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
-	# rm -rf temp_dir
+	rm -rf temp_dir
+	
 
 # Clean up the generated files
 clean:

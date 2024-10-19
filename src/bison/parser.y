@@ -87,15 +87,15 @@ corpo: bloco_de_comandos;
     sequência, possivelmente vazia, de comandos simples cada um 
     expressao_2inado por ponto-e-vírgula. 
 */
-bloco_de_comandos: '{' comando '}' | '{''}';
+bloco_de_comandos: '{' comando ';' '}' | '{''}';
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando comando_simples
-    | comando_simples ';'
+comando: comando ';' comando_simples
+    | comando_simples
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -118,7 +118,8 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis | tipos_de_variavel variavel TK_OC_LE literal ;
+declaracao_variavel: tipos_de_variavel lista_de_variaveis 
+    | tipos_de_variavel variavel TK_OC_LE literal
 lista_de_variaveis: variavel 
     | lista_de_variaveis ',' variavel;
 variavel: TK_IDENTIFICADOR 
@@ -137,7 +138,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao;
     Um argumento pode ser uma expressão.
 */
 chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' | TK_IDENTIFICADOR '(' ')';
-argumento: argumento ',' argumento 
+argumento: argumento ',' expressao 
     | expressao 
 /*
     Trata-se do token return seguido de uma expressão
@@ -165,7 +166,7 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos;
     Expressoes conforme definidas na tabela na especificaça da E2
     Quanto mais baixo, maior a precedencia
 */
-expressao: expressao TK_OC_OR expressao 
+expressao: expressao TK_OC_OR expressao_6 
     | expressao_6;
 expressao_6: expressao_6 TK_OC_AND expressao_5 
     | expressao_5;

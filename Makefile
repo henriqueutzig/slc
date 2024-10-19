@@ -42,11 +42,11 @@ $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_C_OUT) $(BISON_H_OUT)
 
 # Rule to generate parser.tab.h using bison 
 $(BISON_H_OUT): $(BISON_SRC)
-	$(BISON) -o $(BISON_H_OUT) -d $(BISON_SRC)
+	$(BISON) -Wcounterexamples -o $(BISON_H_OUT) -d $(BISON_SRC)
 	
 # Rule to generate parser.tab.c using bison 
 $(BISON_C_OUT): $(BISON_SRC)
-	$(BISON) -o $(BISON_C_OUT) -d $(BISON_SRC)	
+	$(BISON) -Wcounterexamples -o $(BISON_C_OUT) -d $(BISON_SRC)	
 
 # Rule to generate lex.yy.c using flex
 $(LEX_OUT): $(LEX_SRC)
@@ -75,7 +75,7 @@ test: $(BINARY)
 
 # Live reload: Tests will be run each time a file is saved
 serve: $(BINARY) 
-	find ${SRC_DIR} ./test -type f | entr -c make test
+	find ${SRC_DIR} ./tests -type f | entr -c make test
 
 # Phony targets
 .PHONY: all run clean tar test

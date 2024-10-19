@@ -24,7 +24,7 @@ BINARY = etapa2
 TAR_FILE = $(BINARY).tgz
 
 # Automated test paths
-TEST = tests/test.sh
+TEST = tests/testreport.sh
 TEST_OUT = output/
 
 # Compilation commands

@@ -48,7 +48,7 @@ PASS_PERCENTAGE=$((100 * PASSED / TOTAL))
 # Generate test summary report
 echo -e "\n==================== Test Summary ===================="
 echo -e "Total tests run: \033[1m$TOTAL\033[0m"
-echo -e "Tests passed: \033[1;32m$PASSED\033[0m (\033[1m$PASS_PERCENTAGE%%\033[0m)"
+echo -e "Tests passed: \033[1;32m$PASSED\033[0m (\033[1m$PASS_PERCENTAGE%\033[0m)"
 echo -e "Tests failed: \033[1;31m$FAILED\033[0m"
 
 if [ ${#FAILED_TESTS[@]} -ne 0 ]; then

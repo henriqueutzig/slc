@@ -119,9 +119,9 @@ comando_simples: chamada_de_funcao
     posto TK_OC_LE e de um literal.
 */
 declaracao_variavel: tipos_de_variavel lista_de_variaveis 
-    | tipos_de_variavel variavel TK_OC_LE literal
-lista_de_variaveis: variavel 
-    | lista_de_variaveis ',' variavel;
+lista_de_variaveis: variavel_inicializada 
+    | lista_de_variaveis ',' variavel_inicializada
+variavel_inicializada : variavel | variavel TK_OC_LE literal
 variavel: TK_IDENTIFICADOR 
 literal: TK_LIT_FLOAT 
     | TK_LIT_INT;

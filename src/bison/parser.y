@@ -86,7 +86,7 @@ corpo: bloco_de_comandos;
 /*
     Um bloco de comandos é definido entre chaves, e consiste em uma 
     sequência, possivelmente vazia, de comandos simples cada um 
-    expressao_2inado por ponto-e-vírgula. 
+    expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: '{' comando ';' '}' | '{''}';
 
@@ -108,6 +108,7 @@ comando_simples: chamada_de_funcao
     | declaracao_variavel 
     | atribuicao_variavel 
     | comando_de_retorno 
+    | bloco_de_comandos
     | fluxo_if 
     | fluxo_while;
 
@@ -120,12 +121,17 @@ comando_simples: chamada_de_funcao
     posto TK_OC_LE e de um literal.
 */
 declaracao_variavel: tipos_de_variavel lista_de_variaveis 
+
 lista_de_variaveis: variavel_inicializada 
     | lista_de_variaveis ',' variavel_inicializada
+
 variavel_inicializada : variavel | variavel TK_OC_LE literal
+
 variavel: TK_IDENTIFICADOR 
-literal: TK_LIT_FLOAT 
-    | TK_LIT_INT;
+
+literal: 
+    TK_LIT_FLOAT 
+    | TK_LIT_INT
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -138,7 +144,8 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao;
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' | TK_IDENTIFICADOR '(' ')';
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')'
+
 argumento: argumento ',' expressao 
     | expressao 
 /*
@@ -165,33 +172,52 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos;
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2
-    Quanto mais baixo, maior a precedencia
+    Quanto mais baixo, maior a precedencia, de maneira que a 
+    precedencia 6 é precedida por operaçoes do nivel 1
 */
-expressao: expressao TK_OC_OR expressao_6 
-    | expressao_6;
-expressao_6: expressao_6 TK_OC_AND expressao_5 
-    | expressao_5;
-expressao_5: expressao_5 TK_OC_EQ expressao_4 
-    | expressao_5 TK_OC_NE expressao_4 
-    | expressao_4;
-expressao_4: expressao_4 '<' expressao_3 
-    | expressao_4 '>' expressao_3 
-    | expressao_4 TK_OC_LE expressao_3 
-    | expressao_4 TK_OC_GE expressao_3 
-    | expressao_3;
-expressao_3:expressao_3 '+' expressao_2 
-    | expressao_3 '-' expressao_2 
-    | expressao_2;
-expressao_2: expressao_2 '*' expressao_1 
-    | expressao_2 '/' expressao_1 
-    | expressao_2 '%' expressao_1 
-    | expressao_1;
-expressao_1: '-' expressao_terminal 
-    | '!' expressao_terminal 
-    | expressao_terminal;
-expressao_terminal: literal 
-    | TK_IDENTIFICADOR 
-    | chamada_de_funcao 
+expressao: 
+    expressao TK_OC_OR expressao_precedencia_6 
+    | expressao_precedencia_6;
+
+expressao_precedencia_6: 
+    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 
+    | expressao_precedencia_5;
+
+expressao_precedencia_5: 
+    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 
+    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 
+    | expressao_precedencia_4;
+
+expressao_precedencia_4:
+    expressao_precedencia_4 '<' expressao_precedencia_3 
+    | expressao_precedencia_4 '>' expressao_precedencia_3 
+    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 
+    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 
+    | expressao_precedencia_3;
+
+expressao_precedencia_3:
+    expressao_precedencia_3 '+' expressao_precedencia_2 
+    | expressao_precedencia_3 '-' expressao_precedencia_2 
+    | expressao_precedencia_2;
+
+expressao_precedencia_2: expressao_precedencia_2 '*' expressao_precedencia_1 
+    | expressao_precedencia_2 '/' expressao_precedencia_1 
+    | expressao_precedencia_2 '%' expressao_precedencia_1 
+    | expressao_precedencia_1;
+
+expressao_precedencia_1: '-' expressao_precedencia_1
+    | '!' expressao_precedencia_1 
+    | operando;
+
+/*
+Os operandos podem ser (a) iden-
+tificadores, (b) literais e (c) chamada de função ou
+(d) outras expressões
+*/
+operando: 
+    TK_IDENTIFICADOR 
+    | literal 
+    | chamada_de_funcao
     | '('expressao')';
 
 

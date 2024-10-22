@@ -40,7 +40,7 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: lista_de_funcoes 
-    | /*Isso aqui é vazio */;
+    | %empty;
 
 lista_de_funcoes: lista_de_funcoes funcao 
     | funcao;
@@ -56,7 +56,8 @@ funcao: cabecalho corpo;
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel | TK_IDENTIFICADOR '=''>' tipos_de_variavel;
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel 
+    | TK_IDENTIFICADOR '=''>' tipos_de_variavel;
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de

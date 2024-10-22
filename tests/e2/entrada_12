@@ -1,0 +1,5 @@
+add = a <- int | b <- int > int {
+    int result;
+    result = a + b;
+    return result;
+}

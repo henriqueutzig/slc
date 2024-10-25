@@ -1,36 +1,56 @@
-# Check for the existence of the 'src' directory
-ifeq ($(wildcard src),)
-    # If 'src' directory does not exist, use flat structure
-    SRC_DIR = .
-else
-    # If 'src' directory exists, use structured organization
-    SRC_DIR = ./src
-endif
+#####################################
+# 		Authors - Grupo J:			#
+# 	Henrique Utzig - 00319043		#
+# 	João Pedro Cosme - 00314792		#
+#####################################
 
 # Define sources and targets
+SRC_DIR = ./src
+
 MAIN_SRC = $(SRC_DIR)/main.c
-LEX_SRC = $(SRC_DIR)/scanner.l
-TOKENS_H = $(SRC_DIR)/tokens.h
-LEX_OUT = lex.yy.c
-BINARY = etapa1
+MAIN_OBJ = main.o
+
+LEX_SRC = $(SRC_DIR)/flex/scanner.l
+LEX_OUT = $(SRC_DIR)/flex/lex.yy.c
+LEX_OBJ = lex.yy.o
+
+BISON_SRC = $(SRC_DIR)/bison/parser.y
+BISON_H_OUT = $(SRC_DIR)/bison/parser.tab.h
+BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
+BISON_OBJ = parser.tab.o 
+
+# Output files
+BINARY = etapa2
+TAR_FILE = $(BINARY).tgz
+
+# Automated test paths
+TEST = tests/testreport.sh
+TEST_OUT = output/
 
 # Compilation commands
 CC = gcc
 LEX = flex
-
-# Output files
-TAR_FILE = etapa1.tgz
+BISON = bison
 
 # Default target: compile and run
 all: $(BINARY)
 
 # Rule to create the final binary
-$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H)
-	$(CC) -I$(SRC_DIR) $(MAIN_SRC) $(LEX_OUT) -o $(BINARY)
+$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_C_OUT) $(BISON_H_OUT)
+	$(CC) -I $(SRC_DIR) -c $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT)
+	$(CC) $(MAIN_OBJ) $(LEX_OBJ) $(BISON_OBJ) -o $(BINARY)
+
+# Rule to generate parser.tab.h using bison 
+$(BISON_H_OUT): $(BISON_SRC)
+	$(BISON) -Wall -Werror -Wcounterexamples -Wother -Wconflicts-sr -Wconflicts-rr -o $(BISON_H_OUT) -d $(BISON_SRC)
+	
+# Rule to generate parser.tab.c using bison 
+$(BISON_C_OUT): $(BISON_SRC)
+	$(BISON) -Wall -Werror -Wcounterexamples -Wother -Wconflicts-sr -Wconflicts-rr -o $(BISON_C_OUT) -d $(BISON_SRC)
 
 # Rule to generate lex.yy.c using flex
 $(LEX_OUT): $(LEX_SRC)
-	$(LEX) $(LEX_SRC)
+	$(LEX) -o $(LEX_OUT) $(LEX_SRC)
 
 # Rule to run the program
 run: $(BINARY)
@@ -38,14 +58,24 @@ run: $(BINARY)
 
 # Rule to create a .tgz file with the correct structure
 tar: $(BINARY)
-	mkdir -p temp_dir
-	cp $(LEX_SRC) $(MAIN_SRC) $(TOKENS_H) Makefile temp_dir/
+	mkdir -p temp_dir/src
+	cp -r $(SRC_DIR)/* temp_dir/src
+	cp Makefile temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
 	rm -rf temp_dir
 
 # Clean up the generated files
 clean:
-	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE)
+	rm -f $(LEX_OUT) $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT) *.o
+
+# Run automated tests
+test: $(BINARY)
+	rm -rf ${TEST_OUT} 
+	bash ${TEST}
+
+# Live reload: Tests will be run each time a file is saved
+serve: $(BINARY) 
+	find ${SRC_DIR} ./tests -type f | entr -c make test
 
 # Phony targets
-.PHONY: all run clean tar
+.PHONY: all run clean tar test

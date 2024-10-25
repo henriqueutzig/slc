@@ -1,8 +1,17 @@
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
 %{
-	#include "tokens.h"
+	#include "bison/parser.tab.h"
 
 	static int line_number = 1;
+	static int column_number = 1;
 	int get_line_number (void); 
+	int get_column_number(void);
 %}
 
 %option noyywrap
@@ -14,37 +23,39 @@ lower_char	 [a-z]
 
 %% /* Regex definitions */
 
+"//".*        								{  }
+[ \t]										{ column_number += yyleng; }
 
-"//".*        								{ }
-[ \t]										{ }
+"int"                        				{ column_number += yyleng; return TK_PR_INT; }
+"float"										{ column_number += yyleng; return TK_PR_FLOAT; }
+"if"										{ column_number += yyleng; return TK_PR_IF; }
+"else"										{ column_number += yyleng; return TK_PR_ELSE; }
+"while"										{ column_number += yyleng; return TK_PR_WHILE; }
+"return"									{ column_number += yyleng; return TK_PR_RETURN; }
 
-"int"                        				{ return TK_PR_INT; }
-"float"										{ return TK_PR_FLOAT; }
-"if"										{ return TK_PR_IF; }
-"else"										{ return TK_PR_ELSE; }
-"while"										{ return TK_PR_WHILE; }
-"return"									{ return TK_PR_RETURN; }
+"<="										{ column_number += yyleng; return TK_OC_LE; }
+">="										{ column_number += yyleng; return TK_OC_GE; }
+"=="										{ column_number += yyleng; return TK_OC_EQ; }
+"!="										{ column_number += yyleng; return TK_OC_NE; }
+"&"											{ column_number += yyleng; return TK_OC_AND; }
+"|"											{ column_number += yyleng; return TK_OC_OR; }
 
-"<="										{ return TK_OC_LE; }
-">="										{ return TK_OC_GE; }
-"=="										{ return TK_OC_EQ; }
-"!="										{ return TK_OC_NE; }
-"&"											{ return TK_OC_AND; }
-"|"											{ return TK_OC_OR; }
+({lower_char}|_)({lower_char}|_|{digit})* 	{ column_number += yyleng; return TK_IDENTIFICADOR; }
 
-({lower_char}|_)({lower_char}|_|{digit})* 	{ return TK_IDENTIFICADOR; }
+{number}									{ column_number += yyleng; return TK_LIT_INT; }
+{number}?\.{number}							{ column_number += yyleng; return TK_LIT_FLOAT; }
 
-{number}									{ return TK_LIT_INT; }
-{number}?\.{number}							{ return TK_LIT_FLOAT; }
+[\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]			{ column_number += yyleng; return (int)yytext[0]; }
 
-[\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]							{ return (int)yytext[0]; }
-
-\n                        					{ line_number++; } // LineCounter
-.											{ return TK_ERRO; }
+\n                        					{ line_number++; column_number = 1; }
+.											{ column_number += yyleng; return TK_ERRO; }
 
 %% /* C functions */
 
-
 int get_line_number(void) {
 	return line_number;
+}
+
+int get_column_number(void) {
+	return column_number;
 }

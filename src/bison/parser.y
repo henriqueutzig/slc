@@ -65,6 +65,7 @@
 %type <tree> operando
 %type <tree> literal
 %type <tree> variavel
+%type <tree> argumento
 
 %%
 
@@ -123,7 +124,7 @@ corpo: bloco_de_comandos;
 */
 bloco_de_comandos: 
     '{' comando ';' '}' 
-    | '{''}' { $$ = NULL; };
+    | '{''}';
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
@@ -157,36 +158,40 @@ comando_simples: chamada_de_funcao
 */
 declaracao_variavel: tipos_de_variavel lista_de_variaveis 
 
-lista_de_variaveis: variavel_inicializada 
-    | lista_de_variaveis ',' variavel_inicializada
+lista_de_variaveis: 
+    variavel_inicializada                          
+    | lista_de_variaveis ',' variavel_inicializada ;
 
-variavel_inicializada : variavel | variavel TK_OC_LE literal
+variavel_inicializada : 
+    variavel                    
+    | variavel TK_OC_LE literal ;
 
-variavel: TK_IDENTIFICADOR { $$ = asd_new($1->value)}
+variavel: TK_IDENTIFICADOR;
 
 literal: 
     TK_LIT_FLOAT { $$ = asd_new($1->value) }
-    | TK_LIT_INT { $$ = asd_new($1->value) }
+    | TK_LIT_INT { $$ = asd_new($1->value) };
 
 /*
     O comando de atribuição consiste em um identificador seguido 
     pelo caractere de igualdade seguido por uma expressão
 */
-atribuicao_variavel: TK_IDENTIFICADOR '=' expressao;
+atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1->value)); asd_add_child($$, $3); };
 
 /*
     Uma chamada de função consiste no nome da função, seguida de 
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')'
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new($1->value); asd_add_child($$, $3); };
 
-argumento: argumento ',' expressao 
-    | expressao 
+argumento: 
+    argumento ',' expressao { $$ = $1; asd_add_child($$, $3); }
+    | expressao             { $$ = $1; };
 /*
     Trata-se do token return seguido de uma expressão
 */
-comando_de_retorno: TK_PR_RETURN expressao;
+comando_de_retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_child($$, $2); };
 
 /*
     A condicional consiste no token if seguido de uma 
@@ -197,8 +202,8 @@ comando_de_retorno: TK_PR_RETURN expressao;
     obrigatório caso o else seja empregado.
 */
 fluxo_if: 
-    TK_PR_IF '(' expressao ')' bloco_de_comandos 
-    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos;
+    TK_PR_IF '(' expressao ')' bloco_de_comandos { $$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); }
+    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos { $$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); asd_add_child($$, $7); };
 
 /*
     Temos apenas uma construção de repetição que é o token while seguido

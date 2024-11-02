@@ -113,7 +113,7 @@ lista_de_parametros: parametro  {$$=$1;}
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,$1);asd_add_child($$,$4);};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,asd_new($1->valor));asd_add_child($$, $4);};
 
 /*
     O tipo da função pode ser float ou int

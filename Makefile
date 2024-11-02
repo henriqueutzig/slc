@@ -35,7 +35,7 @@ all: clean $(BINARY)
 
 # Rule to create the final binary
 $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
-	$(CC) -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
+	$(CC) -I$(SRC_DIR) -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
 
 # Rule to generate parser.tab.h and parser.tab.c using bison
 $(BISON_H_OUT) $(BISON_C_OUT): $(BISON_SRC)
@@ -72,10 +72,3 @@ serve: $(BINARY)
 
 # Phony targets
 .PHONY: all run clean tar test serve
-
-# Include paths for compilation
-CFLAGS = -I$(SRC_DIR) -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema
-
-# Update the binary rule to include the CFLAGS
-$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
-	$(CC) $(CFLAGS) -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)

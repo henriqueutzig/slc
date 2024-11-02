@@ -11,6 +11,8 @@
     void yyerror (char const *mensagem);
     int get_line_number(void);
     int get_column_number(void);
+
+    extern void* arvore;
 %}
 
 %define parse.error verbose
@@ -21,6 +23,7 @@
   lexema *valor;
   asd_tree_t *arvore;
 }
+
 
 %token<valor> TK_PR_INT
 %token<valor> TK_PR_FLOAT
@@ -79,16 +82,16 @@
 */
 programa: 
     lista_de_funcoes { if ($1 != NULL) $$ = $1; else $$ = NULL; arvore = $$; };
-    | %empty         { $$ = NULL};
+    | %empty         { $$ = NULL;};
 
 lista_de_funcoes: 
-    lista_de_funcoes funcao {$$ = $1; asd_add_child($$,$2)}
-    | funcao {$$=$1};
+    lista_de_funcoes funcao {$$ = $1; asd_add_child($$,$2);}
+    | funcao {$$=$1;};
 
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1);asd_add_child($$,$2)};
+funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1);asd_add_child($$,$2);};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -96,21 +99,21 @@ funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1);asd_add_child
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$3);asd_add_child($$,$5)}
-    | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$4)};
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$3);asd_add_child($$,$5);}
+    | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$4);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro  {$$=$1}
-    | lista_de_parametros TK_OC_OR parametro {$$ = asd_new("|");asd_add_child($$,$1);asd_add_child($$,$3)};
+lista_de_parametros: parametro  {$$=$1;}
+    | lista_de_parametros TK_OC_OR parametro {$$ = asd_new("|");asd_add_child($$,$1);asd_add_child($$,$3);};
 
 /* 
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,$1);asd_add_child($$,$4)};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,$1);asd_add_child($$,$4);};
 
 /*
     O tipo da função pode ser float ou int
@@ -129,16 +132,16 @@ corpo: bloco_de_comandos;
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando ';' '}' {$$ = $2}
-    | '{''}' {$$ = NULL};
+    '{' comando ';' '}' {$$ = $2;}
+    | '{''}' {$$ = NULL;};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$1)}
-    | comando_simples {$$ = $1}
+comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$1);}
+    | comando_simples {$$ = $1;}
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -165,18 +168,18 @@ comando_simples: chamada_de_funcao
 declaracao_variavel: tipos_de_variavel lista_de_variaveis 
 
 lista_de_variaveis: 
-    variavel_inicializada  {$$ = $1}                        
-    | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3)}} ;
+    variavel_inicializada  {$$ = $1;}
+    | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
 
 variavel_inicializada : 
     variavel
-    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3)} ;
+    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);} ;
 
 variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor); };
 
 literal: 
-    TK_LIT_FLOAT { $$ = asd_new($1->valor) }
-    | TK_LIT_INT { $$ = asd_new($1->valor) };
+    TK_LIT_FLOAT { $$ = asd_new($1->valor);}
+    | TK_LIT_INT { $$ = asd_new($1->valor);};
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -251,7 +254,7 @@ expressao_precedencia_2:
     expressao_precedencia_2 '*' expressao_precedencia_1   { $$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3); }
     | expressao_precedencia_2 '/' expressao_precedencia_1 { $$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3); }
     | expressao_precedencia_2 '%' expressao_precedencia_1 { $$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_1                             { $$ = $1 };
+    | expressao_precedencia_1                             { $$ = $1; };
 
 expressao_precedencia_1: 
     '-' expressao_precedencia_1   { $$ = asd_new("-"); asd_add_child($$, $2); }

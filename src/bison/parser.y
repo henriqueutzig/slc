@@ -75,7 +75,7 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: 
-    lista_de_funcoes { $$ = $1 };
+    lista_de_funcoes { if ($1 != NULL) $$ = $1; else $$ = NULL; arvore = $$; };
     | %empty         { $$ = NULL};
 
 lista_de_funcoes: 

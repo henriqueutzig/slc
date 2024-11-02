@@ -40,10 +40,10 @@ lower_char	 [a-z]
 "&"											{ column_number += yyleng; return TK_OC_AND; }
 "|"											{ column_number += yyleng; return TK_OC_OR; }
 
-({lower_char}|_)({lower_char}|_|{digit})* 	{ column_number += yyleng; return TK_IDENTIFICADOR; }
+({lower_char}|_)({lower_char}|_|{digit})* 	{ yylval.lex_value = create_lexema(yylineno, yytext, IDENTIFICADOR); column_number += yyleng; return TK_IDENTIFICADOR; }
 
-{number}									{ column_number += yyleng; return TK_LIT_INT; }
-{number}?\.{number}							{ column_number += yyleng; return TK_LIT_FLOAT; }
+{number}									{ yylval.lex_value = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_INT; }
+{number}?\.{number}							{ yylval.lex_value = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_FLOAT; }
 
 [\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]			{ column_number += yyleng; return (int)yytext[0]; }
 

@@ -16,9 +16,10 @@
 %define parse.error verbose
 
 %code requires { #include "asd.h" }
+%code requires { #include "lexema.h" }
 %union {
-  double *lex_value;  // TODO: create a value type struct
-  asd_tree_t *tree;
+  lexema *valor;
+  asd_tree_t *arvore;
 }
 
 %token TK_PR_INT
@@ -33,39 +34,39 @@
 %token TK_OC_NE
 %token TK_OC_AND
 %token TK_OC_OR
-%token<lex_value> TK_IDENTIFICADOR
-%token<lex_value> TK_LIT_INT
-%token<lex_value> TK_LIT_FLOAT
+%token<valor> TK_IDENTIFICADOR
+%token<valor> TK_LIT_INT
+%token<valor> TK_LIT_FLOAT
 %token TK_ERRO
 
-%type <tree> programa
-%type <tree> lista_de_funcoes
-%type <tree> funcao
-%type <tree> cabecalho
-%type <tree> corpo
-%type <tree> lista_de_parametros
-%type <tree> tipos_de_variavel
-%type <tree> parametro
-%type <tree> bloco_de_comandos
-%type <tree> comando
-%type <tree> comando_simples
-%type <tree> chamada_de_funcao
-%type <tree> declaracao_variavel
-%type <tree> atribuicao_variavel
-%type <tree> comando_de_retorno
-%type <tree> fluxo_if
-%type <tree> fluxo_while
-%type <tree> expressao
-%type <tree> expressao_precedencia_6
-%type <tree> expressao_precedencia_5
-%type <tree> expressao_precedencia_4
-%type <tree> expressao_precedencia_3
-%type <tree> expressao_precedencia_2
-%type <tree> expressao_precedencia_1
-%type <tree> operando
-%type <tree> literal
-%type <tree> variavel
-%type <tree> argumento
+%type <arvore> programa
+%type <arvore> lista_de_funcoes
+%type <arvore> funcao
+%type <arvore> cabecalho
+%type <arvore> corpo
+%type <arvore> lista_de_parametros
+%type <arvore> tipos_de_variavel
+%type <arvore> parametro
+%type <arvore> bloco_de_comandos
+%type <arvore> comando
+%type <arvore> comando_simples
+%type <arvore> chamada_de_funcao
+%type <arvore> declaracao_variavel
+%type <arvore> atribuicao_variavel
+%type <arvore> comando_de_retorno
+%type <arvore> fluxo_if
+%type <arvore> fluxo_while
+%type <arvore> expressao
+%type <arvore> expressao_precedencia_6
+%type <arvore> expressao_precedencia_5
+%type <arvore> expressao_precedencia_4
+%type <arvore> expressao_precedencia_3
+%type <arvore> expressao_precedencia_2
+%type <arvore> expressao_precedencia_1
+%type <arvore> operando
+%type <arvore> literal
+%type <arvore> variavel
+%type <arvore> argumento
 
 %%
 
@@ -73,10 +74,12 @@
     Um programa na linguagem é composto por uma
     lista de funções, sendo esta lista opcional 
 */
-programa: lista_de_funcoes 
-    | %empty;
+programa: 
+    lista_de_funcoes { $$ = $1 };
+    | %empty         { $$ = NULL};
 
-lista_de_funcoes: lista_de_funcoes funcao 
+lista_de_funcoes: 
+    lista_de_funcoes funcao 
     | funcao;
 
 /* 
@@ -109,7 +112,7 @@ parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel;
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT 
+tipos_de_variavel: TK_PR_INT
     | TK_PR_FLOAT;
 
 /*
@@ -169,21 +172,21 @@ variavel_inicializada :
 variavel: TK_IDENTIFICADOR;
 
 literal: 
-    TK_LIT_FLOAT { $$ = asd_new($1->value) }
-    | TK_LIT_INT { $$ = asd_new($1->value) };
+    TK_LIT_FLOAT { $$ = asd_new($1->valor) }
+    | TK_LIT_INT { $$ = asd_new($1->valor) };
 
 /*
     O comando de atribuição consiste em um identificador seguido 
     pelo caractere de igualdade seguido por uma expressão
 */
-atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1->value)); asd_add_child($$, $3); };
+atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3); };
 
 /*
     Uma chamada de função consiste no nome da função, seguida de 
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new($1->value); asd_add_child($$, $3); };
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new($1->valor); asd_add_child($$, $3); };
 
 argumento: 
     argumento ',' expressao { $$ = $1; asd_add_child($$, $3); }
@@ -258,7 +261,7 @@ tificadores, (b) literais e (c) chamada de função ou
 (d) outras expressões
 */
 operando: 
-    TK_IDENTIFICADOR    { $$ = asd_new($1->value); }
+    TK_IDENTIFICADOR    { $$ = asd_new($1->valor); }
     | literal           { $$ = $1; }
     | chamada_de_funcao { $$ = $1; }
     | '('expressao')'   { $$ = $2; };

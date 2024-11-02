@@ -19,6 +19,12 @@ BISON_H_OUT = $(SRC_DIR)/bison/parser.tab.h
 BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
 BISON_OBJ = parser.tab.o 
 
+ASD_C = $(SRC_DIR)/asd/asd.c
+ASD_H = $(SRC_DIR)/asd/asd.h
+
+LEXEMA_C = $(SRC_DIR)/lexema/lexema.c
+LEXEMA_H = $(SRC_DIR)/lexema/lexema.h
+
 # Output files
 BINARY = etapa2
 TAR_FILE = $(BINARY).tgz
@@ -37,7 +43,7 @@ all: $(BINARY)
 
 # Rule to create the final binary
 $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(TOKENS_H) $(BISON_C_OUT) $(BISON_H_OUT)
-	$(CC) -I $(SRC_DIR) -c $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT)
+	$(CC) -I $(SRC_DIR) -c $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
 	$(CC) $(MAIN_OBJ) $(LEX_OBJ) $(BISON_OBJ) -o $(BINARY)
 
 # Rule to generate parser.tab.h using bison 

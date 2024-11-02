@@ -22,8 +22,8 @@
   asd_tree_t *arvore;
 }
 
-%token TK_PR_INT
-%token TK_PR_FLOAT
+%token<valor> TK_PR_INT
+%token<valor> TK_PR_FLOAT
 %token TK_PR_IF
 %token TK_PR_ELSE
 %token TK_PR_WHILE
@@ -67,6 +67,9 @@
 %type <arvore> literal
 %type <arvore> variavel
 %type <arvore> argumento
+%type <arvore> variavel_inicializada
+%type <arvore> lista_de_variaveis
+
 
 %%
 
@@ -79,13 +82,13 @@ programa:
     | %empty         { $$ = NULL};
 
 lista_de_funcoes: 
-    lista_de_funcoes funcao 
-    | funcao;
+    lista_de_funcoes funcao {$$ = $1; asd_add_child($$,$2)}
+    | funcao {$$=$1};
 
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo;
+funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1);asd_add_child($$,$2)};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -93,27 +96,27 @@ funcao: cabecalho corpo;
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel 
-    | TK_IDENTIFICADOR '=''>' tipos_de_variavel;
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$3);asd_add_child($$,$5)}
+    | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$4)};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro 
-    | lista_de_parametros TK_OC_OR parametro;
+lista_de_parametros: parametro  {$$=$1}
+    | lista_de_parametros TK_OC_OR parametro {$$ = asd_new("|");asd_add_child($$,$1);asd_add_child($$,$3)};
 
 /* 
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel;
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,$1);asd_add_child($$,$4)};
 
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT
-    | TK_PR_FLOAT;
+tipos_de_variavel: TK_PR_INT  { $$ = asd_new($1->valor); }
+    | TK_PR_FLOAT  { $$ = asd_new($1->valor); };
 
 /*
     O corpo da função é um bloco de comandos.
@@ -126,16 +129,16 @@ corpo: bloco_de_comandos;
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando ';' '}' 
-    | '{''}';
+    '{' comando ';' '}' {$$ = $2}
+    | '{''}' {$$ = NULL};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples
-    | comando_simples
+comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$1)}
+    | comando_simples {$$ = $1}
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -162,14 +165,14 @@ comando_simples: chamada_de_funcao
 declaracao_variavel: tipos_de_variavel lista_de_variaveis 
 
 lista_de_variaveis: 
-    variavel_inicializada                          
-    | lista_de_variaveis ',' variavel_inicializada ;
+    variavel_inicializada  {$$ = $1}                        
+    | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3)}} ;
 
 variavel_inicializada : 
-    variavel                    
-    | variavel TK_OC_LE literal ;
+    variavel
+    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3)} ;
 
-variavel: TK_IDENTIFICADOR;
+variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor); };
 
 literal: 
     TK_LIT_FLOAT { $$ = asd_new($1->valor) }

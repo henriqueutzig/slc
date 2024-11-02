@@ -15,6 +15,11 @@
 
 %define parse.error verbose
 
+%code requires { #include "asd.h" }
+%union {
+  double *lex_value;  // TODO: create a value type struct
+  asd_tree_t *tree;
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -28,10 +33,36 @@
 %token TK_OC_NE
 %token TK_OC_AND
 %token TK_OC_OR
-%token TK_IDENTIFICADOR
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
+%token<lex_value> TK_IDENTIFICADOR
+%token<lex_value> TK_LIT_INT
+%token<lex_value> TK_LIT_FLOAT
 %token TK_ERRO
+
+%type <tree> programa
+%type <tree> lista_de_funcoes
+%type <tree> funcao
+%type <tree> cabecalho
+%type <tree> corpo
+%type <tree> lista_de_parametros
+%type <tree> tipos_de_variavel
+%type <tree> parametro
+%type <tree> bloco_de_comandos
+%type <tree> comando
+%type <tree> comando_simples
+%type <tree> chamada_de_funcao
+%type <tree> declaracao_variavel
+%type <tree> atribuicao_variavel
+%type <tree> comando_de_retorno
+%type <tree> fluxo_if
+%type <tree> fluxo_while
+%type <tree> expressao
+%type <tree> expressao_precedencia_6
+%type <tree> expressao_precedencia_5
+%type <tree> expressao_precedencia_4
+%type <tree> expressao_precedencia_3
+%type <tree> expressao_precedencia_2
+%type <tree> expressao_precedencia_1
+%type <tree> operando
 
 %%
 
@@ -131,7 +162,7 @@ variavel: TK_IDENTIFICADOR
 
 literal: 
     TK_LIT_FLOAT 
-    | TK_LIT_INT
+    | TK_LIT_INT 
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -216,9 +247,9 @@ tificadores, (b) literais e (c) chamada de função ou
 */
 operando: 
     TK_IDENTIFICADOR 
-    | literal 
-    | chamada_de_funcao
-    | '('expressao')';
+    | literal {$$ = $1}
+    | chamada_de_funcao {$$ = $1}
+    | '('expressao')'; {$$ = $2}
 
 
 %%

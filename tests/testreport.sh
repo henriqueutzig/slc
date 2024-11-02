@@ -8,36 +8,24 @@ FAILED_TESTS=()
 
 for file in $INPUTS; do
   OUTPUT_FILE="output/output_$file.txt"
-  ERROR_FILE="output/error_$file.txt"
 
-  # Clear the output and error files before writing to them
+  # Clear the output file before writing to it
   > "$OUTPUT_FILE"
-  > "$ERROR_FILE"
 
   echo "Running test for: $file..."
 
-  # Run the test and redirect output
-  if ! cat tests/e2/$file | ./etapa2 > "$OUTPUT_FILE" 2> "$ERROR_FILE"; then
-    echo -e "\n\033[1;31m[ERROR]\033[0m An error occurred while processing $file with etapa2." >> "$OUTPUT_FILE"
-    cat "$ERROR_FILE" >> "$OUTPUT_FILE"
+  # Run the test and redirect both stdout and stderr to the output file
+  cat tests/e2/$file | ./etapa3 > "$OUTPUT_FILE" 2>&1
 
-    # Extract the line number from the error message (assuming format: "Error at line X")
-    ERROR_LINE=$(grep -o 'line [0-9]*' "$ERROR_FILE" | awk '{print $2}')
-    if [ -n "$ERROR_LINE" ]; then
-      ERROR_CONTENT=$(sed -n "${ERROR_LINE}p" "tests/e2/$file")
-      echo -e "\033[1;31mError Details:\033[0m\nFile: \033[1m$file\033[0m\nLine: \033[1m$ERROR_LINE\033[0m\n> \033[1;33m$ERROR_CONTENT\033[0m\n"  # Formatted error output from test file
-    else
-      echo -e "\033[1;31mError line number not found in the error message.\033[0m\n"
-    fi
-
+  # Check if the test should be marked as failed
+  if grep -q "Erro" "$OUTPUT_FILE"; then
+    echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
     FAILED=$((FAILED + 1))
     FAILED_TESTS+=("$file")
-    rm "$ERROR_FILE"  # Remove temporary error file
   else
-    echo "OK" > "$OUTPUT_FILE"
+    echo "OK" >> "$OUTPUT_FILE"
     echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
     PASSED=$((PASSED + 1))
-    rm "$ERROR_FILE"  # Clean up temporary error file if the test passed
   fi
 done
 

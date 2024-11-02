@@ -276,5 +276,9 @@ operando:
 %%
 
 void yyerror(char const *mensagem){
-    fprintf(stderr,"%s at line %d column %d/n",mensagem,get_line_number(),get_column_number());
+    fprintf(stderr,"%s at line %d column %d\n",mensagem,get_line_number(),get_column_number());
 }
+
+void exporta (void *arvore){
+    fprintf(stdout,"%s at line %p\n","Exporta Was Called",arvore);
+};

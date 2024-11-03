@@ -23,7 +23,6 @@ for file in $INPUTS; do
     FAILED=$((FAILED + 1))
     FAILED_TESTS+=("$file")
   else
-    echo "OK" >> "$OUTPUT_FILE"
     echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
     PASSED=$((PASSED + 1))
   fi

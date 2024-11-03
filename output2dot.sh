@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/user/bin/bsh
 ##
 ## output2dot.sh
 ##

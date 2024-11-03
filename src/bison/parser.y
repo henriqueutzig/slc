@@ -279,6 +279,16 @@ void yyerror(char const *mensagem){
     fprintf(stderr,"%s at line %d column %d\n",mensagem,get_line_number(),get_column_number());
 }
 
+void _exporta(asd_tree_t *arvore){
+    fprintf(stdout,"%p [label=\"%s\"];\n",arvore,arvore->label);
+    for (int i = 0; i < arvore->number_of_children; i++){
+        fprintf(stdout,"%p,%p \n",arvore,arvore->children[i]);
+    }
+    for (int i = 0; i < arvore->number_of_children; i++){
+        _exporta(arvore->children[i]);
+    }
+}
+
 void exporta (void *arvore){
-    fprintf(stdout,"%s at line %p\n","Exporta Was Called",arvore);
+    _exporta((asd_tree_t*)arvore);
 };

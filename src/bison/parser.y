@@ -91,7 +91,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1);asd_add_child($$,$2);};
+funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1); if ($2!=NULL) asd_add_child($$,$2);};
 
 /* 
     O cabeçalho consiste no nome da função,

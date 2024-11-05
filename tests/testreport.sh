@@ -8,6 +8,7 @@ FAILED_TESTS=()
 
 for file in $INPUTS; do
   OUTPUT_FILE="output/output_$file.txt"
+  DOT_FILE="output/output_$file.dot"
 
   # Clear the output file before writing to it
   > "$OUTPUT_FILE"
@@ -25,6 +26,10 @@ for file in $INPUTS; do
   else
     echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
     PASSED=$((PASSED + 1))
+
+    # Run output2dot.sh and save the output to the DOT file
+    sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
+    echo "DOT file generated: $DOT_FILE"
   fi
 done
 

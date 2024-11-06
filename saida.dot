@@ -1,11 +1,5 @@
 # Executado assim: output2dot.sh 
 # https://graphviz.org/doc/info/lang.html
 digraph {
-  1
-  x11e6061d0 [label="funcao_soma = param1 <- int | param2 <-int | param3 <-int > int"];
-  x11e6061d0 -> x11e606230
-  0
-  x11e606230 [label="param3 <-int > int
-  {
-      int"];
+  x158605fe0 [label="funcao_vazia = param1 <- int | param2 <- int | param3 <- int > int"];
 }

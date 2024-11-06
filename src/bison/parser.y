@@ -25,8 +25,8 @@
 }
 
 
-%token<valor> TK_PR_INT
-%token<valor> TK_PR_FLOAT
+%token TK_PR_INT
+%token TK_PR_FLOAT
 %token TK_PR_IF
 %token TK_PR_ELSE
 %token TK_PR_WHILE
@@ -85,13 +85,13 @@ programa:
     | %empty         { $$ = NULL;};
 
 lista_de_funcoes: 
-    lista_de_funcoes funcao {$$ = $1; asd_add_child($$,$2);}
+    lista_de_funcoes funcao {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
     | funcao {$$=$1;};
 
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) asd_add_child($$,$2); fprintf(stderr,"TKCHILD-LABEL: %s\n",$2->label);};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) asd_add_child($$,$2); };
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -106,20 +106,20 @@ cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro  {$$=$1;}
-    | lista_de_parametros TK_OC_OR parametro {$$ = asd_new("|");asd_add_child($$,$1);asd_add_child($$,$3);};
+lista_de_parametros: parametro  {$$ = NULL;};
+    | lista_de_parametros TK_OC_OR parametro {$$ = NULL;};
 
 /* 
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=asd_new("<-");asd_add_child($$,asd_new($1->valor));asd_add_child($$, $4);};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=NULL;};
 
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT  { $$ = asd_new($1->valor); }
-    | TK_PR_FLOAT  { $$ = asd_new($1->valor); };
+tipos_de_variavel: TK_PR_INT  {$$ = NULL;};
+    | TK_PR_FLOAT  {$$ = NULL;};
 
 /*
     O corpo da função é um bloco de comandos.
@@ -165,7 +165,7 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis 
+declaracao_variavel: tipos_de_variavel lista_de_variaveis
 
 lista_de_variaveis: 
     variavel_inicializada  {$$ = $1;}
@@ -284,8 +284,6 @@ void _exporta(asd_tree_t *arvore) {
     if (arvore == NULL) {
         return;
     }
-
-    fprintf(stdout, "%d\n", arvore->number_of_children);
 
     fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
 

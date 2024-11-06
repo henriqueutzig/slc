@@ -7,12 +7,24 @@
 */
 %{
     #include<stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
     int yylex(void);
     void yyerror (char const *mensagem);
     int get_line_number(void);
     int get_column_number(void);
 
     extern void* arvore;
+
+    char* create_call_string(const char* valor) {
+        char* buffer = (char*)malloc(256); // Aloca memória para a nova string
+        if (buffer == NULL) {
+            fprintf(stderr, "Erro ao alocar memória\n");
+            exit(1);
+        }
+        snprintf(buffer, 256, "call %s", valor);
+        return buffer;
+    }
 %}
 
 %define parse.error verbose
@@ -140,7 +152,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd_add_child($1,$3);} if($3 != NULL) {$$ = $3;}};
+comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd_add_child($1,$3);} else if($3 != NULL) {$$ = $3;}};
     | comando_simples {if($1 != NULL) {$$ = $1;};};
 
 /*
@@ -192,7 +204,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new($1->valor); asd_add_child($$, $3); };
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3); };
 
 argumento: 
     argumento ',' expressao { $$ = $1; asd_add_child($$, $3); }
@@ -294,7 +306,6 @@ void yyerror(char const *mensagem){
 
 void _exporta(asd_tree_t *arvore) {
     if (arvore == NULL) {
-        fprintf(stdout, "Null tree in _exporta\n");
         return;
     }
 
@@ -317,7 +328,6 @@ void _exporta(asd_tree_t *arvore) {
 
 void exporta (void *arvore){
     if (arvore == NULL) {
-        fprintf(stderr, "Null tree in exporta\n");
         return;
     }
     _exporta((asd_tree_t*)arvore);

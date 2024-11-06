@@ -6,7 +6,6 @@
 
 asd_tree_t *asd_new(const char *label)
 {
-  // fprintf(stderr, "asd_new(%s)\n", label);
   asd_tree_t *ret = NULL;
   ret = calloc(1, sizeof(asd_tree_t));
   if (ret != NULL){

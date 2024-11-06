@@ -91,7 +91,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) asd_add_child($$,$2); };
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);}; };
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -124,7 +124,7 @@ tipos_de_variavel: TK_PR_INT  {$$ = NULL;};
 /*
     O corpo da função é um bloco de comandos.
 */
-corpo: bloco_de_comandos { $$ = $1; };
+corpo: bloco_de_comandos {$$=$1;}; 
 
 /*
     Um bloco de comandos é definido entre chaves, e consiste em uma 
@@ -132,7 +132,7 @@ corpo: bloco_de_comandos { $$ = $1; };
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando ';' '}' {if ($2!=NULL) $$ = $2;}
+    '{' comando ';' '}' {$$ = $2;}
     | '{''}' {$$ = NULL;};
 
 /*
@@ -140,8 +140,8 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$3);}
-    | comando_simples {$$ = $1;}
+comando: comando ';' comando_simples {if($1 != NULL){$$ = $1;};};
+    | comando_simples {if($1 != NULL) {$$ = $1;};};
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -165,7 +165,7 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = NULL; }
+declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = NULL;};
 
 lista_de_variaveis: 
     variavel_inicializada  {$$ = $1;}
@@ -175,7 +175,7 @@ variavel_inicializada :
     variavel {$$ = NULL;}
     | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);} ;
 
-variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor);  };
+variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor);};
 
 literal: 
     TK_LIT_FLOAT { $$ = asd_new($1->valor);}
@@ -317,9 +317,8 @@ void _exporta(asd_tree_t *arvore) {
 
 void exporta (void *arvore){
     if (arvore == NULL) {
-        fprintf(stdout, "Null tree in exporta\n");
+        fprintf(stderr, "Null tree in exporta\n");
         return;
     }
-    /* _exporta((asd_tree_t*)arvore); */
-    asd_print_graphviz(arvore); 
+    _exporta((asd_tree_t*)arvore);
 };

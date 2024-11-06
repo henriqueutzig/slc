@@ -124,7 +124,7 @@ tipos_de_variavel: TK_PR_INT  {$$ = NULL;};
 /*
     O corpo da função é um bloco de comandos.
 */
-corpo: bloco_de_comandos;
+corpo: bloco_de_comandos { $$ = $1; };
 
 /*
     Um bloco de comandos é definido entre chaves, e consiste em uma 
@@ -150,12 +150,12 @@ comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$3);}
     de comandos, e chamadas de função.
 */
 comando_simples: chamada_de_funcao 
-    | declaracao_variavel 
-    | atribuicao_variavel 
-    | comando_de_retorno 
-    | bloco_de_comandos
-    | fluxo_if 
-    | fluxo_while;
+    | declaracao_variavel { $$ = NULL;}
+    | atribuicao_variavel { $$ = $1; }
+    | comando_de_retorno  { $$ = $1; } 
+    | bloco_de_comandos  { $$ = $1; }
+    | fluxo_if { $$ = $1; }
+    | fluxo_while { $$ = $1; };
 
 /*
     Consiste no tipo da variável seguido de uma lista composta de pelo
@@ -165,14 +165,14 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis
+declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = NULL; }
 
 lista_de_variaveis: 
     variavel_inicializada  {$$ = $1;}
     | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
 
 variavel_inicializada : 
-    variavel
+    variavel {$$ = NULL;}
     | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);} ;
 
 variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor);  };
@@ -267,10 +267,22 @@ tificadores, (b) literais e (c) chamada de função ou
 (d) outras expressões
 */
 operando: 
-    TK_IDENTIFICADOR    { $$ = asd_new($1->valor); }
-    | literal           { $$ = $1; }
-    | chamada_de_funcao { $$ = $1; }
-    | '('expressao')'   { $$ = $2; };
+    TK_IDENTIFICADOR    {if ($1 == NULL) {
+            yyerror("Null pointer in TK_IDENTIFICADOR");
+            YYABORT;
+        } $$ = asd_new($1->valor); }
+    | literal           {    if ($1 == NULL) {
+            yyerror("Null pointer in literal");
+            YYABORT;
+        } $$ = $1; }
+    | chamada_de_funcao {  if ($1 == NULL) {
+            yyerror("Null pointer in chamada_de_funcao");
+            YYABORT;
+        } $$ = $1; }
+    | '('expressao')'   { if ($2 == NULL) {
+            yyerror("Null pointer in expressao");
+            YYABORT;
+        } $$ = $2; };
 
 
 %%
@@ -282,20 +294,32 @@ void yyerror(char const *mensagem){
 
 void _exporta(asd_tree_t *arvore) {
     if (arvore == NULL) {
+        fprintf(stdout, "Null tree in _exporta\n");
         return;
     }
 
     fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
 
     for (int i = 0; i < arvore->number_of_children; i++) {
+        if (arvore->children[i] == NULL) {
+            fprintf(stdout, "Null child at index %d in _exporta\n", i);
+            continue;
+        }
         fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
     }
 
     for (int i = 0; i < arvore->number_of_children; i++) {
-        _exporta(arvore->children[i]);
+        if (arvore->children[i] != NULL) {
+            _exporta(arvore->children[i]);
+        }
     }
 }
 
 void exporta (void *arvore){
-    _exporta((asd_tree_t*)arvore);
+    if (arvore == NULL) {
+        fprintf(stdout, "Null tree in exporta\n");
+        return;
+    }
+    /* _exporta((asd_tree_t*)arvore); */
+    asd_print_graphviz(arvore); 
 };

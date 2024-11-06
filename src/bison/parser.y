@@ -91,7 +91,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = asd_new($1->label); if ($2!=NULL) asd_add_child($$,$2);};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) asd_add_child($$,$2);};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -99,7 +99,7 @@ funcao: cabecalho corpo {$$ = asd_new($1->label); if ($2!=NULL) asd_add_child($$
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor)}    
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
 | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
 
 /* 
@@ -140,7 +140,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$1);}
+comando: comando ';' comando_simples {$$ = $1; asd_add_child($$,$3);}
     | comando_simples {$$ = $1;}
 
 /*
@@ -279,12 +279,34 @@ void yyerror(char const *mensagem){
     fprintf(stderr,"%s at line %d column %d\n",mensagem,get_line_number(),get_column_number());
 }
 
-void _exporta(asd_tree_t *arvore){
+/* void _exporta(asd_tree_t *arvore){
     fprintf(stdout,"%p [label=\"%s\"];\n",arvore,arvore->label);
     for (int i = 0; i < arvore->number_of_children; i++){
         fprintf(stdout,"%p,%p \n",arvore,arvore->children[i]);
     }
     for (int i = 0; i < arvore->number_of_children; i++){
+        _exporta(arvore->children[i]);
+    }
+} */
+
+void _exporta(asd_tree_t *arvore) {
+    if (arvore == NULL) {
+        return;
+    }
+
+    //Imprimir o numero de filhos da arvore
+    fprintf(stdout, "%d\n", arvore->number_of_children);
+
+    // Imprime o nó atual
+    fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
+
+    // Imprime as relações entre o nó atual e seus filhos
+    for (int i = 0; i < arvore->number_of_children; i++) {
+        fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
+    }
+
+    // Chama recursivamente para cada filho
+    for (int i = 0; i < arvore->number_of_children; i++) {
         _exporta(arvore->children[i]);
     }
 }

@@ -9,7 +9,7 @@ lexema *create_lexema(int linha, char *valor, tipo tipo){
 
     lex->tipo=tipo;
     lex->linha=linha;
-    lex->valor=valor;
+    lex->valor=strdup(valor);
 
     return lex;
 }

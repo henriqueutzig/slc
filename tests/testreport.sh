@@ -17,9 +17,14 @@ for file in $INPUTS; do
 
   # Run the test and redirect both stdout and stderr to the output file
   cat tests/e2/$file | ./etapa3 > "$OUTPUT_FILE" 2>&1
+  EXIT_CODE=$?
 
   # Check if the test should be marked as failed
-  if grep -q "Erro" "$OUTPUT_FILE"; then
+  if [ $EXIT_CODE -eq 139 ]; then
+    echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
+    FAILED=$((FAILED + 1))
+    FAILED_TESTS+=("$file")
+  elif grep -q "Erro" "$OUTPUT_FILE"; then
     echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
     FAILED=$((FAILED + 1))
     FAILED_TESTS+=("$file")

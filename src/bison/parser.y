@@ -91,7 +91,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1); if ($2!=NULL) asd_add_child($$,$2);};
+funcao: cabecalho corpo {$$ = asd_new($1->label); if ($2!=NULL) asd_add_child($$,$2);};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -99,8 +99,8 @@ funcao: cabecalho corpo {$$ = asd_new("func");asd_add_child($$,$1); if ($2!=NULL
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros  '>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$3);asd_add_child($$,$5);}
-    | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new("cabecalho");asd_add_child($$,$4);};
+cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor)}    
+| TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de

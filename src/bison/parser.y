@@ -140,7 +140,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {if($1 != NULL){$$ = $1;};};
+comando: comando ';' comando_simples {if($1 != NULL){$$ = $1;}; if($3 != NULL) asd_add_child($1,$3);};
     | comando_simples {if($1 != NULL) {$$ = $1;};};
 
 /*
@@ -150,7 +150,7 @@ comando: comando ';' comando_simples {if($1 != NULL){$$ = $1;};};
     de comandos, e chamadas de função.
 */
 comando_simples: chamada_de_funcao 
-    | declaracao_variavel { $$ = NULL;}
+    | declaracao_variavel { $$ = $1; } 
     | atribuicao_variavel { $$ = $1; }
     | comando_de_retorno  { $$ = $1; } 
     | bloco_de_comandos  { $$ = $1; }
@@ -165,15 +165,15 @@ comando_simples: chamada_de_funcao
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = NULL;};
+declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = $2;};
 
 lista_de_variaveis: 
-    variavel_inicializada  {$$ = $1;}
+    variavel_inicializada  { $$ = $1;}
     | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
 
 variavel_inicializada : 
-    variavel {$$ = NULL;}
-    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);} ;
+    variavel {$$ = NULL; }
+    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);}; ;
 
 variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor);};
 

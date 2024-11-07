@@ -1,0 +1,5 @@
+# Executado assim: output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x6000000991e0 [label="h"];
+}

@@ -2,13 +2,14 @@
 
 INPUTS=$(ls tests/e2 | grep entrada_)
 mkdir -p output/
+mkdir -p dot/
 PASSED=0
 FAILED=0
 FAILED_TESTS=()
 
 for file in $INPUTS; do
   OUTPUT_FILE="output/output_$file.txt"
-  DOT_FILE="output/output_$file.dot"
+  DOT_FILE="dot/output_$file.dot"
 
   # Clear the output file before writing to it
   > "$OUTPUT_FILE"

@@ -1,0 +1,25 @@
+# Executado assim: output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  Comando de retorno
+  Comando de retorno
+  x6000003751e0 [label="check"];
+  x6000003751e0 -> x6000003752c0
+  x6000003752c0 [label="if"];
+  x6000003752c0 -> x600000375240
+  x6000003752c0 -> x6000003752a0
+  x6000003752c0 -> x600000375300
+  x600000375240 [label="<"];
+  x600000375240 -> x600000375200
+  x600000375240 -> x600000375220
+  x600000375200 [label="n"];
+  x600000375220 [label="0"];
+  x6000003752a0 [label="return"];
+  x6000003752a0 -> x600000375280
+  x600000375280 [label="-"];
+  x600000375280 -> x600000375260
+  x600000375260 [label="1"];
+  x600000375300 [label="return"];
+  x600000375300 -> x6000003752e0
+  x6000003752e0 [label="1"];
+}

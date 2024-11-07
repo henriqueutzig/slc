@@ -1,0 +1,82 @@
+# Executado assim: output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  Comando de retorno
+  x600003df51e0 [label="funcao_soma"];
+  x600003df51e0 -> x600003df5280
+  x600003df5280 [label="<="];
+  x600003df5280 -> x600003df5240
+  x600003df5280 -> x600003df5260
+  x600003df5280 -> x600003df52c0
+  x600003df5240 [label="z"];
+  x600003df5260 [label="100"];
+  x600003df52c0 [label="="];
+  x600003df52c0 -> x600003df52e0
+  x600003df52c0 -> x600003df52a0
+  x600003df52c0 -> x600003df53a0
+  x600003df52e0 [label="x"];
+  x600003df52a0 [label="param1"];
+  x600003df53a0 [label="="];
+  x600003df53a0 -> x600003df53c0
+  x600003df53a0 -> x600003df5360
+  x600003df53a0 -> x600003df5460
+  x600003df53c0 [label="y"];
+  x600003df5360 [label="call funcao_soma"];
+  x600003df5360 -> x600003df5300
+  x600003df5300 [label="x"];
+  x600003df5300 -> x600003df5320
+  x600003df5320 [label="y"];
+  x600003df5320 -> x600003df5340
+  x600003df5340 [label="z"];
+  x600003df5460 [label="if"];
+  x600003df5460 -> x600003df53e0
+  x600003df5460 -> x600003df5420
+  x600003df5460 -> x600003df5560
+  x600003df53e0 [label="param1"];
+  x600003df5420 [label="="];
+  x600003df5420 -> x600003df5440
+  x600003df5420 -> x600003df5400
+  x600003df5440 [label="z"];
+  x600003df5400 [label="100"];
+  x600003df5560 [label="if"];
+  x600003df5560 -> x600003df5480
+  x600003df5560 -> x600003df54c0
+  x600003df5560 -> x600003df5520
+  x600003df5560 -> x600003df5660
+  x600003df5480 [label="param2"];
+  x600003df54c0 [label="="];
+  x600003df54c0 -> x600003df54e0
+  x600003df54c0 -> x600003df54a0
+  x600003df54e0 [label="z"];
+  x600003df54a0 [label="200"];
+  x600003df5520 [label="="];
+  x600003df5520 -> x600003df5540
+  x600003df5520 -> x600003df5500
+  x600003df5540 [label="z"];
+  x600003df5500 [label="0"];
+  x600003df5660 [label="while"];
+  x600003df5660 -> x600003df55a0
+  x600003df5660 -> x600003df5620
+  x600003df5660 -> x600003df5720
+  x600003df55a0 [label="param3"];
+  x600003df5620 [label="="];
+  x600003df5620 -> x600003df5640
+  x600003df5620 -> x600003df5600
+  x600003df5640 [label="param3"];
+  x600003df5600 [label="-"];
+  x600003df5600 -> x600003df55c0
+  x600003df5600 -> x600003df55e0
+  x600003df55c0 [label="param3"];
+  x600003df55e0 [label="1"];
+  x600003df5720 [label="return"];
+  x600003df5720 -> x600003df5700
+  x600003df5700 [label="+"];
+  x600003df5700 -> x600003df5680
+  x600003df5700 -> x600003df56e0
+  x600003df5680 [label="x"];
+  x600003df56e0 [label="*"];
+  x600003df56e0 -> x600003df56a0
+  x600003df56e0 -> x600003df56c0
+  x600003df56a0 [label="y"];
+  x600003df56c0 [label="z"];
+}

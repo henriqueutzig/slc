@@ -1,0 +1,10 @@
+# Executado assim: output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  Comando de retorno
+  x6000037fc000 [label="ret_func"];
+  x6000037fc000 -> x6000037fc040
+  x6000037fc040 [label="return"];
+  x6000037fc040 -> x6000037fc020
+  x6000037fc020 [label="42"];
+}

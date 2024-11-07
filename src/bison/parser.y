@@ -97,7 +97,7 @@ programa:
     | %empty         { $$ = NULL;};
 
 lista_de_funcoes: 
-    lista_de_funcoes funcao {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
+    funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
     | funcao {$$=$1;};
 
 /* 

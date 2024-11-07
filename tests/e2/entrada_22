@@ -1,6 +1,6 @@
 void_func = > int {
-    chamada_1(x);
+    int x<=1, y<=2;
+    chamada_1(x,y,z);
     chamada_2(x);
-    int x <= 10;
-    x = x + 1;
+    return a + b + c;
 }

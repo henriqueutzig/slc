@@ -144,7 +144,7 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando ';' '}' {$$ = $2;}
+    '{' comando '}' {$$ = $2;}
     | '{''}' {$$ = NULL;};
 
 /*
@@ -152,8 +152,17 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd_add_child($1,$3);} else if($3 != NULL) {$$ = $3;}};
-    | comando_simples {if($1 != NULL) {$$ = $1;};};
+comando: comando ';' comando_simples{
+    if($1 != NULL){
+        $$ = $1; 
+        if($3 != NULL) {
+            asd_add_child($1, $3);
+        }
+    } else if($3 != NULL) {
+        $$ = $3;
+    }
+    };
+    | comando_simples ';' {if($1 != NULL) {$$ = $1;};};
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -161,7 +170,7 @@ comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd
     fluxo de controle, operação de retorno, um bloco
     de comandos, e chamadas de função.
 */
-comando_simples: chamada_de_funcao 
+comando_simples: chamada_de_funcao { $$ = $1; fprintf(stderr, "Chamada de função\n"); }
     | declaracao_variavel { $$ = $1;} 
     | atribuicao_variavel { $$ = $1; }
     | comando_de_retorno  { $$ = $1; } 

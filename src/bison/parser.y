@@ -29,8 +29,8 @@
 
 %define parse.error verbose
 
-%code requires { #include "asd.h" }
-%code requires { #include "lexema.h" }
+%code requires {#include "asd.h"}
+%code requires {#include "lexema.h"}
 %union {
   lexema *valor;
   asd_tree_t *arvore;
@@ -93,8 +93,8 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: 
-    lista_de_funcoes { if ($1 != NULL) $$ = $1; else $$ = NULL; arvore = $$; };
-    | %empty         { $$ = NULL;};
+    lista_de_funcoes {if ($1 != NULL) $$ = $1; else $$ = NULL; arvore = $$;};
+    | %empty {$$ = NULL;};
 
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
@@ -103,7 +103,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);}; };
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -118,7 +118,7 @@ cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro  {$$ = NULL;};
+lista_de_parametros: parametro {$$ = NULL;};
     | lista_de_parametros TK_OC_OR parametro {$$ = NULL;};
 
 /* 
@@ -130,8 +130,8 @@ parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=NULL;};
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT  {$$ = NULL;};
-    | TK_PR_FLOAT  {$$ = NULL;};
+tipos_de_variavel: TK_PR_INT {$$ = NULL;};
+    | TK_PR_FLOAT {$$ = NULL;};
 
 /*
     O corpo da função é um bloco de comandos.
@@ -152,7 +152,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando_simples ';' comando{
+comando: comando_simples ';' comando {
     if($1 != NULL){
         $$ = $1; 
         if($3 != NULL) {
@@ -162,7 +162,7 @@ comando: comando_simples ';' comando{
         $$ = $3;
     }
     };
-    | comando_simples ';' {if($1 != NULL) {$$ = $1;}; };
+    | comando_simples ';' {if($1 != NULL) {$$ = $1;};};
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -170,13 +170,14 @@ comando: comando_simples ';' comando{
     fluxo de controle, operação de retorno, um bloco
     de comandos, e chamadas de função.
 */
-comando_simples: chamada_de_funcao { $$ = $1; }
-    | declaracao_variavel { $$ = $1;} 
-    | atribuicao_variavel { $$ = $1; }
-    | comando_de_retorno  { $$ = $1; } 
-    | bloco_de_comandos  { $$ = $1; }
-    | fluxo_if { $$ = $1; }
-    | fluxo_while { $$ = $1; };
+comando_simples: 
+    chamada_de_funcao {$$ = $1;}
+    | declaracao_variavel {$$ = $1;} 
+    | atribuicao_variavel {$$ = $1;}
+    | comando_de_retorno {$$ = $1;} 
+    | bloco_de_comandos {$$ = $1;}
+    | fluxo_if {$$ = $1;}
+    | fluxo_while {$$ = $1;};
 
 /*
     Consiste no tipo da variável seguido de uma lista composta de pelo
@@ -186,42 +187,42 @@ comando_simples: chamada_de_funcao { $$ = $1; }
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = $2;};
+declaracao_variavel: tipos_de_variavel lista_de_variaveis {$$ = $2;};
 
 lista_de_variaveis: 
-    variavel_inicializada  { $$ = $1;}
+    variavel_inicializada {$$ = $1;}
     | variavel_inicializada ',' lista_de_variaveis {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
 
-variavel_inicializada : 
+variavel_inicializada: 
     variavel {$$ = NULL;}
     | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);}; ;
 
-variavel: TK_IDENTIFICADOR  { $$ = asd_new($1->valor);};
+variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor);};
 
 literal: 
-    TK_LIT_FLOAT { $$ = asd_new($1->valor);}
-    | TK_LIT_INT { $$ = asd_new($1->valor);};
+    TK_LIT_FLOAT {$$ = asd_new($1->valor);}
+    | TK_LIT_INT {$$ = asd_new($1->valor);};
 
 /*
     O comando de atribuição consiste em um identificador seguido 
     pelo caractere de igualdade seguido por uma expressão
 */
-atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3); };
+atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {$$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);};
 
 /*
     Uma chamada de função consiste no nome da função, seguida de 
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3); };
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' {$$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3);};
 
 argumento: 
-    expressao ',' argumento { $$ = $1; asd_add_child($$, $3); }
-    | expressao             { $$ = $1; };
+    expressao ',' argumento {$$ = $1; asd_add_child($$, $3);}
+    | expressao {$$ = $1;};
 /*
     Trata-se do token return seguido de uma expressão
 */
-comando_de_retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_child($$, $2); };
+comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_child($$, $2);};
 
 /*
     A condicional consiste no token if seguido de uma 
@@ -232,14 +233,14 @@ comando_de_retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_chi
     obrigatório caso o else seja empregado.
 */
 fluxo_if: 
-    TK_PR_IF '(' expressao ')' bloco_de_comandos { $$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); }
-    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos { $$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); asd_add_child($$, $7); };
+    TK_PR_IF '(' expressao ')' bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5);}
+    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); asd_add_child($$, $7);};
 
 /*
     Temos apenas uma construção de repetição que é o token while seguido
     de uma expressão entre parênteses e de um bloco de comandos
 */
-fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); asd_add_child($$, $5); };
+fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); asd_add_child($$, $5);};
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2
@@ -247,40 +248,40 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("whil
     precedencia 6 é precedida por operaçoes do nivel 1
 */
 expressao: 
-    expressao TK_OC_OR expressao_precedencia_6 { $$ = asd_new("|"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_6                  { $$ = $1; };
+    expressao TK_OC_OR expressao_precedencia_6 {$$ = asd_new("|"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_6 {$$ = $1;};
 
 expressao_precedencia_6: 
-    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 { $$ = asd_new("&"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_5                                 { $$ = $1; };
+    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {$$ = asd_new("&"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_5 {$$ = $1;};
 
 expressao_precedencia_5: 
-    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4   { $$ = asd_new("=="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 { $$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_4                                  { $$ = $1; };
+    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {$$ = asd_new("=="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {$$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 {$$ = $1;};
 
 expressao_precedencia_4:
-    expressao_precedencia_4 '<' expressao_precedencia_3        { $$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_4 '>' expressao_precedencia_3      { $$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 { $$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 { $$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_3                                  { $$ = $1; };
+    expressao_precedencia_4 '<' expressao_precedencia_3 {$$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 '>' expressao_precedencia_3 {$$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {$$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {$$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_3 {$$ = $1;};
 
 expressao_precedencia_3:
-    expressao_precedencia_3 '+' expressao_precedencia_2   { $$ = asd_new("+"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_3 '-' expressao_precedencia_2 { $$ = asd_new("-"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_2                             { $$ = $1; };
+    expressao_precedencia_3 '+' expressao_precedencia_2 {$$ = asd_new("+"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new("-"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_2 {$$ = $1;};
 
 expressao_precedencia_2: 
-    expressao_precedencia_2 '*' expressao_precedencia_1   { $$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_2 '/' expressao_precedencia_1 { $$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_2 '%' expressao_precedencia_1 { $$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3); }
-    | expressao_precedencia_1                             { $$ = $1; };
+    expressao_precedencia_2 '*' expressao_precedencia_1 {$$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_2 '/' expressao_precedencia_1 {$$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_2 '%' expressao_precedencia_1 {$$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_1 {$$ = $1;};
 
 expressao_precedencia_1: 
-    '-' expressao_precedencia_1   { $$ = asd_new("-"); asd_add_child($$, $2); }
-    | '!' expressao_precedencia_1 { $$ = asd_new("!"); asd_add_child($$, $2); }
-    | operando                    { $$ = $1; };
+    '-' expressao_precedencia_1 {$$ = asd_new("-"); asd_add_child($$, $2);}
+    | '!' expressao_precedencia_1 {$$ = asd_new("!"); asd_add_child($$, $2);}
+    | operando {$$ = $1;};
 
 /*
 Os operandos podem ser (a) iden-
@@ -291,19 +292,19 @@ operando:
     TK_IDENTIFICADOR    {if ($1 == NULL) {
             yyerror("Null pointer in TK_IDENTIFICADOR");
             YYABORT;
-        } $$ = asd_new($1->valor); }
-    | literal           {    if ($1 == NULL) {
+        } $$ = asd_new($1->valor);}
+    | literal           {   if ($1 == NULL) {
             yyerror("Null pointer in literal");
             YYABORT;
-        } $$ = $1; }
-    | chamada_de_funcao {  if ($1 == NULL) {
+        } $$ = $1;}
+    | chamada_de_funcao { if ($1 == NULL) {
             yyerror("Null pointer in chamada_de_funcao");
             YYABORT;
-        } $$ = $1; }
-    | '('expressao')'   { if ($2 == NULL) {
+        } $$ = $1;}
+    | '('expressao')'   {if ($2 == NULL) {
             yyerror("Null pointer in expressao");
             YYABORT;
-        } $$ = $2; };
+        } $$ = $2;};
 
 
 %%

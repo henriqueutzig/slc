@@ -58,6 +58,7 @@ tar: $(BINARY)
 	mkdir -p temp_dir/src
 	cp -r $(SRC_DIR)/* temp_dir/src
 	cp Makefile temp_dir/
+	cp -r ./tests temp_dir/
 	tar cvzf $(TAR_FILE) -C temp_dir .
 	rm -rf temp_dir
 

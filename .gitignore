@@ -58,4 +58,4 @@ dkms.conf
 output/*
 parser.tab.*
 lex.yy.*
-etapa*dot/output_entrada_1.dot dot/output_entrada_10.dot dot/output_entrada_11.dot dot/output_entrada_12.dot dot/output_entrada_13.dot dot/output_entrada_14.dot dot/output_entrada_15.dot dot/output_entrada_16.dot dot/output_entrada_17.dot dot/output_entrada_18.dot dot/output_entrada_19.dot dot/output_entrada_2.dot dot/output_entrada_20.dot dot/output_entrada_21.dot dot/output_entrada_22.dot dot/output_entrada_3.dot dot/output_entrada_4.dot dot/output_entrada_5.dot dot/output_entrada_6.dot dot/output_entrada_7.dot dot/output_entrada_8.dot dot/output_entrada_9.dot
+dot/*

@@ -1,0 +1,6 @@
+void_func = > int {
+    chamada_1(x);
+    chamada_2(x);
+    int x <= 10;
+    x = x + 1;
+}

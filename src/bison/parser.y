@@ -144,7 +144,7 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando '}' {$$ = $2;}
+    '{' comando ';''}' {$$ = $2;}
     | '{''}' {$$ = NULL;};
 
 /*
@@ -162,7 +162,7 @@ comando: comando ';' comando_simples{
         $$ = $3;
     }
     };
-    | comando_simples ';' {if($1 != NULL) {$$ = $1;};};
+    | comando_simples {if($1 != NULL) {$$ = $1;};};
 
 /*
     Os comandos simples da linguagem podem ser:

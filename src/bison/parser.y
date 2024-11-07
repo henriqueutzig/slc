@@ -170,10 +170,10 @@ comando: comando_simples ';' comando{
     fluxo de controle, operação de retorno, um bloco
     de comandos, e chamadas de função.
 */
-comando_simples: chamada_de_funcao { $$ = $1; fprintf(stderr, "Chamada de função\n"); }
+comando_simples: chamada_de_funcao { $$ = $1; }
     | declaracao_variavel { $$ = $1;} 
     | atribuicao_variavel { $$ = $1; }
-    | comando_de_retorno  { $$ = $1; fprintf(stderr, "Comando de retorno\n"); } 
+    | comando_de_retorno  { $$ = $1; } 
     | bloco_de_comandos  { $$ = $1; }
     | fluxo_if { $$ = $1; }
     | fluxo_while { $$ = $1; };

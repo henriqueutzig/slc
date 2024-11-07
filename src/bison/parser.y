@@ -152,7 +152,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd_add_child($1,$3);} else if($3 != NULL) {$$ = $3;}};
+comando: comando ';' comando_simples {if($1 != NULL){$$ = $1; if($3 != NULL) asd_add_child($1,$3);} else if($3 != NULL) {$$ = $3;}}
     | comando_simples {if($1 != NULL) {$$ = $1;};};
 
 /*

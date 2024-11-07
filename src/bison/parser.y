@@ -144,7 +144,7 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando ';''}' {$$ = $2;}
+    '{' comando '}' {$$ = $2;}
     | '{''}' {$$ = NULL;};
 
 /*
@@ -152,7 +152,7 @@ bloco_de_comandos:
     recursivamente, e pode ser utilizado em qualquer construção que aceite 
     um comando simples.
 */
-comando: comando ';' comando_simples{
+comando: comando_simples ';' comando{
     if($1 != NULL){
         $$ = $1; 
         if($3 != NULL) {
@@ -162,7 +162,7 @@ comando: comando ';' comando_simples{
         $$ = $3;
     }
     };
-    | comando_simples {if($1 != NULL) {$$ = $1;};};
+    | comando_simples ';' {if($1 != NULL) {$$ = $1;}; };
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -173,7 +173,7 @@ comando: comando ';' comando_simples{
 comando_simples: chamada_de_funcao { $$ = $1; fprintf(stderr, "Chamada de função\n"); }
     | declaracao_variavel { $$ = $1;} 
     | atribuicao_variavel { $$ = $1; }
-    | comando_de_retorno  { $$ = $1; } 
+    | comando_de_retorno  { $$ = $1; fprintf(stderr, "Comando de retorno\n"); } 
     | bloco_de_comandos  { $$ = $1; }
     | fluxo_if { $$ = $1; }
     | fluxo_while { $$ = $1; };
@@ -190,7 +190,7 @@ declaracao_variavel: tipos_de_variavel lista_de_variaveis { $$ = $2;};
 
 lista_de_variaveis: 
     variavel_inicializada  { $$ = $1;}
-    | lista_de_variaveis ',' variavel_inicializada {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
+    | variavel_inicializada ',' lista_de_variaveis {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
 
 variavel_inicializada : 
     variavel {$$ = NULL;}
@@ -216,7 +216,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add
 chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' { $$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3); };
 
 argumento: 
-    argumento ',' expressao { $$ = $1; asd_add_child($$, $3); }
+    expressao ',' argumento { $$ = $1; asd_add_child($$, $3); }
     | expressao             { $$ = $1; };
 /*
     Trata-se do token return seguido de uma expressão

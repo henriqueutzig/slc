@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-INPUTS=$(ls tests/e2 | grep entrada_)
+INPUTS=$(ls tests/e3 | grep entrada_)
 mkdir -p output/
 mkdir -p dot/
 PASSED=0
@@ -17,7 +17,7 @@ for file in $INPUTS; do
   echo "Running test for: $file..."
 
   # Run the test and redirect both stdout and stderr to the output file
-  cat tests/e2/$file | ./etapa3 > "$OUTPUT_FILE" 2>&1
+  cat tests/e3/$file | ./etapa3 > "$OUTPUT_FILE" 2>&1
   EXIT_CODE=$?
 
   # Check if the test should be marked as failed

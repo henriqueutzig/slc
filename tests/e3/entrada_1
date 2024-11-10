@@ -1,0 +1,4 @@
+test_func = > int {
+int c, a <= 1, b <= 2, j, c <= 3, d, e <= 2;
+float z, y <= 1.0, x <= 2.0, w, v <= 3.0;
+}

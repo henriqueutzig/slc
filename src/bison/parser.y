@@ -191,11 +191,11 @@ declaracao_variavel: tipos_de_variavel lista_de_variaveis {$$ = $2;};
 
 lista_de_variaveis: 
     variavel_inicializada {$$ = $1;}
-    | variavel_inicializada ',' lista_de_variaveis {if($1 != NULL) {$$ = $1; if($3 != NULL) asd_add_child($1,$3);}} ;
+    | variavel_inicializada ',' lista_de_variaveis {if($1 != NULL && $3 != NULL){ $$ = $1; asd_add_child($$, $3); } else $$ = $3;} ;
 
 variavel_inicializada: 
     variavel {$$ = NULL;}
-    | variavel TK_OC_LE literal {$$ = asd_new("<=");asd_add_child($$,$1); asd_add_child($$,$3);}; ;
+    | variavel TK_OC_LE literal {$$ = asd_new("<="); asd_add_child($$,$1); asd_add_child($$,$3);}; ;
 
 variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor);};
 

@@ -233,14 +233,14 @@ comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_chil
     obrigatório caso o else seja empregado.
 */
 fluxo_if: 
-    TK_PR_IF '(' expressao ')' bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5);}
-    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); asd_add_child($$, $7);};
+    TK_PR_IF '(' expressao ')' bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }}
+    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); } if($7 != NULL) { asd_add_child($$, $7); }};
 
 /*
     Temos apenas uma construção de repetição que é o token while seguido
     de uma expressão entre parênteses e de um bloco de comandos
 */
-fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); asd_add_child($$, $5);};
+fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }};
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2

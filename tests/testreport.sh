@@ -5,6 +5,12 @@ PASSED=0
 FAILED=0
 FAILED_TESTS=()
 
+# Clear existing output and dot folders
+rm -rf output
+rm -rf dot
+mkdir -p output
+mkdir -p dot
+
 # Loop through each sub-folder in the tests directory
 for subfolder in tests/*; do
   if [ -d "$subfolder" ]; then

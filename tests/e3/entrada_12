@@ -1,0 +1,12 @@
+test_if_funct => int {
+    if (a < 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    };
+
+    if (shouldReturnOne(a, b)){
+        return 1;
+    };
+}

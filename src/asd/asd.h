@@ -31,4 +31,10 @@ void asd_print(asd_tree_t *tree);
  * Função asd_print_graphviz, idem, em formato DOT
  */
 void asd_print_graphviz (asd_tree_t *tree);
+
+/*
+ * Função asd_last_child, retorna o último filho da árvore.
+ */
+asd_tree_t *asd_last_child(asd_tree_t *tree);
+
 #endif //_ARVORE_H_

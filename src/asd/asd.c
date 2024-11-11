@@ -94,3 +94,10 @@ void asd_print_graphviz(asd_tree_t *tree)
     printf("Erro: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
   }
 }
+
+asd_tree_t *asd_last_child(asd_tree_t *tree) {
+    if (tree == NULL || tree->number_of_children <= 2) {
+        return tree;
+    }
+    return asd_last_child(tree->children[tree->number_of_children - 1]);
+}

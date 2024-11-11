@@ -155,9 +155,13 @@ bloco_de_comandos:
 comando: comando_simples ';' comando {
     if($1 != NULL){
         $$ = $1; 
+        $$ = asd_last_child($$);
+
         if($3 != NULL) {
-            asd_add_child($1, $3);
+            asd_add_child($$, $3);
         }
+
+        $$ = $1;
     } else if($3 != NULL) {
         $$ = $3;
     }

@@ -1,4 +1,4 @@
-test_func = > int {
+test_func => int {
 int a, a <= 1, b <= 2, c <= 3, d;
 
 if (a == b | ((!c) & d)) {
@@ -7,9 +7,9 @@ if (a == b | ((!c) & d)) {
     }
     else {
         a = d;
-    }
+    };
     a = b+c;
-}
+};
 
-return (if(a==b) {a} else {b});
+return (a | b +c -!d);
 }

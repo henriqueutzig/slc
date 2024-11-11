@@ -155,7 +155,10 @@ bloco_de_comandos:
 comando: comando_simples ';' comando {
     if($1 != NULL){
         $$ = $1; 
-        $$ = asd_last_child($$);
+
+      if (strcmp($$->label, "<=") == 0) {
+            $$ = asd_last_child($$);
+        }
 
         if($3 != NULL) {
             asd_add_child($$, $3);

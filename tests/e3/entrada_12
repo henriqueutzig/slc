@@ -6,7 +6,7 @@ test_if_funct => int {
         return 0;
     };
 
-    if (shouldReturnOne(a, b)){
+    if (shoudl_return_one(a , b ,c)){
         return 1;
     };
 }

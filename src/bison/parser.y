@@ -190,8 +190,15 @@ comando_simples:
 declaracao_variavel: tipos_de_variavel lista_de_variaveis {$$ = $2;};
 
 lista_de_variaveis: 
-    variavel_inicializada {$$ = $1;}
-    | variavel_inicializada ',' lista_de_variaveis {if($1 != NULL && $3 != NULL){ $$ = $1; asd_add_child($$, $3); } else $$ = $3;} ;
+    variavel_inicializada {$$ = $1; }
+    | variavel_inicializada ',' lista_de_variaveis {
+        if($1 != NULL){ 
+            $$ = $1; 
+            if($3 != NULL) asd_add_child($$, $3);
+        }else {
+            $$ = $3;
+            };
+        } ;
 
 variavel_inicializada: 
     variavel {$$ = NULL;}

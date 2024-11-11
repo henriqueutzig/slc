@@ -1,0 +1,15 @@
+test_func = > int {
+int a, a <= 1, b <= 2, c <= 3, d;
+
+if (a == b | ((!c) & d)) {
+    if (n == 1) {
+        a = b;
+    }
+    else {
+        a = d;
+    }
+    a = b+c;
+}
+
+return (if(a==b) {a} else {b});
+}

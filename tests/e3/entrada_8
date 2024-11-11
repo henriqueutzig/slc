@@ -7,6 +7,15 @@ if (a == b | ((!c) & d)) {
     }
     else {
         a = d;
+        if (a == b) {
+        }
+        else {
+            a = c;
+        };
+
+        if (a) {
+
+        };
     };
     a = b+c;
 };

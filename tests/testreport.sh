@@ -1,41 +1,50 @@
 #!/usr/bin/bash
 
-INPUTS=$(ls tests/e3 | grep entrada_)
-mkdir -p output/
-mkdir -p dot/
+# Initialize counters and arrays
 PASSED=0
 FAILED=0
 FAILED_TESTS=()
 
-for file in $INPUTS; do
-  OUTPUT_FILE="output/output_$file.txt"
-  DOT_FILE="dot/output_$file.dot"
+# Loop through each sub-folder in the tests directory
+for subfolder in tests/*; do
+  if [ -d "$subfolder" ]; then
+    INPUTS=$(ls "$subfolder" | grep entrada_)
+    OUTPUT_DIR="output/$(basename "$subfolder")"
+    DOT_DIR="dot/$(basename "$subfolder")"
+    mkdir -p "$OUTPUT_DIR"
+    mkdir -p "$DOT_DIR"
 
-  # Clear the output file before writing to it
-  > "$OUTPUT_FILE"
+    for file in $INPUTS; do
+      OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
+      DOT_FILE="$DOT_DIR/output_$file.dot"
 
-  echo "Running test for: $file..."
+      # Clear the output file before writing to it
+      > "$OUTPUT_FILE"
 
-  # Run the test and redirect both stdout and stderr to the output file
-  cat tests/e3/$file | ./etapa3 > "$OUTPUT_FILE" 2>&1
-  EXIT_CODE=$?
+      echo "Running test for: $subfolder/$file..."
 
-  # Check if the test should be marked as failed
-  if [ $EXIT_CODE -eq 139 ]; then
-    echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
-    FAILED=$((FAILED + 1))
-    FAILED_TESTS+=("$file")
-  elif grep -q "Erro" "$OUTPUT_FILE"; then
-    echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
-    FAILED=$((FAILED + 1))
-    FAILED_TESTS+=("$file")
-  else
-    echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
-    PASSED=$((PASSED + 1))
+      # Run the test and redirect both stdout and stderr to the output file
+      cat "$subfolder/$file" | ./etapa3 > "$OUTPUT_FILE" 2>&1
+      EXIT_CODE=$?
 
-    # Run output2dot.sh and save the output to the DOT file
-    sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
-    echo "DOT file generated: $DOT_FILE"
+      # Check if the test should be marked as failed
+      if [ $EXIT_CODE -eq 139 ]; then
+        echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
+        FAILED=$((FAILED + 1))
+        FAILED_TESTS+=("$subfolder/$file")
+      elif grep -q "Erro" "$OUTPUT_FILE"; then
+        echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
+        FAILED=$((FAILED + 1))
+        FAILED_TESTS+=("$subfolder/$file")
+      else
+        echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
+        PASSED=$((PASSED + 1))
+
+        # Run output2dot.sh and save the output to the DOT file
+        sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
+        echo "DOT file generated: $DOT_FILE"
+      fi
+    done
   fi
 done
 

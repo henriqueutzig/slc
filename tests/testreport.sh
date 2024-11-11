@@ -32,7 +32,7 @@ for subfolder in tests/*; do
         echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
         FAILED=$((FAILED + 1))
         FAILED_TESTS+=("$subfolder/$file")
-      elif grep -q "Erro" "$OUTPUT_FILE"; then
+      elif grep -qi "erro" "$OUTPUT_FILE"; then
         echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
         FAILED=$((FAILED + 1))
         FAILED_TESTS+=("$subfolder/$file")

@@ -1,0 +1,4 @@
+complex_expr = x <- float > float {
+    a = !--!-2;
+    return (x + 1) * (x - 2) / 2.0;
+}

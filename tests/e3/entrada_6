@@ -1,3 +1,5 @@
-test_func1 = a <- float > int {}
-test_func2 = > int {}
-test_func3 = b <- int | a <- float > int {}
+funcao_soma = param1 <- int | param2 <-int | param3 <-int > int
+{
+    int y <= 1;
+    float z <= 10.0;
+}

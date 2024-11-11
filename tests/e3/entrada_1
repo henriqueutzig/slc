@@ -1,4 +1,24 @@
-test_func = > int {
-int c, a <= 1, b <= 2, j, c <= 3, d, e <= 2;
-float z, y <= 1.0, x <= 2.0, w, v <= 3.0;
+funcao_soma = param1 <- int | param2 <- int | param3 <- int > int
+{
+    int x,y;
+    int z <= 100;
+
+    x = param1;
+    y = funcao_soma(x,y,z);
+
+    if(param1){
+        z=100;
+    };
+
+    if(param2){
+        z = 200;
+    }else{
+        z = 0;
+    };
+
+    while(param3){
+        param3 = param3 - 1;
+    };
+    
+    return x + y * z;
 }

@@ -1,8 +1,0 @@
-negate_while = n <- int > int {
-    int result <= 0;
-    while (!n) {
-        result = result - 1;
-        n = n - 1;
-    };
-    return result;
-}

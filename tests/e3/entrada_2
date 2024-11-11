@@ -1,17 +1,7 @@
-funcao_vazia = param1 <- int | param2 <- int | param3 <- int > int
-{ 
-    a = x + y;
-}
-funcao_vazia2 = param1 <- int | param2 <- int | param3 <- int > int
-{
-    return param1; 
-}
-funcao_vazia3 = param1 <- int | param2 <- int | param3 <- int > int
-{ 
-    funcao_vazia2(x, 1, 2);
-}
-
-funcao_vazia4 = param1 <- int | param2 <- int | param3 <- int > int
-{ 
-    float x <= 1.0;
+test_func = b <- int | a <- float > int {
+int a;
+float c, d;
+int b <= 3;
+b = (3+2) * test_func(a,b);
+return b;
 }

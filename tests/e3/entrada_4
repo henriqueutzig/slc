@@ -1,10 +1,5 @@
-funcao_soma = param1 <- int | param2 <-int | param3 <-int > int
-{
-    int x,y;
-    int z <= 100;
+test_func = b <- int | a <- float > int {
 
-    x = param1;
-    y = funcao_soma(x,y,z);
-    
-    return x;
+return (a+2) * test_func(2) - 2/2-2;
+
 }

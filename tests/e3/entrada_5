@@ -1,4 +1,29 @@
-funcao_soma = param1 <- int | param2 <-int | param3 <-int > int
-{
-    int x,y;
+test_func => int {
+
+if(expression(2)){
+    a = 1 * 2 + !call(a);
+};
+
+if(!-2){
+};
+
+if(!(1+1)){
+}
+else{
+    return k;
+};
+
+if(!1+1){
+}
+else{
+};
+
+while(!1){
+
+};
+
+while(!condition(a)){
+    int a;
+    float c <= 2.0;
+};
 }

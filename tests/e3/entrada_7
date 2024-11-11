@@ -1,24 +1,3 @@
-funcao_soma = param1 <- int | param2 <- int | param3 <- int > int
-{
-    int x,y;
-    int z <= 100;
-
-    x = param1;
-    y = funcao_soma(x,y,z);
-
-    if(param1){
-        z=100;
-    };
-
-    if(param2){
-        z = 200;
-    }else{
-        z = 0;
-    };
-
-    while(param3){
-        param3 = param3 - 1;
-    };
-    
-    return x + y;
+test_func = > int {
+int a, a1 <= 1, b <= 2, c <= 3, d;
 }

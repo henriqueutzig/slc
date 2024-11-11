@@ -1,5 +1,0 @@
-math_func = x <- float > float {
-    float result <= 2.0;
-    result = result + 1.5;
-    return result;
-}

@@ -1,6 +1,0 @@
-void_func = > int {
-    int x<=1, y<=2;
-    chamada_1(x,y,z);
-    chamada_2(x);
-    return a + b + c;
-}

@@ -1,4 +1,0 @@
-void_func = > int {
-    int x <= 10;
-    x = x + 1 + 10+ 39;
-}

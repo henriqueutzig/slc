@@ -58,4 +58,5 @@ dkms.conf
 output/*
 parser.tab.*
 lex.yy.*
+dot/*
 etapa*

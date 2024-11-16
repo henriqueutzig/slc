@@ -1,0 +1,5 @@
+test_func = > int {
+int c, a <= 1, b <= 2, j, c <= 3, d, e <= 2;
+
+return a;
+}

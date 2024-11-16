@@ -1,0 +1,7 @@
+test_func = b <- int | a <- float > int {
+int a;
+float c, d;
+int b <= 3;
+b = (3+2) * test_func(a,b);
+return b;
+}

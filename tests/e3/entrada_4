@@ -1,0 +1,5 @@
+test_func = b <- int | a <- float > int {
+
+return (a+2) * test_func(2) - 2/2-2;
+
+}

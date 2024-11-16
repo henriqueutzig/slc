@@ -1,43 +1,56 @@
 #!/usr/bin/bash
 
-INPUTS=$(ls tests/e2 | grep entrada_)
-mkdir -p output/
+# Initialize counters and arrays
 PASSED=0
 FAILED=0
 FAILED_TESTS=()
 
-for file in $INPUTS; do
-  OUTPUT_FILE="output/output_$file.txt"
-  ERROR_FILE="output/error_$file.txt"
+# Clear existing output and dot folders
+rm -rf output
+rm -rf dot
+mkdir -p output
+mkdir -p dot
 
-  # Clear the output and error files before writing to them
-  > "$OUTPUT_FILE"
-  > "$ERROR_FILE"
+# Loop through each sub-folder in the tests directory
+for subfolder in tests/*; do
+  if [ -d "$subfolder" ]; then
+    INPUTS=$(ls "$subfolder" | grep entrada_)
+    OUTPUT_DIR="output/$(basename "$subfolder")"
+    DOT_DIR="dot/$(basename "$subfolder")"
+    mkdir -p "$OUTPUT_DIR"
+    mkdir -p "$DOT_DIR"
 
-  echo "Running test for: $file..."
+    for file in $INPUTS; do
+      OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
+      DOT_FILE="$DOT_DIR/output_$file.dot"
 
-  # Run the test and redirect output
-  if ! cat tests/e2/$file | ./etapa2 > "$OUTPUT_FILE" 2> "$ERROR_FILE"; then
-    echo -e "\n\033[1;31m[ERROR]\033[0m An error occurred while processing $file with etapa2." >> "$OUTPUT_FILE"
-    cat "$ERROR_FILE" >> "$OUTPUT_FILE"
+      # Clear the output file before writing to it
+      > "$OUTPUT_FILE"
 
-    # Extract the line number from the error message (assuming format: "Error at line X")
-    ERROR_LINE=$(grep -o 'line [0-9]*' "$ERROR_FILE" | awk '{print $2}')
-    if [ -n "$ERROR_LINE" ]; then
-      ERROR_CONTENT=$(sed -n "${ERROR_LINE}p" "tests/e2/$file")
-      echo -e "\033[1;31mError Details:\033[0m\nFile: \033[1m$file\033[0m\nLine: \033[1m$ERROR_LINE\033[0m\n> \033[1;33m$ERROR_CONTENT\033[0m\n"  # Formatted error output from test file
-    else
-      echo -e "\033[1;31mError line number not found in the error message.\033[0m\n"
-    fi
+      echo "Running test for: $subfolder/$file..."
 
-    FAILED=$((FAILED + 1))
-    FAILED_TESTS+=("$file")
-    rm "$ERROR_FILE"  # Remove temporary error file
-  else
-    echo "OK" > "$OUTPUT_FILE"
-    echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
-    PASSED=$((PASSED + 1))
-    rm "$ERROR_FILE"  # Clean up temporary error file if the test passed
+      # Run the test and redirect both stdout and stderr to the output file
+      cat "$subfolder/$file" | ./etapa3 > "$OUTPUT_FILE" 2>&1
+      EXIT_CODE=$?
+
+      # Check if the test should be marked as failed
+      if [ $EXIT_CODE -eq 139 ]; then
+        echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
+        FAILED=$((FAILED + 1))
+        FAILED_TESTS+=("$subfolder/$file")
+      elif grep -qi "erro" "$OUTPUT_FILE"; then
+        echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
+        FAILED=$((FAILED + 1))
+        FAILED_TESTS+=("$subfolder/$file")
+      else
+        echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
+        PASSED=$((PASSED + 1))
+
+        # Run output2dot.sh and save the output to the DOT file
+        sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
+        echo "DOT file generated: $DOT_FILE"
+      fi
+    done
   fi
 done
 

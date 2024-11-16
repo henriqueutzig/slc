@@ -1,0 +1,32 @@
+test_func = > int {
+    int a;
+    
+    float a, b <= 2.0, c, d, e <= 3.0;
+    
+    while(!call(2)){};
+    
+    if(-b){}
+    else{};
+    
+    if(!flag){
+    
+    }
+    else{
+        if(!flag | j & w ){
+            a = -(2+2) * 4 / 2;
+        };
+    };
+    
+    }
+    
+    
+    test_func2 = > float {
+    
+    return a;
+    
+    
+    }
+    
+    test_func3 = > float {
+    
+    }

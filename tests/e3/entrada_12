@@ -1,0 +1,12 @@
+test_if_funct => int {
+    if (a < 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    };
+
+    if (shoudl_return_one(a , b ,c)){
+        return 1;
+    };
+}

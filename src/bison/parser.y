@@ -9,6 +9,7 @@
     #include<stdio.h>
     #include <stdlib.h>
     #include <string.h>
+
     int yylex(void);
     void yyerror (char const *mensagem);
     int get_line_number(void);
@@ -31,6 +32,7 @@
 
 %code requires {#include "asd.h"}
 %code requires {#include "lexema.h"}
+%code requires {#include "errors.h"}
 %union {
   lexema *valor;
   asd_tree_t *arvore;

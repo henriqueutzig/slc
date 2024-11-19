@@ -60,3 +60,4 @@ parser.tab.*
 lex.yy.*
 dot/*
 etapa*
+*.dot

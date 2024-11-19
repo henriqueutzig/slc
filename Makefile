@@ -18,7 +18,7 @@ ASD_C = $(SRC_DIR)/asd/asd.c
 LEXEMA_C = $(SRC_DIR)/lexema/lexema.c
 
 # Output files
-BINARY = etapa3
+BINARY = etapa4
 TAR_FILE = $(BINARY).tgz
 
 # Automated test paths

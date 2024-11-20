@@ -1,5 +1,12 @@
-#include "stack.h"
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
 
+#include "stack.h"
 
 stack_t *create_stack()
 {

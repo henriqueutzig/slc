@@ -1,0 +1,10 @@
+test_func = > int {
+int abc;
+int a <= 12;
+int b <= 1;
+
+float x <= 1.4;
+float j <= a + x;
+float y <= 5.6;
+
+}

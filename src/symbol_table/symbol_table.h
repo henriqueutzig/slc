@@ -10,6 +10,8 @@
 #define _SYMBOL_TABLE_H_
 
 #include "content.h"
+#include <stdlib.h> 
+#include <string.h>
 
 #define HASH_SIZE 999
 
@@ -25,8 +27,8 @@ int hash (char *lexema);
 symbol_table_t *create_symbol_table();
 void destroy_symbol_table(symbol_table_t *table);   
 
-symbol_table_t *insert(symbol_table_t *table, char *lexema, content_t *content);
-symbol_table_t *remove(symbol_table_t *table, char *lexema);
+symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content);
+symbol_table_t *remove_element(symbol_table_t *table, char *lexema);
 
 content_t *search(symbol_table_t *table, char *lexema);
 

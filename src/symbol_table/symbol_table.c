@@ -45,7 +45,7 @@ void destroy_symbol_table(symbol_table_t *table)
     free(table);
 }
 
-symbol_table_t *insert(symbol_table_t *table, char *lexema, content_t *content)
+symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content)
 {
     int index = hash(lexema);
 
@@ -59,7 +59,7 @@ symbol_table_t *insert(symbol_table_t *table, char *lexema, content_t *content)
     return table;
 }
 
-symbol_table_t *remove(symbol_table_t *table, char *lexema)
+symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
 {
     int index = hash(lexema);
 

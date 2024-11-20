@@ -16,16 +16,16 @@
 
 #define STACK_SIZE 100
 
-typedef struct stack_tt {
+typedef struct stackt_t {
     symbol_table_t **tables[STACK_SIZE];
     int top_index;
-} stack_tt;
+} stackt_t;
 
-stack_tt *create_stack();
-bool is_empty(stack_tt *stack);
-bool is_full(stack_tt *stack);
-void destroy_stack(stack_tt *stack);
-stack_tt *push_symbol_table(stack_tt *stack, symbol_table_t *table);
-symbol_table_t *pop_symbol_table(stack_tt *stack);
+stackt_t *create_stack();
+bool is_empty(stackt_t *stack);
+bool is_full(stackt_t *stack);
+void destroy_stack(stackt_t *stack);
+stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table);
+symbol_table_t *pop_symbol_table(stackt_t *stack);
 
 #endif

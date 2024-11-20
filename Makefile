@@ -35,7 +35,7 @@ all: clean $(BINARY)
 
 # Rule to create the final binary
 $(BINARY): $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
-	$(CC) -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
+	$(CC) -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
 
 # Rule to generate parser.tab.h and parser.tab.c using bison
 $(BISON_H_OUT) $(BISON_C_OUT): $(BISON_SRC)

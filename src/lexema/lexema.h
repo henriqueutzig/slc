@@ -6,7 +6,7 @@ typedef enum {
     IDENTIFICADOR
 } tipo;
 
-typedef struct 
+typedef struct lexema
 {
     int linha;
     tipo tipo;

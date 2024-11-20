@@ -1,3 +1,11 @@
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
+
 #ifndef _CONTENT_H_
 #define _CONTENT_H_
 

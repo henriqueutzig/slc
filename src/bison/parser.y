@@ -6,9 +6,13 @@
     #####################################
 */
 %{
-    #include<stdio.h>
+    #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "stack.h"
+    #include "content.h"
+    #include "symbol_table.h"
+    #include "errors.h"
 
     int yylex(void);
     void yyerror (char const *mensagem);
@@ -26,6 +30,8 @@
         snprintf(buffer, 256, "call %s", valor);
         return buffer;
     }
+
+    stackt_t *stack = NULL;
 %}
 
 %define parse.error verbose
@@ -33,6 +39,9 @@
 %code requires {#include "asd.h"}
 %code requires {#include "lexema.h"}
 %code requires {#include "errors.h"}
+%code requires {#include "stack.h"}
+%code requires {#include "content.h"}
+%code requires {#include "symbol_table.h"}
 %union {
   lexema *valor;
   asd_tree_t *arvore;
@@ -95,8 +104,17 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: 
-    lista_de_funcoes {if ($1 != NULL) $$ = $1; else $$ = NULL; arvore = $$;};
+    _init_global_scope lista_de_funcoes _destroy_global_scope {if ($2 != NULL) $$ = $2; else $$ = NULL; arvore = $$;};
     | %empty {$$ = NULL;};
+
+/*
+    Produções para gerência de tabelas de símbolos
+*/
+_init_global_scope: %empty {stack = create_stack(); push_symbol_table(stack, create_symbol_table());};
+_destroy_global_scope: %empty {symbol_table_t *table = pop_symbol_table(stack); destroy_symbol_table(table); destroy_stack(stack);};
+
+_init_local_scope: %empty {push_symbol_table(stack, create_symbol_table());};
+_destroy_local_scope: %empty {symbol_table_t *table = pop_symbol_table(stack); destroy_symbol_table(table);};
 
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
@@ -105,7 +123,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo _destroy_local_scope {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -113,7 +131,7 @@ funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
+cabecalho: TK_IDENTIFICADOR '=' _init_local_scope lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
 | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
 
 /* 
@@ -146,8 +164,8 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando '}' {$$ = $2;}
-    | '{''}' {$$ = NULL;};
+    '{' comando _destroy_local_scope '}' {$$ = $2;}
+    | '{' '}' {$$ = NULL;};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
@@ -199,7 +217,7 @@ comando_simples:
 declaracao_variavel: tipos_de_variavel lista_de_variaveis {$$ = $2;};
 
 lista_de_variaveis: 
-    variavel_inicializada {$$ = $1; }
+    variavel_inicializada {$$ = $1;}
     | variavel_inicializada ',' lista_de_variaveis {
         if($1 != NULL){ 
             $$ = $1; 

@@ -30,6 +30,6 @@ void destroy_symbol_table(symbol_table_t *table);
 symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content);
 symbol_table_t *remove_element(symbol_table_t *table, char *lexema);
 
-content_t *search(symbol_table_t *table, char *lexema);
+content_t *search_table(symbol_table_t *table, char *lexema);
 
 #endif

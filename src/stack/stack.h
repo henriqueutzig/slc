@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../symbol_table/symbol_table.h"
+#include "../lexema/lexema.h"
+#include "../errors/errors.h"
 
 #define STACK_SIZE 100
 
@@ -27,5 +29,10 @@ bool is_full(stackt_t *stack);
 void destroy_stack(stackt_t *stack);
 stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table);
 symbol_table_t *pop_symbol_table(stackt_t *stack);
+
+void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type);
+void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type);
+
+content_t *search_all_tables(stackt_t *stack, char *lexema);
 
 #endif

@@ -64,3 +64,48 @@ symbol_table_t *pop_symbol_table(stackt_t *stack)
     stack->top_index--;
     return table;
 }
+
+
+void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+    if (is_empty(stack)) {
+        printf("ERROR: stack is empty!");
+        return;
+    }
+
+    content_t *symbol = search_all_tables(stack, lexema->valor);
+    if (symbol != NULL) {
+        printf("Erro na linha %d: símbolo já declarado. O símbolo %s foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
+        exit(ERR_DECLARED);
+    }
+
+    content_t *content = create_content(line, lexema, type);
+    insert_element(*stack->tables[0], lexema->valor, content);
+}
+
+void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+    if (is_empty(stack)) {
+        printf("ERROR: stack is empty!");
+        return;
+    }
+
+    content_t *symbol = search_all_tables(stack, lexema->valor);
+    if (symbol != NULL) {
+        printf("Erro na linha %d: símbolo já declarado. O símbolo %s foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
+        exit(ERR_DECLARED);
+    }
+
+    content_t *content = create_content(line, lexema, type);
+    insert_element(*stack->tables[stack->top_index], lexema->valor, content);
+}
+
+content_t *search_all_tables(stackt_t *stack, char *lexema)
+{
+    for (int i = stack->top_index; i >= 0; i--)
+    {
+        content_t *content = search_table(*stack->tables[i], lexema);
+        if (content != NULL)
+            return content;
+    }
+
+    return NULL;
+}

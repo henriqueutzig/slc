@@ -2,7 +2,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "asd.h"
+
 #define ARQUIVO_SAIDA "saida.dot"
+
+type_t infer_node_type(asd_tree_t *first_child, asd_tree_t *second_child) 
+{
+    if (first_child->type == FLOAT || second_child->type == FLOAT) {
+        return FLOAT;
+    }
+
+    return INT;
+}
+
+asd_tree_t *asd_new_typed(const char *label, type_t type) {
+  asd_tree_t *ret = NULL;
+  ret = calloc(1, sizeof(asd_tree_t));
+  if (ret != NULL){
+    ret->label = strdup(label);
+    ret->number_of_children = 0;
+    ret->children = NULL;
+    ret->type = type; 
+  }
+  return ret;
+}
 
 asd_tree_t *asd_new(const char *label)
 {
@@ -12,6 +34,7 @@ asd_tree_t *asd_new(const char *label)
     ret->label = strdup(label);
     ret->number_of_children = 0;
     ret->children = NULL;
+    ret->type = INT; // default type will always be INT 
   }
   return ret;
 }

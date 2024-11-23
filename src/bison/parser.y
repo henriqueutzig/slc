@@ -104,17 +104,17 @@
     lista de funções, sendo esta lista opcional 
 */
 programa: 
-    _init_global_scope lista_de_funcoes _destroy_global_scope {if ($2 != NULL) $$ = $2; else $$ = NULL; arvore = $$;};
+    INIT_GLOBAL_SCOPE lista_de_funcoes DESTROY_GLOBAL_SCOPE {if ($2 != NULL) $$ = $2; else $$ = NULL; arvore = $$;};
     | %empty {$$ = NULL;};
 
 /*
     Produções para gerência de tabelas de símbolos
 */
-_init_global_scope: %empty {stack = create_stack(); push_symbol_table(stack, create_symbol_table());};
-_destroy_global_scope: %empty {symbol_table_t *table = pop_symbol_table(stack); destroy_symbol_table(table); destroy_stack(stack);};
+INIT_GLOBAL_SCOPE: %empty {stack = create_stack(); push_symbol_table(stack, create_symbol_table());};
+DESTROY_GLOBAL_SCOPE: %empty {symbol_table_t *table = pop_symbol_table(stack); destroy_symbol_table(table); destroy_stack(stack);};
 
-_init_local_scope: %empty {push_symbol_table(stack, create_symbol_table());};
-_destroy_local_scope: %empty {symbol_table_t *table = pop_symbol_table(stack); destroy_symbol_table(table);};
+INIT_LOCAL_SCOPE: %empty {push_symbol_table(stack, create_symbol_table());};
+DESTROY_LOCAL_SCOPE: %empty {symbol_table_t *table = pop_symbol_table(stack);};
 
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
@@ -123,7 +123,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo _destroy_local_scope {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -131,14 +131,14 @@ funcao: cabecalho corpo _destroy_local_scope {$$ = $1; if ($2!=NULL) {asd_add_ch
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' _init_local_scope lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
+cabecalho: TK_IDENTIFICADOR '=' INIT_LOCAL_SCOPE lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
 | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro {$$ = NULL;};
+lista_de_parametros: parametro {$$ = NULL; insert_symbol_to_scope(stack, $1, get_line_number(), $1->type);};
     | lista_de_parametros TK_OC_OR parametro {$$ = NULL;};
 
 /* 
@@ -164,7 +164,7 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando _destroy_local_scope '}' {$$ = $2;}
+    '{' comando DESTROY_LOCAL_SCOPE '}' {$$ = $2;}
     | '{' '}' {$$ = NULL;};
 
 /*
@@ -234,8 +234,8 @@ variavel_inicializada:
 variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor);};
 
 literal: 
-    TK_LIT_FLOAT {$$ = asd_new($1->valor);}
-    | TK_LIT_INT {$$ = asd_new($1->valor);};
+    TK_LIT_FLOAT {$$ = asd_new_typed($1->valor, FLOAT);}
+    | TK_LIT_INT {$$ = asd_new_typed($1->valor, INT);};
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -282,39 +282,39 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("whil
     precedencia 6 é precedida por operaçoes do nivel 1
 */
 expressao: 
-    expressao TK_OC_OR expressao_precedencia_6 {$$ = asd_new("|"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao TK_OC_OR expressao_precedencia_6 {$$ = asd_new_typed("|", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_6 {$$ = $1;};
 
 expressao_precedencia_6: 
-    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {$$ = asd_new("&"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {$$ = asd_new_typed("&", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_5 {$$ = $1;};
 
 expressao_precedencia_5: 
-    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {$$ = asd_new("=="); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {$$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {$$ = asd_new_typed("==", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {$$ = asd_new_typed("!=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_4 {$$ = $1;};
 
 expressao_precedencia_4:
-    expressao_precedencia_4 '<' expressao_precedencia_3 {$$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 '>' expressao_precedencia_3 {$$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {$$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {$$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_4 '<' expressao_precedencia_3 {$$ = asd_new_typed("<", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 '>' expressao_precedencia_3 {$$ = asd_new_typed(">", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {$$ = asd_new_typed("<=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {$$ = asd_new_typed(">=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_3 {$$ = $1;};
 
 expressao_precedencia_3:
-    expressao_precedencia_3 '+' expressao_precedencia_2 {$$ = asd_new("+"); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new("-"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_3 '+' expressao_precedencia_2 {$$ = asd_new_typed("+", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_2 {$$ = $1;};
 
 expressao_precedencia_2: 
-    expressao_precedencia_2 '*' expressao_precedencia_1 {$$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '/' expressao_precedencia_1 {$$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '%' expressao_precedencia_1 {$$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_2 '*' expressao_precedencia_1 {$$ = asd_new_typed("*", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_2 '/' expressao_precedencia_1 {$$ = asd_new_typed("/", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    | expressao_precedencia_2 '%' expressao_precedencia_1 {$$ = asd_new_typed("%", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_1 {$$ = $1;};
 
 expressao_precedencia_1: 
-    '-' expressao_precedencia_1 {$$ = asd_new("-"); asd_add_child($$, $2);}
-    | '!' expressao_precedencia_1 {$$ = asd_new("!"); asd_add_child($$, $2);}
+    '-' expressao_precedencia_1 {$$ = asd_new_typed("-", infer_node_type($2, $2)); asd_add_child($$, $2);}
+    | '!' expressao_precedencia_1 {$$ = asd_new_typed("!", infer_node_type($2, $2)); asd_add_child($$, $2);}
     | operando {$$ = $1;};
 
 /*

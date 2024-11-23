@@ -1,11 +1,17 @@
 #ifndef _ARVORE_H_
 #define _ARVORE_H_
 
+#include "../symbol_table/content.h"
+
 typedef struct asd_tree {
   char *label;
   int number_of_children;
   struct asd_tree **children;
+  type_t type;
 } asd_tree_t;
+
+type_t infer_node_type(asd_tree_t *first_child, asd_tree_t *second_child);
+asd_tree_t *asd_new_typed(const char *label, type_t type);
 
 /*
  * Função asd_new, cria um nó sem filhos com o label informado.

@@ -36,6 +36,7 @@ asd_tree_t *asd_new(const char *label)
     ret->children = NULL;
     ret->type = INT; // default type will always be INT 
   }
+  fprintf(stdout, "asd_new label: %s, of type %s\n", label, ret->type == INT ? "INT" : "FLOAT");
   return ret;
 }
 

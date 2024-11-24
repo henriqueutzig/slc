@@ -19,6 +19,18 @@ stackt_t *create_stack()
     return stack;
 }
 
+char *get_type_name(type_t type){
+    switch (type)
+    {
+    case INT:
+        return "int";
+    case FLOAT:
+        return "float";
+    default:
+        return "unknown";
+    }
+}
+
 bool is_empty(stackt_t *stack)
 {
     return stack->top_index == -1;
@@ -98,6 +110,21 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
 
     content_t *content = create_content(line, lexema, type);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
+}
+
+void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line){
+    if (is_empty(stack)) {
+        printf("ERROR: stack is empty!");
+        return;
+    }
+
+    content_t *symbol = search_all_tables(stack, lexema->valor);
+
+    if (symbol->type != type) {
+        printf("Erro na linha %d: atribuição inválida. O símbolo %s foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
+        exit(ERR_VARIABLE);
+        //Validar se erro correto!
+    }
 }
 
 content_t *search_all_tables(stackt_t *stack, char *lexema) {

@@ -257,7 +257,10 @@ literal:
     O comando de atribuição consiste em um identificador seguido 
     pelo caractere de igualdade seguido por uma expressão
 */
-atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {$$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);};
+atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
+    validate_attribution(stack, $1, $3->type, get_line_number());
+    $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
+    };
 
 /*
     Uma chamada de função consiste no nome da função, seguida de 

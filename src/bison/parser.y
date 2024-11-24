@@ -115,8 +115,7 @@ programa:
 INIT_GLOBAL_SCOPE: %empty {stack = create_stack(); push_symbol_table(stack, create_symbol_table());};
 DESTROY_GLOBAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
-    fprintf(stderr, "Destroying global scope:\n");
-    print_symbol_table(table); // Supondo que você tenha uma função para imprimir a tabela de símbolos
+    fprintf(stderr, "Destroying global scope\n");
     destroy_symbol_table(table);
     destroy_stack(stack);
 };
@@ -125,8 +124,7 @@ INIT_LOCAL_SCOPE: %empty {
     push_symbol_table(stack, create_symbol_table());};
 DESTROY_LOCAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
-    fprintf(stderr, "Destroying local scope:\n");
-    print_symbol_table(table); // Supondo que você tenha uma função para imprimir a tabela de símbolos
+    fprintf(stderr, "Destroying local scope\n");
     destroy_symbol_table(table);
 };
 
@@ -395,28 +393,3 @@ void exporta (void *arvore){
     }
     _exporta((asd_tree_t*)arvore);
 };
-
-void print_content_as_markdown(content_t *content) {
-    if (content == NULL) {
-        return;
-    }
-    fprintf(stdout, "| %d | ", content->line);
-    fprintf(stdout, "%u | ", content->type);
-    fprintf(stdout, "%s |\n", content->lexema->valor);
-}
-
-void print_symbol_table(symbol_table_t *table) {
-    if (table == NULL) {
-        fprintf(stdout,"Symbol table is empty.\n");
-        return;
-    }
-
-    fprintf(stdout,"| Line | Type | Value |\n");
-    fprintf(stdout,"|------|------|-------|\n");
-
-    symbol_table_t *current = table;
-    while (current != NULL) {
-        print_content_as_markdown(current->content);
-        current = current->next;
-    }
-}

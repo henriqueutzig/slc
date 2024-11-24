@@ -112,23 +112,32 @@ programa:
 /*
     Produções para gerência de tabelas de símbolos
 */
-INIT_GLOBAL_SCOPE: %empty {stack = create_stack(); push_symbol_table(stack, create_symbol_table());};
+INIT_GLOBAL_SCOPE: %empty {
+    stack = create_stack(); push_symbol_table(stack, create_symbol_table());
+};
 DESTROY_GLOBAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
-    fprintf(stderr, "Destroying global scope\n");
-    destroy_symbol_table(table);
-    destroy_stack(stack);
+    if (table != NULL) {
+       fprintf(stderr, "Destroying global scope\n");
+        destroy_symbol_table(table);
+        destroy_stack(stack);
+    }
 };
 
 INIT_LOCAL_SCOPE: %empty {
-    push_symbol_table(stack, create_symbol_table());};
+    push_symbol_table(stack, create_symbol_table());
+};
 DESTROY_LOCAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
-    fprintf(stderr, "Destroying local scope\n");
-    destroy_symbol_table(table);
+    if (table != NULL) {
+        fprintf(stderr, "Destroying local scope\n");
+        destroy_symbol_table(table);
+    }
 };
 
-DESTROY_CURRENT_TYPE: %empty {tipo_atual = -1;};
+DESTROY_CURRENT_TYPE: %empty {
+    tipo_atual = -1;
+};
 
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
@@ -145,7 +154,7 @@ funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_chi
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' INIT_LOCAL_SCOPE lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor);};
+cabecalho: TK_IDENTIFICADOR '=' INIT_LOCAL_SCOPE lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor); insert_symbol_to_global_scope(stack, $1, get_line_number(), tipo_atual);};
 | TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
 
 /* 

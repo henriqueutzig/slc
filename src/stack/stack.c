@@ -66,7 +66,7 @@ stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
 }
 symbol_table_t *pop_symbol_table(stackt_t *stack) {
     if (is_empty(stack)) {
-        printf("Stack is empty\n");
+        // printf("ERROR (pop_symbol_table): Stack is empty\n");
         return NULL;
     }
 
@@ -82,7 +82,7 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
 
 void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
     if (is_empty(stack)) {
-        printf("ERROR: stack is empty!");
+        printf("ERROR (insert_symbol_to_global_scope): stack is empty!\n");
         return;
     }
 
@@ -98,7 +98,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
     if (is_empty(stack)) {
-        printf("ERROR: stack is empty!");
+        printf("ERROR (insert_symbol_to_scope): stack is empty!\n");
         return;
     }
 
@@ -114,7 +114,7 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
 
 void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line){
     if (is_empty(stack)) {
-        printf("ERROR: stack is empty!");
+        printf("ERROR (validate_attribution): stack is empty!\n");
         return;
     }
 

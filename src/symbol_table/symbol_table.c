@@ -5,9 +5,11 @@
     # 	João Pedro Cosme - 00314792		#
     #####################################
 */
-
 #include "symbol_table.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 int hash(char *lexema)
 {
     int hash_value = 0;
@@ -23,10 +25,16 @@ int hash(char *lexema)
 
 symbol_table_t *create_symbol_table()
 {
-    symbol_table_t *table = (symbol_table_t *)malloc(sizeof(symbol_table_t));
-    table->content = NULL;
-    for (int i = 0; i < HASH_SIZE; i++)
+    symbol_table_t *table = (symbol_table_t *)malloc(HASH_SIZE * sizeof(symbol_table_t));
+    if (table == NULL) {
+        fprintf(stderr, "Memory allocation failed for symbol table\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < HASH_SIZE; i++) {
+        table[i].content = NULL;
         table[i].next = NULL;
+    }
 
     return table;
 }
@@ -52,13 +60,12 @@ void destroy_symbol_table(symbol_table_t *table)
             if (current->content != NULL)
                 free(current->content);
             free(current);
+
             current = next;
         }
     }
     free(table);
 }
-
-
 
 symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content)
 {
@@ -71,8 +78,7 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
     new->next = table[index].next;
     table[index].next = new;
 
-    fprintf(stderr, "Inserted %s at %d in table %p\n", lexema, index,table);
-    fprintf(stderr, "Next is %p\n", new->next);
+    fprintf(stderr, "Inserted '%s' at [%d] in table (%p)\n", lexema, index, table);
 
     return table;
 }
@@ -100,7 +106,6 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
 
 content_t *search_table(symbol_table_t *table, char *lexema) {
     int index = hash(lexema); 
-
 
     symbol_table_t *current = table[index].next; 
     while (current != NULL) {

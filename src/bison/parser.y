@@ -116,7 +116,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -124,8 +124,12 @@ funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_chi
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($2->valor); insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
-| INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($2->valor);};
+cabecalho: INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
+    insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
+    $$ = asd_new($2->valor); insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
+| INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
+    insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
+    $$ = asd_new($2->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
@@ -244,7 +248,10 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     argumentos entre parênteses separados por vírgula. 
     Um argumento pode ser uma expressão.
 */
-chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' {$$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3);};
+chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' {
+    validate_function_call(stack, $1, get_line_number());
+    $$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3);
+    };
 
 argumento: 
     expressao ',' argumento {$$ = $1; asd_add_child($$, $3);}
@@ -319,7 +326,9 @@ tificadores, (b) literais e (c) chamada de função ou
 (d) outras expressões
 */
 operando: 
-    TK_IDENTIFICADOR    {if ($1 == NULL) {
+    TK_IDENTIFICADOR    {
+        validate_variable_use(stack, $1, get_line_number());
+        if ($1 == NULL) {
             yyerror("Null pointer in TK_IDENTIFICADOR");
             YYABORT;
         } $$ = asd_new($1->valor);}

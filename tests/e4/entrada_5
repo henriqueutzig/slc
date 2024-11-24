@@ -1,5 +1,5 @@
 test_func = > int {
     int abc;
     int a <= 12;
-    return funcao_nao_declarada();
+    return funcao_nao_declarada(0);
 }

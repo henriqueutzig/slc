@@ -73,7 +73,7 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
     new->next = table[index].next;
     table[index].next = new;
 
-    fprintf(stderr, "Inserted '%s' at [%d] in table (%p)\n", lexema, index, table);
+    // fprintf(stderr, "Inserted '%s' at [%d] in table (%p)\n", lexema, index, table);
 
     return table;
 }

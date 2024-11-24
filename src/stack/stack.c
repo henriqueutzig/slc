@@ -51,7 +51,7 @@ void destroy_stack(stackt_t *stack)
 }
 
 stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
-    fprintf(stderr, "Pushing table %p to stack %p\n", table, stack);
+    // fprintf(stderr, "Pushing table %p to stack %p\n", table, stack);
     if (is_full(stack)) {
         printf("Stack is full\n");
         return stack;
@@ -146,7 +146,7 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     if(found_as_function){
         // Tudo certo
     }else if(found_as_variable){
-        printf("Erro na linha %d: variavel foi usada como funçao!\n", line, lexema->valor);
+        printf("Erro na linha %d: variavel %s foi usada como funçao!\n", line, lexema->valor);
         exit(ERR_VARIABLE);
     }else{
         printf("Erro na linha %d: símbolo não declarado. O símbolo %s não foi declarado.\n", line, lexema->valor);
@@ -159,10 +159,10 @@ void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
-        fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
+        // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {
-            fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
+            // fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
             if (i!=0){
                 found_as_variable = true; 
             }else{
@@ -171,7 +171,7 @@ void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
         }
     }
     if(found_as_function){
-        printf("Erro na linha %d: funçao foi usada como variavel!\n", line, lexema->valor, line);
+        printf("Erro na linha %d: funçao %s foi usada como variavel!\n", line, lexema->valor);
         exit(ERR_FUNCTION);
     }else if(found_as_variable){
     // Tudo certo

@@ -38,16 +38,18 @@ void destroy_stack(stackt_t *stack)
     free(stack);
 }
 
-stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table)
-{
-    if (is_full(stack))
-    {
+stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
+    if (is_full(stack)) {
         printf("Stack is full\n");
         return stack;
     }
 
+    symbol_table_t **table_ptr = (symbol_table_t **)malloc(sizeof(symbol_table_t *));
+    *table_ptr = table; 
+
     stack->top_index++;
-    stack->tables[stack->top_index] = &table;
+    stack->tables[stack->top_index] = table_ptr;
+
     return stack;
 }
 
@@ -83,8 +85,6 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 }
 
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
-    fprintf(stdout, "Inserting symbol %s to scope\n", lexema->valor);
-
     if (is_empty(stack)) {
         printf("ERROR: stack is empty!");
         return;
@@ -95,8 +95,6 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         printf("Erro na linha %d: símbolo já declarado. O símbolo %s foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
         exit(ERR_DECLARED);
     }
-
-    fprintf(stdout, "Symbol %s not found in scope\n", lexema->valor);
 
     content_t *content = create_content(line, lexema, type);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);

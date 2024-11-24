@@ -124,8 +124,8 @@ funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_chi
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: TK_IDENTIFICADOR '=' INIT_LOCAL_SCOPE lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($1->valor); insert_symbol_to_global_scope(stack, $1, get_line_number(), tipo_atual);};
-| TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($1->valor);};
+cabecalho: INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {$$ = asd_new($2->valor); insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
+| INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {$$ = asd_new($2->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
@@ -158,7 +158,7 @@ corpo: bloco_de_comandos {$$=$1;};
 */
 bloco_de_comandos: 
     '{' comando DESTROY_LOCAL_SCOPE '}' {$$ = $2;}
-    | '{' '}' {$$ = NULL;};
+    | '{' DESTROY_LOCAL_SCOPE '}' {$$ = NULL;};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
@@ -343,6 +343,7 @@ INIT_GLOBAL_SCOPE: %empty {
     printf("\t>DEBUG: new GLOBAL scope\n");
     stack = create_stack(); push_symbol_table(stack, create_symbol_table());
 };
+
 DESTROY_GLOBAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
     if (table != NULL) {

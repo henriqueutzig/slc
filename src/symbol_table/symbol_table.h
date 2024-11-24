@@ -17,7 +17,7 @@
 
 typedef struct symbol_table
 {
-    char *lexema;
+    char *content_lexema_value;
     content_t *content;
     struct symbol_table *next;
 } symbol_table_t;

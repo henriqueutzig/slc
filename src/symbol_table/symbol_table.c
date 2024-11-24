@@ -37,7 +37,7 @@ void destroy_symbol_table(symbol_table_t *table)
         while (current != NULL)
         {
             symbol_table_t *next = current->next;
-            free(current->lexema);
+            free(current->content_lexema_value);
             free(current);
             current = next;
         }
@@ -51,7 +51,7 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
     int index = hash(lexema);
 
     symbol_table_t *new = (symbol_table_t *)malloc(sizeof(symbol_table_t));
-    new->lexema = strdup(lexema);
+    new->content_lexema_value = strdup(lexema);
     new->content = content;
 
     new->next = table[index].next;
@@ -67,10 +67,10 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
     symbol_table_t *current = &table[index];
     while (current->next != NULL)
     {
-        if (strcmp(current->next->lexema, lexema) == 0)
+        if (strcmp(current->next->content_lexema_value, lexema) == 0)
         {
             symbol_table_t *next = current->next->next;
-            free(current->next->lexema);
+            free(current->next->content_lexema_value);
             free(current->next);
             current->next = next;
             break;
@@ -86,7 +86,7 @@ content_t *search_table(symbol_table_t *table, char *lexema) {
 
     symbol_table_t *current = table[index].next; 
     while (current != NULL) {
-        if (strcmp(current->lexema, lexema) == 0) {
+        if (strcmp(current->content_lexema_value, lexema) == 0) {
             return current->content; 
         }
         current = current->next;

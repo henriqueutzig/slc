@@ -7,6 +7,7 @@
 */
 
 #include "symbol_table.h"
+#include <stdio.h>
 
 int hash (char *lexema)
 {
@@ -85,6 +86,7 @@ content_t *search_table(symbol_table_t *table, char *lexema)
     int index = hash(lexema);
 
     symbol_table_t *current = table[index].next;
+    fprintf(stdout,"Current is %p\n",current);
     while (current != NULL)
     {
         if (strcmp(current->lexema, lexema) == 0)

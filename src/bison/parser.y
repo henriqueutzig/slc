@@ -399,7 +399,7 @@ void print_content_as_markdown(content_t *content) {
     }
     fprintf(stdout, "| %d | ", content->line);
     fprintf(stdout, "%u | ", content->type);
-    fprintf(stdout, "%s |\n", content->value->valor);
+    fprintf(stdout, "%s |\n", content->lexema->valor);
 }
 
 void print_symbol_table(symbol_table_t *table) {

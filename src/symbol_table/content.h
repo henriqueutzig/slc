@@ -21,7 +21,7 @@ typedef struct content_t
 {
     int line;
     type_t type;
-    lexema *value;
+    lexema *lexema;
 } content_t;
 
 content_t *create_content(int line, lexema *value, type_t type);

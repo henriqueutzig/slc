@@ -96,9 +96,12 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         exit(ERR_DECLARED);
     }
 
+    fprintf(stdout, "Symbol %s not found in scope\n", lexema->valor);
+
     content_t *content = create_content(line, lexema, type);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
+
 content_t *search_all_tables(stackt_t *stack, char *lexema) {
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 

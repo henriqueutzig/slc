@@ -109,36 +109,6 @@ programa:
     INIT_GLOBAL_SCOPE lista_de_funcoes DESTROY_GLOBAL_SCOPE {if ($2 != NULL) $$ = $2; else $$ = NULL; arvore = $$;};
     | %empty {$$ = NULL;};
 
-/*
-    Produções para gerência de tabelas de símbolos
-*/
-INIT_GLOBAL_SCOPE: %empty {
-    stack = create_stack(); push_symbol_table(stack, create_symbol_table());
-};
-DESTROY_GLOBAL_SCOPE: %empty {
-    symbol_table_t *table = pop_symbol_table(stack);
-    if (table != NULL) {
-       fprintf(stderr, "Destroying global scope\n");
-        destroy_symbol_table(table);
-        destroy_stack(stack);
-    }
-};
-
-INIT_LOCAL_SCOPE: %empty {
-    push_symbol_table(stack, create_symbol_table());
-};
-DESTROY_LOCAL_SCOPE: %empty {
-    symbol_table_t *table = pop_symbol_table(stack);
-    if (table != NULL) {
-        fprintf(stderr, "Destroying local scope\n");
-        destroy_symbol_table(table);
-    }
-};
-
-DESTROY_CURRENT_TYPE: %empty {
-    tipo_atual = -1;
-};
-
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
     | funcao {$$=$1;};
@@ -366,6 +336,38 @@ operando:
             YYABORT;
         } $$ = $2;};
 
+/*
+    Produções para gerência de tabelas de símbolos
+*/
+INIT_GLOBAL_SCOPE: %empty {
+    printf("\t>DEBUG: new GLOBAL scope\n");
+    stack = create_stack(); push_symbol_table(stack, create_symbol_table());
+};
+DESTROY_GLOBAL_SCOPE: %empty {
+    symbol_table_t *table = pop_symbol_table(stack);
+    if (table != NULL) {
+       fprintf(stderr, "Destroying global scope\n");
+        destroy_symbol_table(table);
+        destroy_stack(stack);
+    }
+};
+
+INIT_LOCAL_SCOPE: %empty {
+    printf("\t>DEBUG: new LOCAL scope\n");
+    push_symbol_table(stack, create_symbol_table());
+};
+
+DESTROY_LOCAL_SCOPE: %empty {
+    symbol_table_t *table = pop_symbol_table(stack);
+    if (table != NULL) {
+        fprintf(stderr, "Destroying local scope\n");
+        destroy_symbol_table(table);
+    }
+};
+
+DESTROY_CURRENT_TYPE: %empty {
+    tipo_atual = -1;
+};
 
 %%
 

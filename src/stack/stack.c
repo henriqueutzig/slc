@@ -98,7 +98,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
     if (is_empty(stack)) {
-        printf("ERROR (insert_symbol_to_scope): stack is empty!\n");
+        printf("ERROR (insert_symbol_to_scope): stack is empty! Could not insert symbol '%s'\n", lexema->valor);
         return;
     }
 

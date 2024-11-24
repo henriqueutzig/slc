@@ -83,6 +83,8 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 }
 
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+    fprintf(stdout, "Inserting symbol %s to scope\n", lexema->valor);
+
     if (is_empty(stack)) {
         printf("ERROR: stack is empty!");
         return;
@@ -100,11 +102,18 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
 
 content_t *search_all_tables(stackt_t *stack, char *lexema)
 {
-    for (int i = stack->top_index; i >= 0; i--)
-    {
-        content_t *content = search_table(*stack->tables[i], lexema);
-        if (content != NULL)
-            return content;
+    fprintf(stdout, "Searching for %s in all tables\n", lexema);
+    fprintf(stdout, "Stack top index is %d\n", stack->top_index);
+    for (int i = stack->top_index; i >= 0; i--) {
+        fprintf(stdout, "Searching in table %d\n", i);
+        symbol_table_t *table = stack->tables[i];
+        if (table != NULL) {
+            fprintf(stdout, "Table is not null\n");
+            content_t *result = search_table(table, lexema);
+            if (result != NULL) {
+                return result;
+            }
+        }
     }
 
     return NULL;

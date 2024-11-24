@@ -22,7 +22,7 @@ int hash (char *lexema)
 symbol_table_t *create_symbol_table()
 {
     symbol_table_t *table = (symbol_table_t *)malloc(sizeof(symbol_table_t));
-
+    table->content = NULL;
     for (int i = 0; i < HASH_SIZE; i++)
         table[i].next = NULL;
 
@@ -85,11 +85,15 @@ content_t *search_table(symbol_table_t *table, char *lexema)
 {
     int index = hash(lexema);
 
-    symbol_table_t *current = table[index].next;
+    symbol_table_t *current = table;
     fprintf(stdout,"Current is %p\n",current);
+    fprintf(stdout, "Currrent content is %p\n", current->content);
+    fprintf(stdout, "Current content line is %d\n", current->content->line);
+    fprintf(stdout, "Current content type is %d\n", current->content->type);
+    fprintf(stdout, "Current content lexema is %s\n", current->content->lexema->valor);
     while (current != NULL)
     {
-        if (strcmp(current->lexema->valor, lexema) == 0)
+        if (strcmp(current->content->lexema->valor, lexema) == 0)
             return current->content;
         current = current->next;
     }

@@ -7,9 +7,11 @@
 */
 
 #include "content.h" 
+#include <stdio.h>
 
 content_t *create_content(int line, lexema *value, type_t type)
 {
+    fprintf(stderr, "Creating content\n");
     content_t *content = (content_t *)malloc(sizeof(content_t));
 
     content->line = line;

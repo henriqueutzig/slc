@@ -81,22 +81,15 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
     return table;
 }
 
-content_t *search_table(symbol_table_t *table, char *lexema)
-{
-    int index = hash(lexema);
+content_t *search_table(symbol_table_t *table, char *lexema) {
+    int index = hash(lexema); 
 
-    symbol_table_t *current = table;
-    fprintf(stdout,"Current is %p\n",current);
-    fprintf(stdout, "Currrent content is %p\n", current->content);
-    fprintf(stdout, "Current content line is %d\n", current->content->line);
-    fprintf(stdout, "Current content type is %d\n", current->content->type);
-    fprintf(stdout, "Current content lexema is %s\n", current->content->lexema->valor);
-    while (current != NULL)
-    {
-        if (strcmp(current->content->lexema->valor, lexema) == 0)
-            return current->content;
+    symbol_table_t *current = table[index].next; 
+    while (current != NULL) {
+        if (strcmp(current->lexema, lexema) == 0) {
+            return current->content; 
+        }
         current = current->next;
     }
-
-    return NULL;
+    return NULL; 
 }

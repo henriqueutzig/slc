@@ -99,22 +99,13 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
     content_t *content = create_content(line, lexema, type);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
-
-content_t *search_all_tables(stackt_t *stack, char *lexema)
-{
-    fprintf(stdout, "Searching for %s in all tables\n", lexema);
-    fprintf(stdout, "Stack top index is %d\n", stack->top_index);
+content_t *search_all_tables(stackt_t *stack, char *lexema) {
     for (int i = stack->top_index; i >= 0; i--) {
-        fprintf(stdout, "Searching in table %d\n", i);
-        symbol_table_t *table = stack->tables[i];
-        if (table != NULL) {
-            fprintf(stdout, "Table is not null\n");
-            content_t *result = search_table(table, lexema);
-            if (result != NULL) {
-                return result;
-            }
+        symbol_table_t *table = *(stack->tables[i]); 
+        content_t *result = search_table(table, lexema); 
+        if (result != NULL) {
+            return result; 
         }
     }
-
-    return NULL;
+    return NULL; 
 }

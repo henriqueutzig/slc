@@ -58,6 +58,8 @@ void destroy_symbol_table(symbol_table_t *table)
     free(table);
 }
 
+
+
 symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content)
 {
     int index = hash(lexema);
@@ -70,6 +72,7 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
     table[index].next = new;
 
     fprintf(stderr, "Inserted %s at %d in table %p\n", lexema, index,table);
+    fprintf(stderr, "Next is %p\n", new->next);
 
     return table;
 }
@@ -97,6 +100,7 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
 
 content_t *search_table(symbol_table_t *table, char *lexema) {
     int index = hash(lexema); 
+
 
     symbol_table_t *current = table[index].next; 
     while (current != NULL) {

@@ -2,5 +2,5 @@ test_func = > int {
     int abc;
     int a <= 12;
     int b <= 1;
-    return b();
+    return b(0);
 }

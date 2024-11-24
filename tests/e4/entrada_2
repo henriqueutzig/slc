@@ -8,5 +8,5 @@ test_func = > int {
 another_func = > int {
     int a <= 12;
     int b <= 1;
-    return b + test_func();
+    return b + test_func(0);
 }

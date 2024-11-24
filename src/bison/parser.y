@@ -33,6 +33,7 @@
     }
 
     stackt_t *stack = NULL;
+    type_t tipo_atual = -1;
 %}
 
 %define parse.error verbose
@@ -129,6 +130,8 @@ DESTROY_LOCAL_SCOPE: %empty {
     destroy_symbol_table(table);
 };
 
+DESTROY_CURRENT_TYPE: %empty {tipo_atual = -1;};
+
 lista_de_funcoes: 
     funcao lista_de_funcoes {$$ = $1; if($2!=NULL) asd_add_child($$,$2);}
     | funcao {$$=$1;};
@@ -151,20 +154,20 @@ cabecalho: TK_IDENTIFICADOR '=' INIT_LOCAL_SCOPE lista_de_parametros '>' tipos_d
     A lista de parâmetros é composta por zero ou mais parâmetros de
     entrada, separados por TK_OC_OR
 */
-lista_de_parametros: parametro {$$ = NULL; insert_symbol_to_scope(stack, $1, get_line_number(), $1->type);};
+lista_de_parametros: parametro {$$ = NULL; };
     | lista_de_parametros TK_OC_OR parametro {$$ = NULL;};
 
 /* 
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel {$$=NULL;};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel DESTROY_CURRENT_TYPE {$$=NULL; insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
 
 /*
     O tipo da função pode ser float ou int
 */
-tipos_de_variavel: TK_PR_INT {$$ = NULL;};
-    | TK_PR_FLOAT {$$ = NULL;};
+tipos_de_variavel: TK_PR_INT {$$ = NULL; tipo_atual = INT;};
+    | TK_PR_FLOAT {$$ = NULL; tipo_atual = FLOAT;};
 
 /*
     O corpo da função é um bloco de comandos.
@@ -227,7 +230,7 @@ comando_simples:
     caso sua declaração seja seguida do operador com-
     posto TK_OC_LE e de um literal.
 */
-declaracao_variavel: tipos_de_variavel lista_de_variaveis {$$ = $2;};
+declaracao_variavel: tipos_de_variavel lista_de_variaveis DESTROY_CURRENT_TYPE{$$ = $2;} ;
 
 lista_de_variaveis: 
     variavel_inicializada {$$ = $1;}
@@ -241,10 +244,10 @@ lista_de_variaveis:
         } ;
 
 variavel_inicializada: 
-    variavel {$$ = NULL;}
+    variavel {$$ = NULL; }
     | variavel TK_OC_LE literal {$$ = asd_new("<="); asd_add_child($$,$1); asd_add_child($$,$3);}; ;
 
-variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor);};
+variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
 
 literal: 
     TK_LIT_FLOAT {$$ = asd_new_typed($1->valor, FLOAT);}

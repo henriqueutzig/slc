@@ -8,17 +8,18 @@
 
 #include "symbol_table.h"
 #include <stdio.h>
-
-int hash (char *lexema)
+int hash(char *lexema)
 {
-    int hash = 0;
+    int hash_value = 0;
+    int i = 0;
 
-    for (int i = 0; lexema[i] != '\0'; i++)
-        hash = 31 * hash + lexema[i];
+    while (lexema[i] != '\0') {
+        hash_value = (hash_value * 151) + lexema[i];
+        i++;
+    }
 
-    return hash % HASH_SIZE;
+    return hash_value % HASH_SIZE;  
 }
-
 
 symbol_table_t *create_symbol_table()
 {
@@ -32,6 +33,7 @@ symbol_table_t *create_symbol_table()
 
 void destroy_symbol_table(symbol_table_t *table)
 {
+    fprintf(stderr, "Destroying table %p\n", table);
     for (int i = 0; i < HASH_SIZE; i++)
     {
         if (table[i].next == NULL) continue;
@@ -66,6 +68,8 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
 
     new->next = table[index].next;
     table[index].next = new;
+
+    fprintf(stderr, "Inserted %s at %d in table %p\n", lexema, index,table);
 
     return table;
 }

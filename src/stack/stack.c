@@ -132,7 +132,7 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
-        fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
+        // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {
             fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);

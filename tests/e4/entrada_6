@@ -1,0 +1,26 @@
+test_func = > int {
+    int abc;
+    int a <= 12;
+    int b <= 1;
+
+    if (b) {
+        float bb <= 1.0;
+        abc = 1;
+        {};
+        if (a) {
+            int b <= 1;
+            abc = 1;
+        } else {
+            int b <= 1;
+            abc = 1;
+        };
+    }
+
+    return b;
+}
+
+another_func = > int {
+    int a <= 12;
+    int b <= 1;
+    return b + test_func(0);
+}

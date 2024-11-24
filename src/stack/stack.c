@@ -64,16 +64,16 @@ stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
 
     return stack;
 }
-
-symbol_table_t *pop_symbol_table(stackt_t *stack)
-{
-    if (is_empty(stack))
-    {
+symbol_table_t *pop_symbol_table(stackt_t *stack) {
+    if (is_empty(stack)) {
         printf("Stack is empty\n");
         return NULL;
     }
 
-    symbol_table_t *table = *stack->tables[stack->top_index];
+    symbol_table_t **table_ptr = stack->tables[stack->top_index];
+    symbol_table_t *table = *table_ptr;
+
+    free(table_ptr); 
     stack->tables[stack->top_index] = NULL;
     stack->top_index--;
     return table;

@@ -19,6 +19,7 @@ int hash (char *lexema)
     return hash % HASH_SIZE;
 }
 
+
 symbol_table_t *create_symbol_table()
 {
     symbol_table_t *table = (symbol_table_t *)malloc(sizeof(symbol_table_t));
@@ -33,16 +34,25 @@ void destroy_symbol_table(symbol_table_t *table)
 {
     for (int i = 0; i < HASH_SIZE; i++)
     {
+        if (table[i].next == NULL) continue;
+
         symbol_table_t *current = table[i].next;
+
+        fprintf(stderr, "Destroying table %d\n", i);
         while (current != NULL)
         {
+            fprintf(stderr, "Current: %p\n", current);
+            fprintf(stderr, "Current->lexema: %s\n", current->content_lexema_value);
             symbol_table_t *next = current->next;
-            free(current->content_lexema_value);
+            fprintf(stderr, "Next: %p\n", next);
+            if (current->content_lexema_value != NULL)
+                free(current->content_lexema_value);
+            if (current->content != NULL)
+                free(current->content);
             free(current);
             current = next;
         }
     }
-
     free(table);
 }
 

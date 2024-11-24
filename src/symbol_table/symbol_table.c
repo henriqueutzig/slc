@@ -89,7 +89,7 @@ content_t *search_table(symbol_table_t *table, char *lexema)
     fprintf(stdout,"Current is %p\n",current);
     while (current != NULL)
     {
-        if (strcmp(current->lexema, lexema) == 0)
+        if (strcmp(current->lexema->valor, lexema) == 0)
             return current->content;
         current = current->next;
     }

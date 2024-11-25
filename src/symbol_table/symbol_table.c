@@ -41,7 +41,8 @@ symbol_table_t *create_symbol_table()
 
 void destroy_symbol_table(symbol_table_t *table)
 {
-    if (table == NULL) return;
+    assert(table != NULL);
+
     for (int i = 0; i < HASH_SIZE; i++)
     {
         if (table[i].next == NULL) continue;
@@ -65,6 +66,7 @@ void destroy_symbol_table(symbol_table_t *table)
 
 symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *content)
 {
+    assert(table != NULL);
     int index = hash(lexema);
 
     symbol_table_t *new = (symbol_table_t *)malloc(sizeof(symbol_table_t));
@@ -81,6 +83,7 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
 
 symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
 {
+    assert(table != NULL);
     int index = hash(lexema);
 
     symbol_table_t *current = &table[index];
@@ -101,6 +104,7 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
 }
 
 content_t *search_table(symbol_table_t *table, char *lexema) {
+    assert(table != NULL);
     int index = hash(lexema); 
 
     symbol_table_t *current = table[index].next; 

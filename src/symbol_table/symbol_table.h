@@ -12,6 +12,7 @@
 #include "content.h"
 #include <stdlib.h> 
 #include <string.h>
+#include <assert.h>
 
 #define HASH_SIZE 999
 

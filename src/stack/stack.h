@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "../symbol_table/symbol_table.h"
 #include "../lexema/lexema.h"
 #include "../errors/errors.h"

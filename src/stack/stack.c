@@ -43,6 +43,7 @@ bool is_full(stackt_t *stack)
 
 void destroy_stack(stackt_t *stack)
 {
+    assert(stack != NULL);
     for (int i = 0; i < STACK_SIZE; i++)
         if (stack->tables[i] != NULL)
             destroy_symbol_table(*stack->tables[i]);
@@ -51,6 +52,8 @@ void destroy_stack(stackt_t *stack)
 }
 
 stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
+    assert(stack != NULL);
+    assert(table != NULL);
     // fprintf(stderr, "Pushing table %p to stack %p\n", table, stack);
     if (is_full(stack)) {
         printf("Stack is full\n");
@@ -67,6 +70,7 @@ stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
 }
 
 symbol_table_t *pop_symbol_table(stackt_t *stack) {
+    assert(stack != NULL);
     if (is_empty(stack)) {
         return NULL;
     }
@@ -82,6 +86,7 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
 
 
 void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+    assert(stack != NULL);
     if (is_empty(stack)) {
         printf("ERROR (insert_symbol_to_global_scope): stack is empty!\n");
         return;
@@ -98,6 +103,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 }
 
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+    assert(stack != NULL);
     if (is_empty(stack)) {
         printf("ERROR (insert_symbol_to_scope): stack is empty! Could not insert symbol '%s'\n", lexema->valor);
         return;
@@ -121,14 +127,15 @@ void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line
 
     content_t *symbol = search_all_tables(stack, lexema->valor);
 
-    if (symbol->type != type) {
-        printf("Erro na linha %d: atribuição inválida. O símbolo '%s' foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
-        exit(ERR_VARIABLE);
-        //Validar se erro correto!
-    }
+    // if (symbol->type != type) {
+    //     printf("Erro na linha %d: atribuição inválida. O símbolo '%s' foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
+    //     exit(ERR_VARIABLE);
+    //     //Validar se erro correto!
+    // }
 }
 
 void validate_function_call(stackt_t *stack, lexema *lexema, int line){
+    assert(stack != NULL);
     bool found_as_variable = false;
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
@@ -182,6 +189,7 @@ void print_all_tables(stackt_t *stack) {
 // -====================
 
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
+    assert(stack != NULL);
     bool found_as_variable = false;
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
@@ -209,6 +217,7 @@ void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
 
 
 content_t *search_all_tables(stackt_t *stack, char *lexema) {
+    assert(stack != NULL);
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
         content_t *result = search_table(table, lexema); 

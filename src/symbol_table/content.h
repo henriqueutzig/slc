@@ -12,12 +12,12 @@
 #include <stdlib.h>
 #include "../lexema/lexema.h"
 
-typedef enum {
+typedef enum type_t {
     INT = 0,
     FLOAT
 } type_t;
 
-typedef enum {
+typedef enum nature_t {
     VARIABLE = 0,
     FUNCTION
 } nature_t;

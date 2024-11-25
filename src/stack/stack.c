@@ -155,26 +155,34 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
 }
 
 /// DEBUG FUNC
-void print_table(symbol_table_t *table){
+void print_table(symbol_table_t *table, int stack_index) {
     printf("-----+-----+-----+-----+-----+\n");
-    printf("Index\tLexema\tLine\tType\tNature\n");
+    printf("Stack Index\tIndex\tLexema\tLine\tType\tNature\n");
     for (int i = 0; i < HASH_SIZE; i++) {
         symbol_table_t *current = &table[i];
         while (current != NULL) {
             if (current->content != NULL) {
-                printf("%d\t%s\t%d\t%d\t%d\n", i, current->content_lexema_value, current->content->line, current->content->type, current->content->nature);
+                printf("%d\t%d\t%s\t%d\t%d\t%d\n", stack_index, i, current->content_lexema_value, current->content->line, current->content->type, current->content->nature);
             }
             current = current->next;
         }
     }
 }
 
+void print_all_tables(stackt_t *stack) {
+    if (stack == NULL) return;
+    for (int i = stack->top_index; i >= 0; i--) {
+        symbol_table_t *table = *(stack->tables[i]); 
+        print_table(table, i);
+    }
+}
+
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
+    print_all_tables(stack);
     bool found_as_variable = false;
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
-        print_table(table);
         // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {

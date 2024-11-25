@@ -125,8 +125,8 @@ funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
     função pode ser float ou int 
 */
 cabecalho: INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
-    insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
-    $$ = asd_new($2->valor); insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
+    $$ = asd_new($2->valor); 
+    insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
 | INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
     $$ = asd_new($2->valor);};

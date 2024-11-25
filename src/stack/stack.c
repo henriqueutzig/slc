@@ -33,17 +33,20 @@ char *get_type_name(type_t type){
 
 bool is_empty(stackt_t *stack)
 {
+    assert(stack != NULL);
     return stack->top_index == -1;
 }
 
 bool is_full(stackt_t *stack)
 {
+    assert(stack != NULL);
     return stack->top_index == STACK_SIZE - 1;
 }
 
 void destroy_stack(stackt_t *stack)
 {
     assert(stack != NULL);
+
     for (int i = 0; i < STACK_SIZE; i++)
         if (stack->tables[i] != NULL)
             destroy_symbol_table(*stack->tables[i]);
@@ -61,6 +64,7 @@ stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
     }
 
     symbol_table_t **table_ptr = (symbol_table_t **)malloc(sizeof(symbol_table_t *));
+    assert(table_ptr != NULL);
     *table_ptr = table; 
 
     stack->top_index++;
@@ -76,7 +80,9 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
     }
 
     symbol_table_t **table_ptr = stack->tables[stack->top_index];
+    assert(table_ptr != NULL);
     symbol_table_t *table = *table_ptr;
+    assert(table != NULL);
 
     free(table_ptr); 
     stack->tables[stack->top_index] = NULL;

@@ -52,6 +52,7 @@ void destroy_symbol_table(symbol_table_t *table)
         while (current != NULL)
         {
             symbol_table_t *next = current->next;
+            
             if (current->content_lexema_value != NULL)
                 free(current->content_lexema_value);
             if (current->content != NULL)
@@ -87,11 +88,13 @@ symbol_table_t *remove_element(symbol_table_t *table, char *lexema)
     int index = hash(lexema);
 
     symbol_table_t *current = &table[index];
+    assert(current != NULL);
     while (current->next != NULL)
     {
         if (strcmp(current->next->content_lexema_value, lexema) == 0)
         {
             symbol_table_t *next = current->next->next;
+            assert(next != NULL);
             free(current->next->content_lexema_value);
             free(current->next);
             current->next = next;

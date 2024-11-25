@@ -20,6 +20,11 @@ int hash(char *lexema)
         i++;
     }
 
+    //garanta que o valor de hash value sempre é positivo
+    if (hash_value < 0) {
+        hash_value = -hash_value;
+    }
+
     return hash_value % HASH_SIZE;  
 }
 

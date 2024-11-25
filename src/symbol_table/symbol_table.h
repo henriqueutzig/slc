@@ -23,7 +23,7 @@ typedef struct symbol_table
     struct symbol_table *next;
 } symbol_table_t;
 
-int hash (char *lexema);
+unsigned hash (char *lexema);
 
 symbol_table_t *create_symbol_table();
 void destroy_symbol_table(symbol_table_t *table);   

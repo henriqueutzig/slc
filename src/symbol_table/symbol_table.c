@@ -10,19 +10,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-int hash(char *lexema)
+unsigned hash(char *lexema)
 {
-    int hash_value = 0;
+    unsigned hash_value = 0;
     int i = 0;
 
     while (lexema[i] != '\0') {
         hash_value = (hash_value * 151) + lexema[i];
         i++;
-    }
-
-    //garanta que o valor de hash value sempre é positivo
-    if (hash_value < 0) {
-        hash_value = -hash_value;
     }
 
     return hash_value % HASH_SIZE;  

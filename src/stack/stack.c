@@ -65,6 +65,7 @@ stackt_t *push_symbol_table(stackt_t *stack, symbol_table_t *table) {
 
     return stack;
 }
+
 symbol_table_t *pop_symbol_table(stackt_t *stack) {
     if (is_empty(stack)) {
         return NULL;
@@ -135,11 +136,12 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
         // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {
-            fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
-            if (i!=0){
-                found_as_variable = true; 
-            }else{
+            // fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
+            if (result->nature == FUNCTION){
                 found_as_function = true;
+                break;
+            }else{
+                found_as_variable = true; 
             }
         }
     }
@@ -154,10 +156,11 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     }
 }
 
+// -====================
 /// DEBUG FUNC
 void print_table(symbol_table_t *table, int stack_index) {
     printf("-----+-----+-----+-----+-----+\n");
-    printf("Stack Index\tIndex\tLexema\tLine\tType\tNature\n");
+    printf("StckId\tIndex\tLexema\tLine\tType\tNature\n");
     for (int i = 0; i < HASH_SIZE; i++) {
         symbol_table_t *current = &table[i];
         while (current != NULL) {
@@ -176,31 +179,30 @@ void print_all_tables(stackt_t *stack) {
         print_table(table, i);
     }
 }
+// -====================
 
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
-    print_all_tables(stack);
     bool found_as_variable = false;
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
-        // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {
-            // fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
-            if (i > 0){
+            if (result->nature == VARIABLE){
                 found_as_variable = true; 
-            }else{
+            } else if (result->nature == FUNCTION) {
                 found_as_function = true;
+                break; // Exit the loop if found as a function
             }
         }
     }
     if(found_as_function){
-        printf("Erro na linha %d: funçao %s foi usada como variavel!\n", line, lexema->valor);
+        printf("Erro na linha %d: função '%s' foi usada como variável!\n", line, lexema->valor);
         exit(ERR_FUNCTION);
     }else if(found_as_variable){
-    // Tudo certo
+        // Everything is fine
     }else{
-        printf("Erro na linha %d: símbolo não declarado. O símbolo %s não foi declarado.\n", line, lexema->valor);
+        printf("Erro na linha %d: símbolo não declarado. O símbolo '%s' não foi declarado.\n", line, lexema->valor);
         exit(ERR_UNDECLARED);
     }
 }

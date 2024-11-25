@@ -161,8 +161,8 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando DESTROY_LOCAL_SCOPE '}' {$$ = $2;}
-    | '{' DESTROY_LOCAL_SCOPE '}' {$$ = NULL;};
+    '{' INIT_LOCAL_SCOPE comando DESTROY_LOCAL_SCOPE '}' {$$ = $3;}
+    | '{' INIT_LOCAL_SCOPE DESTROY_LOCAL_SCOPE '}' {$$ = NULL;};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 
@@ -239,8 +239,8 @@ literal:
     pelo caractere de igualdade seguido por uma expressão
 */
 atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
-    validate_attribution(stack, $1, $3->type, get_line_number());
     $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
+    validate_attribution(stack, $1, $3->type, get_line_number());
     };
 
 /*
@@ -249,8 +249,8 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     Um argumento pode ser uma expressão.
 */
 chamada_de_funcao: TK_IDENTIFICADOR '(' argumento ')' {
-    validate_function_call(stack, $1, get_line_number());
     $$ = asd_new(create_call_string($1->valor)); asd_add_child($$, $3);
+    validate_function_call(stack, $1, get_line_number());
     };
 
 argumento: 
@@ -364,7 +364,7 @@ DESTROY_GLOBAL_SCOPE: %empty {
 
 INIT_LOCAL_SCOPE: %empty {
     // printf("\t>DEBUG: new LOCAL scope\n");
-    push_symbol_table(stack, create_symbol_table());
+    stack = push_symbol_table(stack, create_symbol_table());
 };
 
 DESTROY_LOCAL_SCOPE: %empty {

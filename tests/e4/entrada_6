@@ -1,21 +1,22 @@
-test_func = > int {
+test_func = f_var1 <- int | f_var2 <- float  > int {
     int abc;
     int a <= 12;
     int b <= 1;
 
     if (b) {
-        float bb <= 1.0;
+        float if1_var <= 1.0;
         abc = 1;
-        {};
+        
         if (a) {
-            int _b <= 1;
-            abc = 1;
+            int if2_var <= 1;
         } else {
-            _b = 1 + 9;
-            abc = 1;
+            if1_var = 1.0 + a + f_var1;
         };
-    }
+    };
 
+    {
+        
+    };
     return b;
 }
 

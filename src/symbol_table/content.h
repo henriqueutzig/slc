@@ -17,13 +17,19 @@ typedef enum {
     FLOAT
 } type_t;
 
+typedef enum {
+    VARIABLE = 0,
+    FUNCTION
+} nature_t;
+
 typedef struct content_t
 {
     int line;
     type_t type;
+    nature_t nature;
     lexema *lexema;
 } content_t;
 
-content_t *create_content(int line, lexema *value, type_t type);
+content_t *create_content(int line, lexema *value, type_t type, nature_t nature);
 
 #endif

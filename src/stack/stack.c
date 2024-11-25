@@ -92,7 +92,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type);
+    content_t *content = create_content(line, lexema, type, FUNCTION);
     insert_element(*stack->tables[0], lexema->valor, content);
 }
 
@@ -108,7 +108,7 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type);
+    content_t *content = create_content(line, lexema, type, VARIABLE);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
 
@@ -157,12 +157,12 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
 /// DEBUG FUNC
 void print_table(symbol_table_t *table){
     printf("-----+-----+-----+-----+-----+\n");
-    printf("Index\tLexema\tLine\tType\n");
+    printf("Index\tLexema\tLine\tType\tNature\n");
     for (int i = 0; i < HASH_SIZE; i++) {
         symbol_table_t *current = &table[i];
         while (current != NULL) {
             if (current->content != NULL) {
-                printf("%d\t%s\t%d\t%d\n", i, current->content_lexema_value, current->content->line, current->content->type);
+                printf("%d\t%s\t%d\t%d\t%d\n", i, current->content_lexema_value, current->content->line, current->content->type, current->content->nature);
             }
             current = current->next;
         }

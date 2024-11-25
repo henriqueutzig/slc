@@ -116,7 +116,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -162,7 +162,7 @@ corpo: bloco_de_comandos {$$=$1;};
 */
 bloco_de_comandos: 
     '{' INIT_LOCAL_SCOPE comando DESTROY_LOCAL_SCOPE '}' {$$ = $3;}
-    | '{' INIT_LOCAL_SCOPE DESTROY_LOCAL_SCOPE '}' {$$ = NULL;};
+    | '{''}' {$$ = NULL;};
 
 /*
     Um bloco de comandos é considerado como um comando único simples, 

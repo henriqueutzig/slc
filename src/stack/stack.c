@@ -154,16 +154,32 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     }
 }
 
+/// DEBUG FUNC
+void print_table(symbol_table_t *table){
+    printf("-----+-----+-----+-----+-----+\n");
+    printf("Index\tLexema\tLine\tType\n");
+    for (int i = 0; i < HASH_SIZE; i++) {
+        symbol_table_t *current = &table[i];
+        while (current != NULL) {
+            if (current->content != NULL) {
+                printf("%d\t%s\t%d\t%d\n", i, current->content_lexema_value, current->content->line, current->content->type);
+            }
+            current = current->next;
+        }
+    }
+}
+
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line){
     bool found_as_variable = false;
     bool found_as_function = false;
     for (int i = stack->top_index; i >= 0; i--) {
         symbol_table_t *table = *(stack->tables[i]); 
+        print_table(table);
         // fprintf(stderr, "Searching lexema %s in table %d, with pointer %p\n",lexema->valor ,i, table);
         content_t *result = search_table(table, lexema->valor); 
         if (result != NULL) {
             // fprintf(stderr, "Found lexema %s in table %d\n",lexema->valor ,i);
-            if (i!=0){
+            if (i > 0){
                 found_as_variable = true; 
             }else{
                 found_as_function = true;

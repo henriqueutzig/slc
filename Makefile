@@ -71,9 +71,5 @@ test: $(BINARY)
 	rm -rf ${TEST_OUT} 
 	bash ${TEST}
 
-# Live reload: Tests will be run each time a file is saved
-serve: $(BINARY) 
-	find ${SRC_DIR} ./tests -type f | entr -c make test
-
 # Phony targets
 .PHONY: all run clean tar test serve

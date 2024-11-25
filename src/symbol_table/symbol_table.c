@@ -41,6 +41,7 @@ symbol_table_t *create_symbol_table()
 
 void destroy_symbol_table(symbol_table_t *table)
 {
+    if (table == NULL) return;
     for (int i = 0; i < HASH_SIZE; i++)
     {
         if (table[i].next == NULL) continue;

@@ -122,7 +122,7 @@ void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line
     content_t *symbol = search_all_tables(stack, lexema->valor);
 
     if (symbol->type != type) {
-        printf("Erro na linha %d: atribuição inválida. O símbolo %s foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
+        printf("Erro na linha %d: atribuição inválida. O símbolo '%s' foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
         exit(ERR_VARIABLE);
         //Validar se erro correto!
     }

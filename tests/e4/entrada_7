@@ -1,0 +1,5 @@
+test_func_2 = > int {
+    c = 2;
+    return 1;
+}
+

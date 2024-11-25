@@ -239,8 +239,8 @@ literal:
     pelo caractere de igualdade seguido por uma expressão
 */
 atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
-    $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
     validate_attribution(stack, $1, $3->type, get_line_number());
+    $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
     };
 
 /*
@@ -349,28 +349,28 @@ operando:
     Produções para gerência de tabelas de símbolos
 */
 INIT_GLOBAL_SCOPE: %empty {
-    // printf("\t>DEBUG: new GLOBAL scope\n");
+    printf("\t>DEBUG: new GLOBAL scope\n");
     stack = create_stack(); push_symbol_table(stack, create_symbol_table());
 };
 
 DESTROY_GLOBAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
     if (table != NULL) {
-    //    fprintf(stderr, "Destroying global scope\n");
+       fprintf(stderr, "Destroying global scope\n");
         destroy_symbol_table(table);
         destroy_stack(stack);
     }
 };
 
 INIT_LOCAL_SCOPE: %empty {
-    // printf("\t>DEBUG: new LOCAL scope\n");
+    printf("\t>DEBUG: new LOCAL scope\n");
     stack = push_symbol_table(stack, create_symbol_table());
 };
 
 DESTROY_LOCAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
     if (table != NULL) {
-        // fprintf(stderr, "Destroying local scope\n");
+        fprintf(stderr, "Destroying local scope\n");
         destroy_symbol_table(table);
     }
 };

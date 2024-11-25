@@ -1,9 +1,9 @@
-test_func = f_var1 <- int | f_var2 <- float  > int {
+test_func = f_var1 < - int | f_var2 < - float > int {
     int abc;
     int a <= 12;
     int b <= 1;
 
-    {};
+    { };
     {
         {
             {
@@ -35,5 +35,6 @@ test_func = f_var1 <- int | f_var2 <- float  > int {
 another_func = > int {
     int a <= 12;
     int b <= 1;
+    int c;
     return b + test_func(0);
 }

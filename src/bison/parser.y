@@ -117,7 +117,7 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
 
 /* 
     O cabeçalho consiste no nome da função,

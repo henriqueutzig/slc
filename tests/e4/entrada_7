@@ -1,5 +1,8 @@
-test_func_2 = > int {
-    c = 2;
+test_func_2 =  a <- int | b <- float  > int {
+    a = 2.0;
+    b = 1;
+    
+    test_func_2 = a + b;
     return 1;
 }
 

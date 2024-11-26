@@ -100,7 +100,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
 
     content_t *symbol = search_all_tables(stack, lexema->valor);
     if (symbol != NULL) {
-        printf("Erro na linha %d: símbolo já declarado. O símbolo %s foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
+        printf("Erro na linha %d: símbolo já declarado. O símbolo '%s' foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
         exit(ERR_DECLARED);
     }
 
@@ -117,7 +117,7 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
 
     content_t *symbol = search_all_tables(stack, lexema->valor);
     if (symbol != NULL) {
-        printf("Erro na linha %d: símbolo já declarado. O símbolo %s foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
+        printf("Erro na linha %d: símbolo já declarado. O símbolo '%s' foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
         exit(ERR_DECLARED);
     }
 
@@ -134,15 +134,14 @@ void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line
     content_t *symbol = search_all_tables(stack, lexema->valor);
 
     if (symbol == NULL) {
-        printf("Erro na linha %d: símbolo não declarado. O símbolo %s não foi declarado.\n", line, lexema->valor);
+        printf("Erro na linha %d: símbolo não declarado. O símbolo '%s' não foi declarado.\n", line, lexema->valor);
         exit(ERR_UNDECLARED);
     }
 
-    // if (symbol->type != type) {
-    //     printf("Erro na linha %d: atribuição inválida. O símbolo '%s' foi declarado como %s e está sendo atribuído como %s na linha %d.\n", symbol->line, lexema->valor, get_type_name(symbol->type), get_type_name(type), line);
-    //     exit(ERR_VARIABLE);
-    //     //Validar se erro correto!
-    // }
+    if (symbol->nature != VARIABLE) {
+        printf("Erro na linha %d: função '%s' foi usada como variável!\n", symbol->line, lexema->valor);
+        exit(ERR_FUNCTION);
+    }
 }
 
 void validate_function_call(stackt_t *stack, lexema *lexema, int line){
@@ -166,10 +165,10 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     if(found_as_function){
         // Tudo certo
     }else if(found_as_variable){
-        printf("Erro na linha %d: variavel %s foi usada como funçao!\n", line, lexema->valor);
+        printf("Erro na linha %d: variável '%s' foi usada como função!\n", line, lexema->valor);
         exit(ERR_VARIABLE);
     }else{
-        printf("Erro na linha %d: símbolo não declarado. O símbolo %s não foi declarado.\n", line, lexema->valor);
+        printf("Erro na linha %d: símbolo não declarado. O símbolo '%s' não foi declarado.\n", line, lexema->valor);
         exit(ERR_UNDECLARED);
     }
 }

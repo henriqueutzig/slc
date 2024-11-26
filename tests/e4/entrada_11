@@ -1,0 +1,85 @@
+test_func = b <- int | a <- float > int {
+b = 3;
+return b;
+}
+
+test_func2 = b <- int | a <- float > int {
+if(a == 0){
+    int c <= 2;
+} else
+{
+    test_func2(a);
+};
+
+return b;
+}
+
+test_func4 = b <- int | a <- float > int 
+{
+    {{{{{int j <= 2;{{{{{{{j = 3.0;};};};};};};};};};};}; return a;};
+}
+
+test_func3 = b <- int | a <- float > int {
+int c <= 2.0, d <= 2;
+
+{
+   {{{{ int d;
+    c = 2;};};};};
+};
+
+while(2){
+ c = 2;
+ int c <=2;
+ c = 3;
+ if(1){
+    int c <= 2;
+    {
+        int c <= 2;
+    };
+
+    {
+        if(a){
+            int c <= 2;
+            while(2){
+                int k <= 2;
+                if(a){
+
+                } else {
+                    k = test_func2(a);
+                };
+
+            };
+
+        };
+        int c <= 2;
+        return b;
+    };
+
+    if(2){
+        float c <= 2;
+        if(3){
+            int c <= 2;
+            test_func(a);
+            return c;
+        };
+    };
+} else{
+    c = 2;
+    return b;
+};
+};
+
+
+d = 2 | test_func4(a) ;
+return a;
+}
+
+test_func5 = b <- int | a <- float > int 
+{
+    {{{{{int j <= 2;{{{{{{{j = 3.0;};};};};};};};};};};}; return a;};
+}
+
+test_func6 = b <- int | a <- float > int 
+{
+    {{{{{{{{{{{{};};};};};};};};};};}; return a;};
+}

@@ -162,7 +162,7 @@ corpo: bloco_de_comandos {$$=$1;};
     expressao_precedencia_2inado por ponto-e-vírgula. 
 */
 bloco_de_comandos: 
-    '{' comando '}' {$$ = $2;}
+    '{' INIT_LOCAL_SCOPE comando DESTROY_LOCAL_SCOPE '}' {$$ = $3;}
     | '{''}' {$$ = NULL;};
 
 /*

@@ -4,54 +4,50 @@
 # 	João Pedro Cosme - 00314792		#
 #####################################
 
-# Define sources and targets
-SRC_DIR = ./src
-
-MAIN_SRC = $(SRC_DIR)/main.c
-LEX_SRC = $(SRC_DIR)/flex/scanner.l
-LEX_OUT = $(SRC_DIR)/flex/lex.yy.c
-BISON_SRC = $(SRC_DIR)/bison/parser.y
-BISON_H_OUT = $(SRC_DIR)/bison/parser.tab.h
-BISON_C_OUT = $(SRC_DIR)/bison/parser.tab.c
-
-ASD_C = $(SRC_DIR)/asd/asd.c
-LEXEMA_C = $(SRC_DIR)/lexema/lexema.c
-STACK_C = $(SRC_DIR)/stack/stack.c
-SYMBOL_TABLE_C = $(SRC_DIR)/symbol_table/symbol_table.c
-CONTENT_C = $(SRC_DIR)/symbol_table/content.c
-
-
-# Output files
-BINARY = etapa4
-TAR_FILE = $(BINARY).tgz
-
-# Automated test paths
-TEST = tests/testreport.sh
-TEST_OUT = output/
-
 # Compilation commands
 CC = gcc
 LEX = flex
 BISON = bison
 
+# Source and object files
+SRC_DIR = ./src
+BISON_SRC = $(SRC_DIR)/bison/parser.y
+LEX_SRC = $(SRC_DIR)/flex/scanner.l
+
+MAIN_SRC = $(SRC_DIR)/main.c
+SRC_FILES = $(MAIN_SRC) $(SRC_DIR)/asd/asd.c $(SRC_DIR)/lexema/lexema.c \
+            $(SRC_DIR)/stack/stack.c $(SRC_DIR)/symbol_table/symbol_table.c \
+            $(SRC_DIR)/symbol_table/content.c $(SRC_DIR)/flex/lex.yy.c \
+            $(SRC_DIR)/bison/parser.tab.c
+
+OBJECTS = $(SRC_FILES:.c=.o)
+
+# Output files
+BINARY = etapa4
+TAR_FILE = $(BINARY).tgz
+
 # Default target: clean and compile
-all: clean $(BINARY)
+all: $(BINARY)
 
 # Rule to create the final binary
-$(BINARY): $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C)
-	$(CC) -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table -o $(BINARY) $(MAIN_SRC) $(LEX_OUT) $(BISON_C_OUT) $(ASD_C) $(LEXEMA_C) $(STACK_C) $(SYMBOL_TABLE_C) $(CONTENT_C)
+$(BINARY): $(OBJECTS)
+	$(CC) -o $(BINARY) $(OBJECTS)
 
 # Rule to generate parser.tab.h and parser.tab.c using bison
-$(BISON_H_OUT) $(BISON_C_OUT): $(BISON_SRC)
-	$(BISON) -Wall -Werror -Wcounterexamples -Wother -Wconflicts-sr -Wconflicts-rr -o $(BISON_C_OUT) -d $(BISON_SRC)
+$(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h: $(BISON_SRC)
+	$(BISON) -Wall -Werror -o $(SRC_DIR)/bison/parser.tab.c -d $(BISON_SRC)
 
 # Rule to generate lex.yy.c using flex
-$(LEX_OUT): $(LEX_SRC)
-	$(LEX) -o $(LEX_OUT) $(LEX_SRC)
+$(SRC_DIR)/flex/lex.yy.c: $(LEX_SRC) $(SRC_DIR)/bison/parser.tab.h
+	$(LEX) -o $(SRC_DIR)/flex/lex.yy.c $(LEX_SRC)
+
+# Compile .c files into .o object files
+%.o: %.c
+	$(CC) -c -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table -o $@ $<
 
 # Rule to clean up the generated files
 clean:
-	rm -f $(BINARY) $(TAR_FILE) $(BISON_C_OUT) $(BISON_H_OUT) $(LEX_OUT)
+	rm -f $(BINARY) $(TAR_FILE) $(OBJECTS) $(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h $(SRC_DIR)/flex/lex.yy.c
 
 # Rule to run the program
 run: $(BINARY)

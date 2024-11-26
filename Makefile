@@ -23,6 +23,10 @@ SRC_FILES = $(MAIN_SRC) $(SRC_DIR)/asd/asd.c $(SRC_DIR)/lexema/lexema.c \
 
 OBJECTS = $(SRC_FILES:.c=.o)
 
+#Test files
+TEST_OUT = output/
+TEST=tests/testreport.sh
+
 # Output files
 BINARY = etapa4
 TAR_FILE = $(BINARY).tgz

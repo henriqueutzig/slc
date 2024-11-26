@@ -7,6 +7,6 @@ test_func_2  = b <- int | a <- float > int {
     int c;
     {
         int c;
-    }
+    };
     return a;
 }

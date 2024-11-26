@@ -34,6 +34,7 @@
 
     stackt_t *stack = NULL;
     type_t tipo_atual = -1;
+    bool just_created_function_scope = false;
 %}
 
 %define parse.error verbose
@@ -124,10 +125,10 @@ funcao: cabecalho corpo DESTROY_LOCAL_SCOPE {$$ = $1; if ($2!=NULL) {asd_add_chi
     operador maior ’>’ e o tipo de retorno. O tipo da
     função pode ser float ou int 
 */
-cabecalho: INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
+cabecalho: INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
     $$ = asd_new($2->valor); 
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
-| INIT_LOCAL_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
+| INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
     $$ = asd_new($2->valor);};
 
@@ -364,6 +365,16 @@ DESTROY_GLOBAL_SCOPE: %empty {
 
 INIT_LOCAL_SCOPE: %empty {
     // printf("\t>DEBUG: new LOCAL scope\n");
+    if(just_created_function_scope){
+        just_created_function_scope = false;
+    }else{
+    stack = push_symbol_table(stack, create_symbol_table());
+    }
+};
+
+INIT_FUNCTION_SCOPE: %empty {
+    // printf("\t>DEBUG: new LOCAL scope\n");
+    just_created_function_scope = true;
     stack = push_symbol_table(stack, create_symbol_table());
 };
 

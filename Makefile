@@ -10,51 +10,51 @@ CFLAGS = -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I
 LEX = flex
 BISON = bison
 
-# Source and object files
+# Directories and files
 SRC_DIR = ./src
 BISON_SRC = $(SRC_DIR)/bison/parser.y
 LEX_SRC = $(SRC_DIR)/flex/scanner.l
-
 MAIN_SRC = $(SRC_DIR)/main.c
-SRC_FILES = $(MAIN_SRC) $(SRC_DIR)/asd/asd.c $(SRC_DIR)/lexema/lexema.c \
-            $(SRC_DIR)/stack/stack.c $(SRC_DIR)/symbol_table/symbol_table.c \
-            $(SRC_DIR)/symbol_table/content.c $(SRC_DIR)/flex/lex.yy.c \
-            $(SRC_DIR)/bison/parser.tab.c
-
+SRC_FILES = $(MAIN_SRC) $(wildcard $(SRC_DIR)/*/*.c)
 OBJECTS = $(SRC_FILES:.c=.o)
 
-# Output files
+# Outputs
 BINARY = etapa4
 TAR_FILE = $(BINARY).tgz
 
-# Default target: clean and compile
+# Test variables
+TEST=tests/testreport.sh
+TEST_OUT = output/
+
+# Default target
 all: $(BINARY)
 
-# Rule to create the final binary
+# Compile final binary
 $(BINARY): $(OBJECTS)
-	$(CC) -o $(BINARY) $(OBJECTS)
+	$(CC) -o $@ $^
 
-# Rule to generate parser.tab.h and parser.tab.c using bison
+# Generate parser.tab.c and parser.tab.h
 $(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h: $(BISON_SRC)
-	$(BISON) -Wall -Werror -o $(SRC_DIR)/bison/parser.tab.c -d $(BISON_SRC)
+	$(BISON) -Wall -Werror -o $(@:.h=.c) -d $<
 
-# Rule to generate lex.yy.c using flex
+# Generate lex.yy.c
 $(SRC_DIR)/flex/lex.yy.c: $(LEX_SRC) $(SRC_DIR)/bison/parser.tab.h
-	$(LEX) -o $(SRC_DIR)/flex/lex.yy.c $(LEX_SRC)
+	$(LEX) -o $@ $<
 
-# Compile .c files into .o object files
+# Compile .c files into .o
 %.o: %.c
-	$(CC) -c -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-# Rule to clean up the generated files
+# Clean up generated files
 clean:
-	rm -f $(BINARY) $(TAR_FILE) $(OBJECTS) $(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h $(SRC_DIR)/flex/lex.yy.c
+	rm -f $(BINARY) $(TAR_FILE) $(OBJECTS) \
+		$(SRC_DIR)/bison/parser.tab.* $(SRC_DIR)/flex/lex.yy.c
 
-# Rule to run the program
+# Run the binary
 run: $(BINARY)
-	./$(BINARY)
+	./$<
 
-# Rule to create a .tgz file with the correct structure
+# Create .tgz package
 tar: $(BINARY)
 	mkdir -p temp_dir/src
 	cp -r $(SRC_DIR)/* temp_dir/src
@@ -64,10 +64,10 @@ tar: $(BINARY)
 	tar cvzf $(TAR_FILE) -C temp_dir .
 	rm -rf temp_dir
 
-# Run automated tests
+# Run tests
 test: $(BINARY)
-	rm -rf ${TEST_OUT} 
-	bash ${TEST}
+	rm -rf $(TEST_OUT)
+	bash $(TEST)
 
 # Phony targets
 .PHONY: all run clean tar test

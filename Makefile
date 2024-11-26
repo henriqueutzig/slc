@@ -1,11 +1,12 @@
 #####################################
-# 		Authors - Grupo J:			#
-# 	Henrique Utzig - 00319043		#
-# 	João Pedro Cosme - 00314792		#
+#          Authors - Grupo J:       #
+#     Henrique Utzig - 00319043     #
+#     João Pedro Cosme - 00314792   #
 #####################################
 
 # Compilation commands
 CC = gcc
+CFLAGS = -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table
 LEX = flex
 BISON = bison
 
@@ -69,4 +70,4 @@ test: $(BINARY)
 	bash ${TEST}
 
 # Phony targets
-.PHONY: all run clean tar test serve
+.PHONY: all run clean tar test

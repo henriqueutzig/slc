@@ -115,7 +115,8 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         return;
     }
 
-    content_t *symbol = search_all_tables(stack, lexema->valor);
+    symbol_table_t *table = *stack->tables[stack->top_index];
+    content_t *symbol = search_table(table, lexema->valor);
     if (symbol != NULL) {
         printf("Erro na linha %d: símbolo já declarado. O símbolo '%s' foi previamente declarado na linha %d.\n", line, lexema->valor, symbol->line);
         exit(ERR_DECLARED);

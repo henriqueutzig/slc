@@ -1,0 +1,27 @@
+test_func = b <- int | a <- float > int {
+
+int c;
+
+if(!a){
+    int c;
+    {
+        int c;
+        {
+            int c;
+            {
+                return a;
+            };
+        };
+    };
+};
+
+}
+
+test_func2 = b <- int | a <- float > int {
+
+int c,d,e,f,g;
+
+float h,i,c;
+
+return b;
+}

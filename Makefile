@@ -6,59 +6,58 @@
 
 # Compilation commands
 CC = gcc
-CFLAGS = -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table
+CFLAGS = -I./src -I./src/errors -I./src/bison -I./src/asd -I./src/lexema -I./src/stack -I./src/symbol_table
 LEX = flex
 BISON = bison
 
-# Source and object files
+# Directories and files
 SRC_DIR = ./src
 BISON_SRC = $(SRC_DIR)/bison/parser.y
 LEX_SRC = $(SRC_DIR)/flex/scanner.l
-
-MAIN_SRC = $(SRC_DIR)/main.c
-SRC_FILES = $(MAIN_SRC) $(SRC_DIR)/asd/asd.c $(SRC_DIR)/lexema/lexema.c \
-            $(SRC_DIR)/stack/stack.c $(SRC_DIR)/symbol_table/symbol_table.c \
-            $(SRC_DIR)/symbol_table/content.c $(SRC_DIR)/flex/lex.yy.c \
+SRC_FILES = $(SRC_DIR)/main.c \
+            $(SRC_DIR)/asd/asd.c \
+            $(SRC_DIR)/lexema/lexema.c \
+            $(SRC_DIR)/stack/stack.c \
+            $(SRC_DIR)/symbol_table/symbol_table.c \
+            $(SRC_DIR)/symbol_table/content.c \
+            $(SRC_DIR)/flex/lex.yy.c \
             $(SRC_DIR)/bison/parser.tab.c
-
 OBJECTS = $(SRC_FILES:.c=.o)
-
-#Test files
-TEST_OUT = output/
-TEST=tests/testreport.sh
 
 # Output files
 BINARY = etapa4
 TAR_FILE = $(BINARY).tgz
+TEST_OUT = output/
+TEST = tests/testreport.sh
 
-# Default target: clean and compile
+# Default target: build binary
 all: $(BINARY)
 
 # Rule to create the final binary
 $(BINARY): $(OBJECTS)
-	$(CC) -o $(BINARY) $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS)
 
 # Rule to generate parser.tab.h and parser.tab.c using bison
 $(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h: $(BISON_SRC)
-	$(BISON) -Wall -Werror -o $(SRC_DIR)/bison/parser.tab.c -d $(BISON_SRC)
+	$(BISON) -Wall -Werror -d -o $(SRC_DIR)/bison/parser.tab.c $<
 
 # Rule to generate lex.yy.c using flex
 $(SRC_DIR)/flex/lex.yy.c: $(LEX_SRC) $(SRC_DIR)/bison/parser.tab.h
-	$(LEX) -o $(SRC_DIR)/flex/lex.yy.c $(LEX_SRC)
+	$(LEX) -o $@ $<
 
 # Compile .c files into .o object files
 %.o: %.c
-	$(CC) -c -I$(SRC_DIR) -I$(SRC_DIR)/errors -I$(SRC_DIR)/bison -I$(SRC_DIR)/asd -I$(SRC_DIR)/lexema -I$(SRC_DIR)/stack -I$(SRC_DIR)/symbol_table -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-# Rule to clean up the generated files
+# Clean up generated files
 clean:
 	rm -f $(BINARY) $(TAR_FILE) $(OBJECTS) $(SRC_DIR)/bison/parser.tab.c $(SRC_DIR)/bison/parser.tab.h $(SRC_DIR)/flex/lex.yy.c
 
-# Rule to run the program
+# Run the program
 run: $(BINARY)
 	./$(BINARY)
 
-# Rule to create a .tgz file with the correct structure
+# Create a .tgz archive with the project
 tar: $(BINARY)
 	mkdir -p temp_dir/src
 	cp -r $(SRC_DIR)/* temp_dir/src
@@ -70,8 +69,8 @@ tar: $(BINARY)
 
 # Run automated tests
 test: $(BINARY)
-	rm -rf ${TEST_OUT} 
-	bash ${TEST}
+	rm -rf $(TEST_OUT)
+	bash $(TEST)
 
 # Phony targets
 .PHONY: all run clean tar test

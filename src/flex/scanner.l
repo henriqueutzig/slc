@@ -19,36 +19,36 @@
 /* Regular expression definitions */
 digit        [0-9]
 number       {digit}+
-lower_char	 [a-z]
+lower_char   [a-z]
 
 %% /* Regex definitions */
 
-"//".*        								{  }
-[ \t]										{ column_number += yyleng; }
+"//".*                                      {  }
+[ \t]                                       { column_number += yyleng; }
 
-"int"                        				{ column_number += yyleng; return TK_PR_INT; }
-"float"										{ column_number += yyleng; return TK_PR_FLOAT; }
-"if"										{ column_number += yyleng; return TK_PR_IF; }
-"else"										{ column_number += yyleng; return TK_PR_ELSE; }
-"while"										{ column_number += yyleng; return TK_PR_WHILE; }
-"return"									{ column_number += yyleng; return TK_PR_RETURN; }
+"int"                                       { column_number += yyleng; return TK_PR_INT; }
+"float"                                     { column_number += yyleng; return TK_PR_FLOAT; }
+"if"                                        { column_number += yyleng; return TK_PR_IF; }
+"else"                                      { column_number += yyleng; return TK_PR_ELSE; }
+"while"                                     { column_number += yyleng; return TK_PR_WHILE; }
+"return"                                    { column_number += yyleng; return TK_PR_RETURN; }
 
-"<="										{ column_number += yyleng; return TK_OC_LE; }
-">="										{ column_number += yyleng; return TK_OC_GE; }
-"=="										{ column_number += yyleng; return TK_OC_EQ; }
-"!="										{ column_number += yyleng; return TK_OC_NE; }
-"&"											{ column_number += yyleng; return TK_OC_AND; }
-"|"											{ column_number += yyleng; return TK_OC_OR; }
+"<="                                        { column_number += yyleng; return TK_OC_LE; }
+">="                                        { column_number += yyleng; return TK_OC_GE; }
+"=="                                        { column_number += yyleng; return TK_OC_EQ; }
+"!="                                        { column_number += yyleng; return TK_OC_NE; }
+"&"                                         { column_number += yyleng; return TK_OC_AND; }
+"|"                                         { column_number += yyleng; return TK_OC_OR; }
 
-({lower_char}|_)({lower_char}|_|{digit})* 	{ yylval.valor = create_lexema(yylineno, yytext, IDENTIFICADOR); column_number += yyleng; return TK_IDENTIFICADOR; }
+({lower_char}|_)({lower_char}|_|{digit})*   { yylval.valor = create_lexema(yylineno, yytext, IDENTIFICADOR); column_number += yyleng; return TK_IDENTIFICADOR; }
 
-{number}									{ yylval.valor = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_INT; }
-{number}?\.{number}							{ yylval.valor = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_FLOAT; }
+{number}                                    { yylval.valor = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_INT; }
+{number}?\.{number}                         { yylval.valor = create_lexema(yylineno, yytext, LITERAL); column_number += yyleng; return TK_LIT_FLOAT; }
 
-[\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]			{ column_number += yyleng; return (int)yytext[0]; }
+[\!\*\/\%\+\-\<\>\{\}\(\)\=\,\;]            { column_number += yyleng; return (int)yytext[0]; }
 
-\n                        					{ line_number++; column_number = 1; }
-.											{ column_number += yyleng; return TK_ERRO; }
+\n                                          { line_number++; column_number = 1; }
+.                                           { column_number += yyleng; return TK_ERRO; }
 
 %% /* C functions */
 

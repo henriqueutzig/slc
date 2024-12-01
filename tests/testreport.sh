@@ -30,7 +30,7 @@ for subfolder in tests/*; do
       echo "Running test for: $subfolder/$file..."
 
       # Run the test and redirect both stdout and stderr to the output file
-      cat "$subfolder/$file" | ./etapa3 > "$OUTPUT_FILE" 2>&1
+      cat "$subfolder/$file" | ./etapa4 > "$OUTPUT_FILE" 2>&1
       EXIT_CODE=$?
 
       # Check if the test should be marked as failed

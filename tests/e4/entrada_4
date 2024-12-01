@@ -1,0 +1,10 @@
+test_func_2 = > int {
+    int a;
+    int b;
+    int c;
+    return a;
+}
+
+test_func = > int {
+    return test_func_2;
+}

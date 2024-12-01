@@ -1,0 +1,12 @@
+test_func_2  = b <- int | a <- float > int {
+    int a,b;
+    return a;
+}
+
+test_func_2  = b <- int | a <- float > int {
+    int c;
+    {
+        int c;
+    };
+    return a;
+}

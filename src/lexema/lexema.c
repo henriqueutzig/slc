@@ -1,3 +1,11 @@
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
+
 #include "lexema.h"
 #include <string.h>
 #include <stdio.h>

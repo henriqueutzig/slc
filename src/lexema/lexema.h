@@ -1,3 +1,10 @@
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
 #ifndef _LEXEMA_H_
 #define _LEXEMA_H_
 
@@ -6,7 +13,7 @@ typedef enum {
     IDENTIFICADOR
 } tipo;
 
-typedef struct 
+typedef struct lexema
 {
     int linha;
     tipo tipo;

@@ -27,9 +27,11 @@ typedef struct content_t
     int line;
     type_t type;
     nature_t nature;
+    unsigned int offset;
+    char *base_reg;
     lexema *lexema;
 } content_t;
 
-content_t *create_content(int line, lexema *value, type_t type, nature_t nature);
+content_t *create_content(int line, lexema *value, type_t type, nature_t nature, char *base_reg, unsigned int offset);
 
 #endif

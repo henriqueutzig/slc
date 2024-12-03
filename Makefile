@@ -65,7 +65,7 @@ tar: $(BINARY)
 	cp -r ./tests temp_dir/
 	find ./temp_dir -name "*.o" -type f -delete
 	find temp_dir -name ".*" -exec rm -rf {} +
-	tar cvzf $(TAR_FILE) -C temp_dir .
+	tar cvzf $(TAR_FILE) --exclude="\..*" -C temp_dir .
 	rm -rf temp_dir
 
 # Run automated tests

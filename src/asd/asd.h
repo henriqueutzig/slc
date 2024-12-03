@@ -1,13 +1,17 @@
 #ifndef _ARVORE_H_
 #define _ARVORE_H_
 
-#include "../symbol_table/content.h"
+#include "content.h"
+#include "iloc.h"
 
 typedef struct asd_tree {
   char *label;
   int number_of_children;
   struct asd_tree **children;
   type_t type;
+
+  inst_block_t *code; 
+  char *temp;
 } asd_tree_t;
 
 type_t infer_node_type(asd_tree_t *first_child, asd_tree_t *second_child);

@@ -1,6 +1,9 @@
 #ifndef __ILOC_H__
 #define __ILOC_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef enum {
     NOP,
     ADD,
@@ -100,5 +103,22 @@ static const char *op_t_str[] = {
     "cmp_GT",
     "cmp_NE"
 };
+
+typedef struct inst_t
+{
+    char* op; 
+    char *op1;
+    char *op2;
+    char *op3;
+} inst_t;
+
+typedef struct inst_block_t 
+{
+    inst_t *inst;
+    struct inst_block_t *next;
+} inst_block_t;
+
+inst_t *create_inst(op_t op, char *op1, char *op2, char *op3);
+inst_block_t *create_inst_block(inst_t *inst, inst_block_t *next, ...);
 
 #endif

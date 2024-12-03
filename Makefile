@@ -25,7 +25,7 @@ SRC_FILES = $(SRC_DIR)/main.c \
 OBJECTS = $(SRC_FILES:.c=.o)
 
 # Output files
-BINARY = etapa4
+BINARY = etapa5
 TAR_FILE = $(BINARY).tgz
 TEST_OUT = output/
 TEST = tests/testreport.sh

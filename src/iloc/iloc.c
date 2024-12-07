@@ -1,5 +1,13 @@
 #include "iloc.h"
 
+char *gen_reg() {
+    static unsigned int r = 0;
+    char *reg = (char *)malloc(REG_SIZE * sizeof(char));
+
+    sprintf(reg, "r%d", r++);
+    return reg;
+}
+
 inst_t *create_inst(op_t op, char *op1, char *op2, char *op3, char *label) {
     inst_t *inst = (inst_t *)malloc(sizeof(inst_t));
 

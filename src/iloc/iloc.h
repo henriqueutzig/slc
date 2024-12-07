@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <assert.h>
 
+#define REG_SIZE 10
+
 typedef enum {
     NOP,
     HALT,
@@ -132,4 +134,6 @@ void destroy_inst_block(inst_block_t *block);
 
 void print_inst(inst_t *inst);
 void print_inst_block(inst_block_t *block);
+
+char *gen_reg();
 #endif

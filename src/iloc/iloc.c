@@ -8,6 +8,14 @@ char *gen_reg() {
     return reg;
 }
 
+char *gen_label() {
+    static unsigned int l = 0;
+    char *label = (char *)malloc(LABEL_SIZE * sizeof(char));
+
+    sprintf(label, "L%d", l++);
+    return label;
+}
+
 inst_t *create_inst(op_t op, char *op1, char *op2, char *op3, char *label) {
     inst_t *inst = (inst_t *)malloc(sizeof(inst_t));
 

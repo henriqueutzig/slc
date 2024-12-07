@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #define REG_SIZE 10
+#define LABEL_SIZE 10
 
 typedef enum {
     NOP,
@@ -136,4 +137,5 @@ void print_inst(inst_t *inst);
 void print_inst_block(inst_block_t *block);
 
 char *gen_reg();
+char *gen_label();
 #endif

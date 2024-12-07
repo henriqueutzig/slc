@@ -1,3 +1,11 @@
+/*
+    #####################################
+    # 		Authors - Grupo J:			#
+    # 	Henrique Utzig - 00319043		#
+    # 	João Pedro Cosme - 00314792		#
+    #####################################
+*/
+
 #ifndef __ILOC_H__
 #define __ILOC_H__
 

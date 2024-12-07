@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <assert.h>
 
 typedef enum {
     NOP,
@@ -110,6 +112,7 @@ typedef struct inst_t
     char *op1;
     char *op2;
     char *op3;
+    op_t inst;
 } inst_t;
 
 typedef struct inst_block_t 
@@ -119,6 +122,11 @@ typedef struct inst_block_t
 } inst_block_t;
 
 inst_t *create_inst(op_t op, char *op1, char *op2, char *op3);
-inst_block_t *create_inst_block(inst_t *inst, inst_block_t *next, ...);
+inst_block_t *create_inst_block(inst_t *inst, ...);
 
+void destroy_inst(inst_t *inst);
+void destroy_inst_block(inst_block_t *block);
+
+void print_inst(inst_t *inst);
+void print_inst_block(inst_block_t *block);
 #endif

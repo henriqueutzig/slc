@@ -70,6 +70,7 @@ typedef enum {
 
 static const char *op_t_str[] = {
     "nop",
+    "halt",
     "add",
     "sub",
     "mult",

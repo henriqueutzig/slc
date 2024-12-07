@@ -53,6 +53,30 @@ inst_block_t *create_inst_block(inst_t *inst, ...) {
     return block;
 }
 
+inst_block_t *append_inst(inst_block_t *block, inst_t *inst) {
+    inst_block_t *current = block;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    inst_block_t *new_block = (inst_block_t *)malloc(sizeof(inst_block_t));
+    new_block->inst = inst;
+    new_block->next = NULL;
+    current->next = new_block;
+
+    return block;
+}
+
+inst_block_t *append_inst_block(inst_block_t *block, inst_block_t *block2) {
+    inst_block_t *current = block;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = block2;
+    return block;
+}
+
 void destroy_inst(inst_t *inst) {
     free(inst);
 }

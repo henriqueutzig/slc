@@ -119,7 +119,10 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {
+    $$->code = $2->code;
+    asd_add_child($$,$2);
+    };};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -189,7 +192,9 @@ comando: comando_simples ';' comando {
         $$ = $3;
     }
     };
-    | comando_simples ';' {if($1 != NULL) {$$ = $1;};};
+    | comando_simples ';' {if($1 != NULL) {
+        $$ = $1;
+        };};
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -239,7 +244,6 @@ literal:
         $$ = asd_new_typed($1->valor, INT);
         $$->temp = gen_reg();
         $$->code = generate_load_literal($1, $$->temp);
-        print_inst_block($$->code);
         };
 
 /*
@@ -416,6 +420,10 @@ void _exporta(asd_tree_t *arvore) {
         return;
     }
 
+    if (arvore->code == NULL) {
+        fprintf(stderr, "Null code in _exporta\n");
+        return;
+    }
     print_inst_block(arvore->code);
 
     /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);

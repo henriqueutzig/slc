@@ -80,7 +80,6 @@ inst_block_t *append_inst_block(inst_block_t *block, inst_block_t *block2) {
     while (current->next != NULL) {
         current = current->next;
     }
-
     current->next = block2;
     return block;
 }

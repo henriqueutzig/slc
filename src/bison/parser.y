@@ -176,6 +176,7 @@ bloco_de_comandos:
     um comando simples.
 */
 comando: comando_simples ';' comando {
+    fprintf(stderr,"Comando concatenado\n");
     if($1 != NULL){
         $$ = $1; 
 
@@ -192,8 +193,10 @@ comando: comando_simples ';' comando {
         $$ = $3;
     }
     };
-    | comando_simples ';' {if($1 != NULL) {
-        $$ = $1;
+    | comando_simples ';' {
+        fprintf(stderr, "Comando Simples\n");
+        if($1 != NULL) {
+            $$ = $1;
         };};
 
 /*
@@ -258,7 +261,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     asd_add_child($$, $3);
 
     $$->temp = gen_reg();
-    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1));
+    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
     };
 
 /*
@@ -323,7 +326,25 @@ expressao_precedencia_4:
     | expressao_precedencia_3 {$$ = $1;};
 
 expressao_precedencia_3:
-    expressao_precedencia_3 '+' expressao_precedencia_2 {$$ = asd_new_typed("+", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_3 '+' expressao_precedencia_2 { 
+        $$ = asd_new_typed("+", infer_node_type($1, $3)); 
+        
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+
+
+        char *temp1 = gen_reg();
+        char *temp2 = gen_reg();
+
+        inst_block_t *bloco_1 = generate_load_ident($1, temp1,get_offset_from_stack(stack, $1->label));
+        inst_block_t *bloco_2 = generate_load_ident($3, temp2,get_offset_from_stack(stack, $3->label));
+
+        bloco_2 = append_inst_block(bloco_1, bloco_2);
+        print_inst_block(bloco_2);
+
+        $$->temp = gen_reg();
+        // $$->code = ;
+        }
     | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_2 {$$ = $1;};
 
@@ -349,7 +370,7 @@ operando:
         if ($1 == NULL) {
             yyerror("Null pointer in TK_IDENTIFICADOR");
             YYABORT;
-        } 
+        }
         $$ = asd_new($1->valor);
         }
     | literal {   if ($1 == NULL) {

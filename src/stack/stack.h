@@ -39,7 +39,7 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line);
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line);
 
 content_t *search_all_tables(stackt_t *stack, char *lexema);
-unsigned int get_offset_from_stack(stackt_t *stack, lexema *lexema);
+unsigned int get_offset_from_stack(stackt_t *stack, char *valor);
 
 
 #endif

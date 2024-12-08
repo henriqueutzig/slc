@@ -1,2 +1,8 @@
 loadI 1 => r0
+loadI 1 => r0
+loadI 1 => r0
+storeAI r0 => r1, 4
+loadI 1 => r0
+storeAI r0 => r1, 4
+loadI 1 => r0
 storeAI r0 => r1, 4

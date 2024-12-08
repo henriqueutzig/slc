@@ -235,7 +235,11 @@ variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stac
 
 literal: 
     TK_LIT_FLOAT {$$ = asd_new_typed($1->valor, FLOAT);}
-    | TK_LIT_INT {$$ = asd_new_typed($1->valor, INT);};
+    | TK_LIT_INT {
+        $$ = asd_new_typed($1->valor, INT);
+        $$->temp = gen_reg();
+        $$->code = generate_load_literal($1, $$->temp);
+        };
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -341,9 +345,6 @@ operando:
             yyerror("Null pointer in literal");
             YYABORT;
         }
-        $$->temp = gen_reg();
-        $$->code = create_inst(LOAD_I,$1->valor,$$->temp,NULL,NULL);
-        $$ = $1;
         }
     | chamada_de_funcao { if ($1 == NULL) {
             yyerror("Null pointer in chamada_de_funcao");

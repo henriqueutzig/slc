@@ -13,6 +13,7 @@
     #include "content.h"
     #include "symbol_table.h"
     #include "errors.h"
+    #include "iloc.h"
 
     int yylex(void);
     void yyerror (char const *mensagem);
@@ -402,7 +403,9 @@ void _exporta(asd_tree_t *arvore) {
         return;
     }
 
-    fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
+    print_inst_block(arvore->code);
+
+    /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
 
     for (int i = 0; i < arvore->number_of_children; i++) {
         if (arvore->children[i] == NULL) {
@@ -416,7 +419,7 @@ void _exporta(asd_tree_t *arvore) {
         if (arvore->children[i] != NULL) {
             _exporta(arvore->children[i]);
         }
-    }
+    } */
 }
 
 void exporta (void *arvore){

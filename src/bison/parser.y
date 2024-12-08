@@ -176,7 +176,6 @@ bloco_de_comandos:
     um comando simples.
 */
 comando: comando_simples ';' comando {
-    fprintf(stderr,"Comando concatenado\n");
     if($1 != NULL){
         $$ = $1; 
 
@@ -186,6 +185,7 @@ comando: comando_simples ';' comando {
 
         if($3 != NULL) {
             asd_add_child($$, $3);
+            $$->code = append_inst_block($$->code, $3->code);
         }
 
         $$ = $1;
@@ -194,7 +194,6 @@ comando: comando_simples ';' comando {
     }
     };
     | comando_simples ';' {
-        fprintf(stderr, "Comando Simples\n");
         if($1 != NULL) {
             $$ = $1;
         };};
@@ -343,7 +342,8 @@ expressao_precedencia_3:
         print_inst_block(bloco_2);
 
         $$->temp = gen_reg();
-        // $$->code = ;
+        $$->code = generate_expression($$->temp, temp1, temp2, ADD);
+        $$-> code = append_inst_block(bloco_2, $$->code);
         }
     | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_2 {$$ = $1;};

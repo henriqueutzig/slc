@@ -47,4 +47,18 @@ inst_block_t* generate_load_ident(asd_tree_t *base, char *temp,unsigned int targ
     return block;
 }
 
+void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *op2, op_t operation,stackt_t *stack){
+        char *temp1 = gen_reg();
+        char *temp2 = gen_reg();
+
+        inst_block_t *bloco_1 = generate_load_ident(op1, temp1,get_offset_from_stack(stack, op1->label));
+        inst_block_t *bloco_2 = generate_load_ident(op2, temp2,get_offset_from_stack(stack, op2->label));
+        bloco_2 = append_inst_block(bloco_1, bloco_2);
+
+        target->temp = gen_reg();
+        target->code = generate_expression(target->temp, temp1, temp2, ADD);
+        target->code = append_inst_block(bloco_2, target->code);
+
+}
+
 

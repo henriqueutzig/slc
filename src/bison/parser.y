@@ -332,18 +332,17 @@ expressao_precedencia_3:
         asd_add_child($$, $3);
 
 
-        char *temp1 = gen_reg();
-        char *temp2 = gen_reg();
+        // char *temp1 = gen_reg();
+        // char *temp2 = gen_reg();
 
-        inst_block_t *bloco_1 = generate_load_ident($1, temp1,get_offset_from_stack(stack, $1->label));
-        inst_block_t *bloco_2 = generate_load_ident($3, temp2,get_offset_from_stack(stack, $3->label));
+        // inst_block_t *bloco_1 = generate_load_ident($1, temp1,get_offset_from_stack(stack, $1->label));
+        // inst_block_t *bloco_2 = generate_load_ident($3, temp2,get_offset_from_stack(stack, $3->label));
+        // bloco_2 = append_inst_block(bloco_1, bloco_2);
 
-        bloco_2 = append_inst_block(bloco_1, bloco_2);
-        print_inst_block(bloco_2);
-
-        $$->temp = gen_reg();
-        $$->code = generate_expression($$->temp, temp1, temp2, ADD);
-        $$-> code = append_inst_block(bloco_2, $$->code);
+        // $$->temp = gen_reg();
+        // $$->code = generate_expression($$->temp, temp1, temp2, ADD);
+        // $$-> code = append_inst_block(bloco_2, $$->code);
+        generate_expression_code($$, $1,$3, ADD,stack);
         }
     | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
     | expressao_precedencia_2 {$$ = $1;};

@@ -1,5 +1,3 @@
-loadAI rfp, 4 => r4
-loadAI rfp, 8 => r5
 add r4, r5 => r6
 loadI 2 => r0
 storeAI r0 => rfp, 4

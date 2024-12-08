@@ -56,7 +56,7 @@ void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *o
         bloco_2 = append_inst_block(bloco_1, bloco_2);
 
         target->temp = gen_reg();
-        target->code = generate_expression(target->temp, temp1, temp2, ADD);
+        target->code = generate_expression(target->temp, temp1, temp2, operation);
         target->code = append_inst_block(bloco_2, target->code);
 
 }

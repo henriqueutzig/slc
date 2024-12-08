@@ -318,44 +318,76 @@ expressao_precedencia_5:
     | expressao_precedencia_4 {$$ = $1;};
 
 expressao_precedencia_4:
-    expressao_precedencia_4 '<' expressao_precedencia_3 {$$ = asd_new_typed("<", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 '>' expressao_precedencia_3 {$$ = asd_new_typed(">", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {$$ = asd_new_typed("<=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {$$ = asd_new_typed(">=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_4 '<' expressao_precedencia_3 {
+        $$ = asd_new_typed("<", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_LT, stack);
+    }
+    | expressao_precedencia_4 '>' expressao_precedencia_3 {
+        $$ = asd_new_typed(">", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_GT, stack);
+    }
+    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {
+        $$ = asd_new_typed("<=", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_LE, stack);
+    }
+    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {
+        $$ = asd_new_typed(">=", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_GE, stack);
+    }
     | expressao_precedencia_3 {$$ = $1;};
 
 expressao_precedencia_3:
-    expressao_precedencia_3 '+' expressao_precedencia_2 { 
-        $$ = asd_new_typed("+", infer_node_type($1, $3)); 
-        
-        asd_add_child($$, $1); 
+    expressao_precedencia_3 '+' expressao_precedencia_2 {
+        $$ = asd_new_typed("+", infer_node_type($1, $3));
+        asd_add_child($$, $1);
         asd_add_child($$, $3);
-
-
-        // char *temp1 = gen_reg();
-        // char *temp2 = gen_reg();
-
-        // inst_block_t *bloco_1 = generate_load_ident($1, temp1,get_offset_from_stack(stack, $1->label));
-        // inst_block_t *bloco_2 = generate_load_ident($3, temp2,get_offset_from_stack(stack, $3->label));
-        // bloco_2 = append_inst_block(bloco_1, bloco_2);
-
-        // $$->temp = gen_reg();
-        // $$->code = generate_expression($$->temp, temp1, temp2, ADD);
-        // $$-> code = append_inst_block(bloco_2, $$->code);
-        generate_expression_code($$, $1,$3, ADD,stack);
-        }
-    | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+        generate_expression_code($$, $1, $3, ADD, stack);
+    }
+    | expressao_precedencia_3 '-' expressao_precedencia_2 {
+        $$ = asd_new_typed("-", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, SUB, stack);
+    }
     | expressao_precedencia_2 {$$ = $1;};
 
 expressao_precedencia_2: 
-    expressao_precedencia_2 '*' expressao_precedencia_1 {$$ = asd_new_typed("*", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '/' expressao_precedencia_1 {$$ = asd_new_typed("/", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '%' expressao_precedencia_1 {$$ = asd_new_typed("%", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_2 '*' expressao_precedencia_1 {
+        $$ = asd_new_typed("*", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, MULT, stack);
+    }
+    | expressao_precedencia_2 '/' expressao_precedencia_1 {
+        $$ = asd_new_typed("/", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, DIV, stack);
+    }
+    | expressao_precedencia_2 '%' expressao_precedencia_1 {
+        $$ = asd_new_typed("%", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+    }
     | expressao_precedencia_1 {$$ = $1;};
 
 expressao_precedencia_1: 
-    '-' expressao_precedencia_1 {$$ = asd_new_typed("-", infer_node_type($2, $2)); asd_add_child($$, $2);}
-    | '!' expressao_precedencia_1 {$$ = asd_new_typed("!", infer_node_type($2, $2)); asd_add_child($$, $2);}
+    '-' expressao_precedencia_1 {
+        $$ = asd_new_typed("-", infer_node_type($2, $2));
+        asd_add_child($$, $2);
+    }
+    | '!' expressao_precedencia_1 {
+        $$ = asd_new_typed("!", infer_node_type($2, $2));
+        asd_add_child($$, $2);
+    }
     | operando {$$ = $1;};
 
 /*

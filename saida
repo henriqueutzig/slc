@@ -1,4 +1,5 @@
 add r4, r5 => r6
+sub r8, r9 => r10
 loadI 2 => r0
 storeAI r0 => rfp, 4
 loadI 3 => r2
@@ -7,3 +8,7 @@ loadAI rfp, 4 => r4
 loadAI rfp, 8 => r5
 add r4, r5 => r6
 storeAI r6 => rfp, 12
+loadAI rfp, 12 => r8
+loadAI rfp, 8 => r9
+sub r8, r9 => r10
+storeAI r10 => rfp, 12

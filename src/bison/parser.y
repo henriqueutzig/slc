@@ -245,7 +245,7 @@ literal:
     | TK_LIT_INT {
         $$ = asd_new_typed($1->valor, INT);
         $$->temp = gen_reg();
-        $$->code = generate_load_literal($1, $$->temp);
+        $$->code = generate_load_literal($1->valor, $$->temp);
         };
 
 /*

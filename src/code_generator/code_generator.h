@@ -13,7 +13,7 @@
 #include <asd.h>
 
 inst_block_t* generate_load_literal(lexema *literal, char *temp);
-inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset,char *temp);
+inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset);
 
 
 #endif

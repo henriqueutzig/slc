@@ -20,7 +20,7 @@ inst_block_t* generate_load_literal(lexema *literal, char *temp) {
     return block;
 }
 
-inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset,char *temp) {
+inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset) {
 
     inst_t *inst = create_inst(STORE_AI, expr->temp, target->temp,parse_unsigned_int(target_offset) ,NULL);
     inst_block_t *block = create_inst_block(inst, NULL);

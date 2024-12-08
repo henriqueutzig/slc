@@ -258,7 +258,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     asd_add_child($$, $3);
 
     $$->temp = gen_reg();
-    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1), $$->temp);
+    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1));
     };
 
 /*

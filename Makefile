@@ -6,7 +6,7 @@
 
 # Compilation commands
 CC = gcc
-CFLAGS = -I./src -I./src/errors -I./src/bison -I./src/asd -I./src/lexema -I./src/stack -I./src/symbol_table -I./src/iloc
+CFLAGS = -I./src -I./src/errors -I./src/bison -I./src/asd -I./src/lexema -I./src/stack -I./src/symbol_table -I./src/iloc -I./src/code_generator
 LEX = flex
 BISON = bison
 
@@ -16,7 +16,8 @@ BISON_SRC = $(SRC_DIR)/bison/parser.y
 LEX_SRC = $(SRC_DIR)/flex/scanner.l
 SRC_FILES = $(SRC_DIR)/main.c \
             $(SRC_DIR)/asd/asd.c \
-			$(SRC_DIR)/iloc/iloc.c \
+            $(SRC_DIR)/iloc/iloc.c \
+            $(SRC_DIR)/code_generator/code_generator.c \
             $(SRC_DIR)/lexema/lexema.c \
             $(SRC_DIR)/stack/stack.c \
             $(SRC_DIR)/symbol_table/symbol_table.c \

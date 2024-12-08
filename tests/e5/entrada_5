@@ -1,0 +1,8 @@
+funcao_soma => int
+{
+    int y <= 1;
+    int z <= 2;
+    int x;
+    x = y +z ;
+    return x;
+}

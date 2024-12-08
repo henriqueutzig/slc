@@ -14,6 +14,7 @@
     #include "symbol_table.h"
     #include "errors.h"
     #include "iloc.h"
+    #include "code_generator.h"
 
     int yylex(void);
     void yyerror (char const *mensagem);
@@ -328,16 +329,22 @@ tificadores, (b) literais e (c) chamada de função ou
 (d) outras expressões
 */
 operando: 
-    TK_IDENTIFICADOR    {
+    TK_IDENTIFICADOR  {
         validate_variable_use(stack, $1, get_line_number());
         if ($1 == NULL) {
             yyerror("Null pointer in TK_IDENTIFICADOR");
             YYABORT;
-        } $$ = asd_new($1->valor);}
-    | literal           {   if ($1 == NULL) {
+        } 
+        $$ = asd_new($1->valor);
+        }
+    | literal {   if ($1 == NULL) {
             yyerror("Null pointer in literal");
             YYABORT;
-        } $$ = $1;}
+        }
+        $$->temp = gen_reg();
+        $$->code = create_inst(LOAD_I,$1->valor,$$->temp,NULL,NULL);
+        $$ = $1;
+        }
     | chamada_de_funcao { if ($1 == NULL) {
             yyerror("Null pointer in chamada_de_funcao");
             YYABORT;
@@ -374,7 +381,6 @@ INIT_LOCAL_SCOPE: %empty {
 };
 
 INIT_FUNCTION_SCOPE: %empty {
-    // printf("\t>DEBUG: new LOCAL scope\n");
     just_created_function_scope = true;
     stack = push_symbol_table(stack, create_symbol_table());
 };
@@ -382,7 +388,6 @@ INIT_FUNCTION_SCOPE: %empty {
 DESTROY_LOCAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
     if (table != NULL) {
-        // fprintf(stderr, "Destroying local scope\n");
         destroy_symbol_table(table);
     }
 };

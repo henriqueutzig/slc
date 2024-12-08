@@ -119,3 +119,28 @@ content_t *search_table(symbol_table_t *table, char *lexema) {
     }
     return NULL; 
 }
+
+unsigned int get_offset(symbol_table_t *table, type_t var_type) {
+    assert(table != NULL);
+
+    unsigned int var_type_size = var_type == INT ? INT_SIZE : FLOAT_SIZE;
+    unsigned int offset = 0;
+    symbol_table_t *last_instance = NULL;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        symbol_table_t *current = table[i].next;
+        while (current != NULL) {
+            if (current->content->type == var_type) {
+                last_instance = current;
+            }
+            current = current->next;
+        }
+    }
+
+    if (last_instance != NULL) {
+        offset = last_instance->content->offset + var_type_size;
+    } else {
+        offset = var_type_size;
+    }
+
+    return offset;
+}

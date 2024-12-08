@@ -32,5 +32,6 @@ symbol_table_t *insert_element(symbol_table_t *table, char *lexema, content_t *c
 symbol_table_t *remove_element(symbol_table_t *table, char *lexema);
 
 content_t *search_table(symbol_table_t *table, char *lexema);
+unsigned int get_offset(symbol_table_t *table, type_t var_type);
 
 #endif

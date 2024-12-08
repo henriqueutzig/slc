@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include "../lexema/lexema.h"
 
+#define INT_SIZE 4
+#define FLOAT_SIZE 8
+
 typedef enum type_t {
     INT = 0,
     FLOAT

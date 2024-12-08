@@ -33,6 +33,7 @@ symbol_table_t *pop_symbol_table(stackt_t *stack);
 
 void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type);
 void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type);
+
 void validate_attribution(stackt_t *stack, lexema *lexema, type_t type, int line);
 void validate_function_call(stackt_t *stack, lexema *lexema, int line);
 void validate_variable_use(stackt_t *stack, lexema *lexema, int line);

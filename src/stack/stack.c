@@ -90,7 +90,6 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
     return table;
 }
 
-
 void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
     assert(stack != NULL);
     if (is_empty(stack)) {
@@ -104,7 +103,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type, FUNCTION);
+    content_t *content = create_content(line, lexema, type, FUNCTION, GLOBAL_BASE_POINTER, get_offset(*stack->tables[0], type));
     insert_element(*stack->tables[0], lexema->valor, content);
 }
 
@@ -122,7 +121,7 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type, VARIABLE);
+    content_t *content = create_content(line, lexema, type, VARIABLE, LOCAL_BASE_POINTER, get_offset(table, type));
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
 

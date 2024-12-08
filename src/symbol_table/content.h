@@ -15,6 +15,9 @@
 #define INT_SIZE 4
 #define FLOAT_SIZE 8
 
+#define GLOBAL_BASE_POINTER "rbss"
+#define LOCAL_BASE_POINTER "rfp"
+
 typedef enum type_t {
     INT = 0,
     FLOAT

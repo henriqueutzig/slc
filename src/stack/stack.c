@@ -173,6 +173,22 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
     }
 }
 
+unsigned int get_offset_from_stack(stackt_t *stack, lexema *lexema){
+    assert(stack != NULL);
+    if (is_empty(stack)) {
+        printf("ERROR (get_offset): stack is empty!\n");
+        return 0;
+    }
+
+    content_t *symbol = search_all_tables(stack, lexema->valor);
+    if (symbol == NULL) {
+        printf("ERROR (get_offset): symbol not found!\n");
+        return 0;
+    }
+    return symbol->offset;
+}
+
+
 // -====================
 /// DEBUG FUNC
 void print_table(symbol_table_t *table, int stack_index) {

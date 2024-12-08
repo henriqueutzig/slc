@@ -8,8 +8,24 @@
 
 #include "code_generator.h"
 
-inst_block_t* generate_load_literal(lexema *literal, char *reg) {
-    inst_t *inst = create_inst(LOAD_I, literal->valor, NULL, reg, NULL);
+char *parse_unsigned_int(unsigned int value) {
+    char *str = (char *)malloc(12);
+    sprintf(str, "%d", value);
+    return str;
+}
+
+inst_block_t* generate_load_literal(lexema *literal, char *temp) {
+    inst_t *inst = create_inst(LOAD_I, literal->valor, temp, NULL, NULL);
     inst_block_t *block = create_inst_block(inst, NULL);
     return block;
 }
+
+inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset,char *temp) {
+
+    inst_t *inst = create_inst(STORE_AI, target->temp, parse_unsigned_int(target_offset) , expr->temp, NULL);
+    inst_block_t *block = create_inst_block(inst, NULL);
+    append_inst_block(block, expr->code);
+
+    return block;
+}
+

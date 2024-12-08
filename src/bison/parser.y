@@ -239,6 +239,7 @@ literal:
         $$ = asd_new_typed($1->valor, INT);
         $$->temp = gen_reg();
         $$->code = generate_load_literal($1, $$->temp);
+        print_inst_block($$->code);
         };
 
 /*
@@ -247,7 +248,13 @@ literal:
 */
 atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     validate_attribution(stack, $1, $3->type, get_line_number());
-    $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
+    
+    $$ = asd_new("="); 
+    asd_add_child($$, asd_new($1->valor)); 
+    asd_add_child($$, $3);
+
+    $$->temp = gen_reg();
+    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1), $$->temp);
     };
 
 /*

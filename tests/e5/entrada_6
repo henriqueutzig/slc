@@ -1,0 +1,17 @@
+funcao_soma => int
+{
+    int y;
+    int x;
+
+    y = 0;
+
+    if(y > 2){
+        y = 2;
+    }else{
+        y = 0;
+    };
+
+    x = y + 3;
+
+    return y;
+}

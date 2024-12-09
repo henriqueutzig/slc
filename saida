@@ -3,13 +3,16 @@ storeAI r0 => rfp, 4
 loadAI rfp, 4 => r3
 loadI 2 => r4
 cmp_GT r3, r4 => r5
-loadI 0 => r9
-cmp_EQ r5, r9 => r8
-cbr r8 => l0, l1
+loadI 0 => r11
+cmp_EQ r5, r11 => r10
+jumpI => l2
+cbr r10 => l0, l2
 l0: loadI 2 => r6
 storeAI r6 => rfp, 4
-l1: nop
-loadAI rfp, 4 => r12
-loadI 3 => r13
-add r12, r13 => r14
-storeAI r14 => rfp, 8
+l1: loadI 0 => r8
+storeAI r8 => rfp, 4
+l2: nop
+loadAI rfp, 4 => r14
+loadI 3 => r15
+add r14, r15 => r16
+storeAI r16 => rfp, 8

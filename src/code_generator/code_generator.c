@@ -37,7 +37,6 @@ inst_block_t* generate_load(lexema *literal, char *temp) {
 inst_block_t* generate_expression(char *target_temp, char *op1, char *op2,op_t operation){
     inst_t *inst = create_inst(operation, op1, op2, target_temp, NULL);
     inst_block_t *block = create_inst_block(inst, NULL);
-    print_inst_block(block);
     return block;
 }
 
@@ -57,7 +56,6 @@ int is_integer(const char *str) {
     return is_int;
 }
 
-
 inst_block_t *generate_load_inner(asd_tree_t *node, char *temp, stackt_t *stack) {
     if (is_integer(node->label)) {
         return generate_load_literal(node->label, temp);
@@ -65,10 +63,6 @@ inst_block_t *generate_load_inner(asd_tree_t *node, char *temp, stackt_t *stack)
         return generate_load_ident(node, temp, get_offset_from_stack(stack, node->label));
     }
 }
-
-
-
-
 
 void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *op2, op_t operation,stackt_t *stack){
         char *temp1 = gen_reg();
@@ -83,6 +77,24 @@ void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *o
         target->temp = gen_reg();
         target->code = generate_expression(target->temp, temp1, temp2, operation);
         target->code = append_inst_block(bloco_2, target->code);
+
+}
+
+void generate_neg(asd_tree_t* target, asd_tree_t *op1, stackt_t *stack){
+        char *temp1 = gen_reg();
+
+        inst_block_t *bloco_1 = generate_load_inner(op1, temp1, stack);
+
+        target->temp = gen_reg();
+
+        inst_t *inst = create_inst(MULT_I, temp1, "-1", target->temp, NULL);
+        inst_block_t *bloco_2 = create_inst_block(inst, NULL);
+        bloco_2 = append_inst_block(bloco_1, bloco_2);
+
+        target->code = bloco_2;
+}
+
+void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
 
 }
 

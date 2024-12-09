@@ -383,10 +383,12 @@ expressao_precedencia_1:
     '-' expressao_precedencia_1 {
         $$ = asd_new_typed("-", infer_node_type($2, $2));
         asd_add_child($$, $2);
+        generate_neg($$, $2, stack);
     }
     | '!' expressao_precedencia_1 {
         $$ = asd_new_typed("!", infer_node_type($2, $2));
         asd_add_child($$, $2);
+        generate_not($$, $2, stack);
     }
     | operando {$$ = $1;};
 
@@ -408,15 +410,13 @@ operando:
             yyerror("Null pointer in literal");
             YYABORT;
         }
-        }
+        $$ = $1;
+    }
     | chamada_de_funcao { if ($1 == NULL) {
             yyerror("Null pointer in chamada_de_funcao");
             YYABORT;
         } $$ = $1;}
-    | '('expressao')'   {if ($2 == NULL) {
-            yyerror("Null pointer in expressao");
-            YYABORT;
-        } $$ = $2;};
+    | '(' expressao ')' {$$ = $2;};
 
 /*
     Produções para gerência de tabelas de símbolos

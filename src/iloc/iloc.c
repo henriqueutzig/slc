@@ -20,7 +20,7 @@ char *gen_label() {
     static unsigned int l = 0;
     char *label = (char *)malloc(LABEL_SIZE * sizeof(char));
 
-    sprintf(label, "L%d", l++);
+    sprintf(label, "l%d", l++);
     return label;
 }
 
@@ -108,6 +108,10 @@ void print_inst(inst_t *inst) {
     switch (inst->inst)
     {
     case NOP:
+        if (inst->label != NULL) 
+            printf("%s: ", inst->label);
+        printf("%s", inst->op);
+        break;
     case HALT:
         printf("%s", inst->op);
         break;

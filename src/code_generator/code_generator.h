@@ -20,6 +20,7 @@ inst_block_t* generate_load_ident(asd_tree_t *base, char *temp,unsigned int targ
 void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *op2, op_t operation,stackt_t *stack);
 void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack);
 void generate_neg(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack);
+void generate_if(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, stackt_t *stack);
 
 
 

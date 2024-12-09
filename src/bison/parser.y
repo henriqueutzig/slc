@@ -290,7 +290,14 @@ comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_chil
     obrigatório caso o else seja empregado.
 */
 fluxo_if: 
-    TK_PR_IF '(' expressao ')' bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }}
+    TK_PR_IF '(' expressao ')' bloco_de_comandos {
+        $$ = asd_new("if"); 
+        asd_add_child($$, $3); 
+        if($5 != NULL) { 
+            asd_add_child($$, $5); 
+        }
+        generate_if($$, $3, $5, stack);
+    }
     | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); } if($7 != NULL) { asd_add_child($$, $7); }};
 
 /*

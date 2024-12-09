@@ -306,7 +306,7 @@ fluxo_if:
         } 
         if($7 != NULL) { 
             asd_add_child($$, $7); 
-            }
+        }
         
         generate_if_with_else($$, $3, $5, $7, stack);
         }
@@ -316,7 +316,14 @@ fluxo_if:
     Temos apenas uma construção de repetição que é o token while seguido
     de uma expressão entre parênteses e de um bloco de comandos
 */
-fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }};
+fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {
+    $$ = asd_new("while"); 
+    asd_add_child($$, $3); 
+    if($5 != NULL) { 
+        asd_add_child($$, $5); 
+    }
+    generate_while($$, $3, $5, stack);
+    };
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2

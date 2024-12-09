@@ -182,7 +182,7 @@ unsigned int get_offset_from_stack(stackt_t *stack, char *valor){
 
     content_t *symbol = search_all_tables(stack, valor);
     if (symbol == NULL) {
-        printf("ERROR (get_offset): symbol not found!\n");
+        printf("ERROR (get_offset): symbol %s not found!\n", valor);
         return 0;
     }
     return symbol->offset;

@@ -22,6 +22,7 @@ void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack);
 void generate_neg(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack);
 void generate_if(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, stackt_t *stack);
 void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, asd_tree_t *else_body, stackt_t *stack);
+void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, stackt_t *stack);
 
 
 

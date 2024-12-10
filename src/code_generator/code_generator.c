@@ -60,7 +60,11 @@ inst_block_t *generate_load_inner(asd_tree_t *node, char *temp, stackt_t *stack)
     if (is_integer(node->label)) {
         return generate_load_literal(node->label, temp);
     } else {
-        return generate_load_ident(node, temp, get_offset_from_stack(stack, node->label));
+        if(node->code == NULL){
+            return generate_load_ident(node, temp, get_offset_from_stack(stack, node->label));
+        }
+        node->temp = temp;
+        return node->code;
     }
 }
 

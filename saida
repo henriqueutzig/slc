@@ -1,6 +1,6 @@
 loadI 0 => r0
 storeAI r0 => rfp, 4
-loadI 4 => r4
+loadI 1 => r4
 loadI 2 => r5
 cmp_GT r4, r5 => r6
 loadI 0 => r10

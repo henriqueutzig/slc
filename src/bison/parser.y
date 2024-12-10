@@ -260,6 +260,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     asd_add_child($$, $3);
 
     $$->temp = gen_reg();
+    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
     $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
     };
 

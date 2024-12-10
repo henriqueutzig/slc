@@ -3,12 +3,12 @@ funcao_soma => int
     int y;
     int x;
 
-    y = 0;
+    y = 2;
 
     if(y > 2){
         y = 2;
     }else{
-        y = 0;
+        y = 4;
     };
 
     x = y + 3;

@@ -148,7 +148,7 @@ void generate_if(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, s
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst = create_inst(CBR, temp3, label1, label2, NULL);
+        inst = create_inst(CBR, temp3, label2, label1, NULL);
         inst_block_t *bloco_jump_condicional = create_inst_block(inst);
         
         inst = create_inst(NOP, NULL, NULL, NULL, label2);
@@ -179,7 +179,7 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst = create_inst(CBR, temp3, label1, label3, NULL);
+        inst = create_inst(CBR, temp3, label3, label1, NULL);
         inst_block_t *bloco_jump_condicional = create_inst_block(inst);
         
         inst = create_inst(NOP, NULL, NULL, NULL, label3);
@@ -214,7 +214,7 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst = create_inst(CBR, temp3, label1, label2, NULL);
+        inst = create_inst(CBR, temp3, label2, label1, NULL);
         inst_block_t *bloco_jump_condicional = create_inst_block(inst);
         
         inst = create_inst(NOP, NULL, NULL, NULL, label2);

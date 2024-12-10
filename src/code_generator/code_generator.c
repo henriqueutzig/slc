@@ -99,6 +99,36 @@ void generate_neg(asd_tree_t* target, asd_tree_t *op1, stackt_t *stack){
 }
 
 void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
+        char *temp1 = gen_reg();
+        char *temp3 = gen_reg();
+        char *temp4 = gen_reg();
+
+        char *label1 = gen_label();
+        char *label2 = gen_label();
+
+        inst_block_t *bloco_principal = generate_load_inner(op1, temp1, stack);
+        inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
+        
+        inst_t *cmp_with_zero = create_inst(CMP_EQ, temp1, temp4, temp3, NULL);
+        inst_block_t *bloco_cmp_with_zero = create_inst_block(cmp_with_zero, NULL);
+
+        inst_t *inst = create_inst(CBR, temp3, label1, label2, NULL);
+        inst_block_t *bloco_jump_condicional = create_inst_block(inst, NULL);
+
+        inst = create_inst(LOAD_I, "1", temp1, NULL, label1);
+        inst_block_t *bloco_salva_1 = create_inst_block(inst);
+
+        inst = create_inst(LOAD_I, "0", temp1, NULL, label2);
+        inst_block_t *bloco_salva_0 = create_inst_block(inst);
+
+        if_load_zero_for_comp = append_inst_block(bloco_principal, if_load_zero_for_comp);
+        bloco_cmp_with_zero = append_inst_block(if_load_zero_for_comp, bloco_cmp_with_zero);
+        bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_jump_condicional);
+        bloco_salva_0 = append_inst_block(bloco_salva_1, bloco_salva_0);
+        bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_salva_0);
+
+        target->temp = gen_reg();
+        target->code = bloco_cmp_with_zero;
 
 }
 

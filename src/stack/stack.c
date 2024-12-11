@@ -107,7 +107,7 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
     insert_element(*stack->tables[0], lexema->valor, content);
 }
 
-void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type, unsigned int *offset){
     assert(stack != NULL);
     if (is_empty(stack)) {
         printf("ERROR (insert_symbol_to_scope): stack is empty! Could not insert symbol '%s'\n", lexema->valor);
@@ -121,7 +121,9 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type, VARIABLE, LOCAL_BASE_POINTER, get_offset(table, type));
+    unsigned int var_type_size = (type == INT ? INT_SIZE : FLOAT_SIZE);
+    *offset += var_type_size;
+    content_t *content = create_content(line, lexema, type, VARIABLE, LOCAL_BASE_POINTER, *offset);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
 

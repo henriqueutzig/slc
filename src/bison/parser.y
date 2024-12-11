@@ -37,6 +37,7 @@
     stackt_t *stack = NULL;
     type_t tipo_atual = -1;
     bool just_created_function_scope = false;
+    unsigned int offset = 0;
 %}
 
 %define parse.error verbose
@@ -148,7 +149,7 @@ lista_de_parametros: parametro {$$ = NULL; };
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel DESTROY_CURRENT_TYPE {$$=NULL; insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel DESTROY_CURRENT_TYPE {$$=NULL; insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual, &offset);};
 
 /*
     O tipo da função pode ser float ou int
@@ -238,7 +239,7 @@ variavel_inicializada:
     variavel {$$ = NULL; }
     | variavel TK_OC_LE literal {$$ = asd_new("<="); asd_add_child($$,$1); asd_add_child($$,$3);}; ;
 
-variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
+variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual, &offset);};
 
 literal: 
     TK_LIT_FLOAT {$$ = asd_new_typed($1->valor, FLOAT);}
@@ -466,14 +467,15 @@ INIT_LOCAL_SCOPE: %empty {
     // printf("\t>DEBUG: new LOCAL scope\n");
     if(just_created_function_scope){
         just_created_function_scope = false;
-    }else{
-    stack = push_symbol_table(stack, create_symbol_table());
+    } else {
+        stack = push_symbol_table(stack, create_symbol_table());
     }
 };
 
 INIT_FUNCTION_SCOPE: %empty {
     just_created_function_scope = true;
     stack = push_symbol_table(stack, create_symbol_table());
+    offset = 0;
 };
 
 DESTROY_LOCAL_SCOPE: %empty {

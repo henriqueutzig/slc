@@ -1,15 +1,18 @@
 funcao_soma => int
 {
     int y;
-    int x;
     int z;
 
     y = 10;
     if(y > 0){
         int a;
         a = 20;
+        int b;
+        b = 2;
+        int c;
+        c = 99;
     };
-
-
+    z = 100;
+    
     return y;
 }

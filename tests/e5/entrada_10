@@ -16,3 +16,22 @@ funcao_soma => int
     
     return y;
 }
+
+funcao_soma_2 => int
+{
+    int y;
+    int z;
+
+    y = 10;
+    if(y > 0){
+        int a;
+        a = 20;
+        int b;
+        b = 2;
+        int c;
+        c = 99;
+    };
+    z = 100;
+    
+    return y;
+}

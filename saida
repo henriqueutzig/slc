@@ -15,3 +15,20 @@ storeAI r10 => rfp, 20
 l1: nop
 loadI 100 => r15
 storeAI r15 => rfp, 8
+loadI 10 => r17
+storeAI r17 => rfp, 4
+loadAI rfp, 4 => r20
+loadI 0 => r21
+cmp_GT r20, r21 => r22
+loadI 0 => r30
+cmp_EQ r22, r30 => r29
+cbr r29 => l3, l2
+l2: loadI 20 => r23
+storeAI r23 => rfp, 12
+loadI 2 => r25
+storeAI r25 => rfp, 16
+loadI 99 => r27
+storeAI r27 => rfp, 20
+l3: nop
+loadI 100 => r32
+storeAI r32 => rfp, 8

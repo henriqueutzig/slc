@@ -132,11 +132,11 @@ funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {
     função pode ser float ou int 
 */
 cabecalho: INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
-    $$ = asd_new($2->valor); 
+    $$ = asd_new_func($2->valor); 
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
 | INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
-    $$ = asd_new($2->valor);};
+    $$ = asd_new_func($2->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
@@ -502,10 +502,22 @@ void _exporta(asd_tree_t *arvore) {
     }
 
     if (arvore->code == NULL) {
-        fprintf(stderr, "Null code in _exporta\n");
         return;
     }
-    print_inst_block(arvore->code);
+    //print nature
+
+    if(arvore->nature == FUNCTION){
+        print_inst_block(arvore->code);
+    }
+
+    for (int i = 0; i < arvore->number_of_children; i++) {
+        if (arvore->children[i] != NULL) {
+            _exporta(arvore->children[i]);
+    }
+    }
+
+
+    /* _exporta(arvore->children[arvore->number_of_children - 1]); */
 
     /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
 
@@ -516,6 +528,7 @@ void _exporta(asd_tree_t *arvore) {
         }
         fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
     }
+
 
     for (int i = 0; i < arvore->number_of_children; i++) {
         if (arvore->children[i] != NULL) {

@@ -9,7 +9,7 @@ typedef struct asd_tree {
   int number_of_children;
   struct asd_tree **children;
   type_t type;
-
+  nature_t nature;
   inst_block_t *code; 
   char *temp;
 } asd_tree_t;
@@ -46,6 +46,13 @@ void asd_print_graphviz (asd_tree_t *tree);
  * Função asd_last_child, retorna o último filho da árvore.
  */
 asd_tree_t *asd_last_child(asd_tree_t *tree);
+
+
+/*
+ * Função asd_new, cria um nó sem filhos com o label informado.
+ */
+asd_tree_t *asd_new_func(const char *label);
+
 
 
 #endif //_ARVORE_H_

@@ -25,7 +25,7 @@ typedef enum type_t {
 
 typedef enum nature_t {
     VARIABLE = 0,
-    FUNCTION
+    FUNCTION = 1
 } nature_t;
 
 typedef struct content_t

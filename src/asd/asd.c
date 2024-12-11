@@ -22,6 +22,7 @@ asd_tree_t *asd_new_typed(const char *label, type_t type) {
     ret->number_of_children = 0;
     ret->children = NULL;
     ret->type = type; 
+    ret->nature = VARIABLE;
   }
   return ret;
 }
@@ -37,6 +38,23 @@ asd_tree_t *asd_new(const char *label)
     ret->type = INT; // default type will always be INT 
     ret->code = NULL;
     ret->temp = NULL;
+    ret->nature = VARIABLE;
+  }
+  return ret;
+}
+
+asd_tree_t *asd_new_func(const char *label)
+{
+  asd_tree_t *ret = NULL;
+  ret = calloc(1, sizeof(asd_tree_t));
+  if (ret != NULL){
+    ret->label = strdup(label);
+    ret->number_of_children = 0;
+    ret->children = NULL;
+    ret->type = INT; // default type will always be INT 
+    ret->code = NULL;
+    ret->temp = NULL;
+    ret->nature = FUNCTION;
   }
   return ret;
 }

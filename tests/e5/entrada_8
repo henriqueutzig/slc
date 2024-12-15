@@ -6,15 +6,7 @@ funcao_soma => int
 
     // y = 10;
     // x = !y;
-    if (0 == 0)
-    {
-        z = 1;
-    }
-    else
-    {
-        z = 0;
-    };
-    // z = !0;
+    z = !0;
 
 
     return z;

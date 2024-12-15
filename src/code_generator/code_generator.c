@@ -30,7 +30,6 @@ inst_block_t* generate_load_literal(char *valor, char *temp) {
 }
 
 inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset) {
-    fprintf(stderr,  "temp is %s\n", expr->temp);
     inst_t *inst = create_inst(STORE_AI, expr->temp, "rfp",parse_unsigned_int(target_offset) ,NULL);
     inst_block_t *block = create_inst_block(inst, NULL);    
     block = append_inst_block(expr->code,block);
@@ -104,6 +103,7 @@ void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
 
         char *label1 = gen_label();
         char *label2 = gen_label();
+        char *label3 = gen_label();
 
         inst_block_t *bloco_principal = generate_load_inner(op1, temp1, stack);
         inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
@@ -111,7 +111,7 @@ void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
         inst_t *cmp_with_zero = create_inst(CMP_EQ, temp1, temp4, temp3, NULL);
         inst_block_t *bloco_cmp_with_zero = create_inst_block(cmp_with_zero, NULL);
 
-        inst_t *inst = create_inst(CBR, temp3, label2, label1, NULL);
+        inst_t *inst = create_inst(CBR, temp3, label1, label2, NULL);
         inst_block_t *bloco_jump_condicional = create_inst_block(inst, NULL);
 
         inst = create_inst(LOAD_I, "1", temp2, NULL, label1);
@@ -120,10 +120,20 @@ void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
         inst = create_inst(LOAD_I, "0", temp2, NULL, label2);
         inst_block_t *bloco_salva_0 = create_inst_block(inst);
 
+        inst = create_inst(NOP, NULL, NULL, NULL, label3);
+        inst_block_t *bloco_proxima_instr = create_inst_block(inst);
+
+        inst = create_inst(JUMP_I, label3, NULL, NULL, NULL);
+        inst_block_t *pula_proxima_atrib = create_inst_block(inst);
+
         if_load_zero_for_comp = append_inst_block(bloco_principal, if_load_zero_for_comp);
         bloco_cmp_with_zero = append_inst_block(if_load_zero_for_comp, bloco_cmp_with_zero);
         bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_jump_condicional);
+        bloco_salva_1 = append_inst_block(bloco_salva_1, pula_proxima_atrib);
+        // bloco_salva_0 = append_inst_block(bloco_salva_0, pula_proxima_atrib);
         bloco_salva_0 = append_inst_block(bloco_salva_1, bloco_salva_0);
+        bloco_salva_0 = append_inst_block(bloco_salva_0, bloco_proxima_instr);
+        // bloco_salva_0 = append_inst_block(bloco_salva_0, bloco_proxima_instr);
         bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_salva_0);
 
         target->temp = temp2;

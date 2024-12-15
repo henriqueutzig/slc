@@ -130,10 +130,8 @@ void generate_not(asd_tree_t* target, asd_tree_t *op1,stackt_t *stack){
         bloco_cmp_with_zero = append_inst_block(if_load_zero_for_comp, bloco_cmp_with_zero);
         bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_jump_condicional);
         bloco_salva_1 = append_inst_block(bloco_salva_1, pula_proxima_atrib);
-        // bloco_salva_0 = append_inst_block(bloco_salva_0, pula_proxima_atrib);
         bloco_salva_0 = append_inst_block(bloco_salva_1, bloco_salva_0);
         bloco_salva_0 = append_inst_block(bloco_salva_0, bloco_proxima_instr);
-        // bloco_salva_0 = append_inst_block(bloco_salva_0, bloco_proxima_instr);
         bloco_cmp_with_zero = append_inst_block(bloco_cmp_with_zero, bloco_salva_0);
 
         target->temp = temp2;

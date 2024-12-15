@@ -1,22 +1,16 @@
-loadI 2 => r0
-storeAI r0 => rfp, 4
-loadAI rfp, 4 => r3
-loadI 2 => r4
-cmp_GT r3, r4 => r5
-loadI 0 => r11
-cmp_EQ r5, r11 => r10
+loadI 0 => r2
+loadI 0 => r3
+cmp_EQ r2, r3 => r4
+loadI 0 => r10
+cmp_EQ r4, r10 => r9
 
-cbr r10 => l1, l0
+cbr r9 => l1, l0
 
-l0: loadI 2 => r6
-storeAI r6 => rfp, 4
+l0: loadI 1 => r5
+storeAI r5 => rfp, 4
 jumpI => l2
 
-l1: loadI 4 => r8
-storeAI r8 => rfp, 4
+l1: loadI 0 => r7
+storeAI r7 => rfp, 4
 l2: nop
 
-loadAI rfp, 4 => r14
-loadI 3 => r15
-add r14, r15 => r16
-storeAI r16 => rfp, 8

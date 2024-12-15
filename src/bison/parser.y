@@ -333,16 +333,36 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {
     precedencia 6 é precedida por operaçoes do nivel 1
 */
 expressao: 
-    expressao TK_OC_OR expressao_precedencia_6 {$$ = asd_new_typed("|", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao TK_OC_OR expressao_precedencia_6 {
+        $$ = asd_new_typed("|", infer_node_type($1, $3)); 
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, OR, stack);
+        }
     | expressao_precedencia_6 {$$ = $1;};
 
 expressao_precedencia_6: 
-    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {$$ = asd_new_typed("&", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {
+        $$ = asd_new_typed("&", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, AND, stack);
+        }
     | expressao_precedencia_5 {$$ = $1;};
 
 expressao_precedencia_5: 
-    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {$$ = asd_new_typed("==", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {$$ = asd_new_typed("!=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {
+        $$ = asd_new_typed("==", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_EQ, stack);
+        }
+    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {
+        $$ = asd_new_typed("!=", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_NE, stack);
+        }
     | expressao_precedencia_4 {$$ = $1;};
 
 expressao_precedencia_4:

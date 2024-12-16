@@ -493,9 +493,9 @@ INIT_LOCAL_SCOPE: %empty {
 };
 
 INIT_FUNCTION_SCOPE: %empty {
+    offset = 0;
     just_created_function_scope = true;
     stack = push_symbol_table(stack, create_symbol_table());
-    offset = 0;
 };
 
 DESTROY_LOCAL_SCOPE: %empty {

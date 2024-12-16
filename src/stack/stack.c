@@ -74,6 +74,7 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
 
 void insert_symbol(stackt_t *stack, lexema *lexema, int line, type_t type, unsigned int *offset, bool is_global) {
     assert(stack != NULL);
+    assert(offset != NULL || is_global);
 
     if (is_empty(stack)) {
         printf("ERROR (insert_symbol): stack is empty! Could not insert symbol '%s'\n", lexema->valor);
@@ -93,7 +94,7 @@ void insert_symbol(stackt_t *stack, lexema *lexema, int line, type_t type, unsig
         *offset += var_type_size;
     }
 
-    content_t *content = create_content(line, lexema, type, is_global ? FUNCTION : VARIABLE, is_global ? GLOBAL_BASE_POINTER : LOCAL_BASE_POINTER, is_global ? get_offset(*stack->tables[0], type) : *offset);
+    content_t *content = create_content(line, lexema, type, is_global ? FUNCTION : VARIABLE, is_global ? GLOBAL_BASE_POINTER : LOCAL_BASE_POINTER, (is_global ? get_offset(*stack->tables[0], type) : *offset));
     insert_element(table, lexema->valor, content);
 }
 

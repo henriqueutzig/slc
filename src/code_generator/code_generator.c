@@ -206,7 +206,8 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
 
 
         inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
-        inst_t *inst = create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, label3);
+        boolean_op->code->inst->label = label3;
+        inst_t *inst = create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL);
         inst_block_t *bloco_if = create_inst_block(inst);
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);

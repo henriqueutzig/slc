@@ -1,0 +1,7 @@
+main = a <- int | b <- int > int {
+
+return 2 * 2;
+
+return -2*(a-b*b+a);
+
+}

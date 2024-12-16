@@ -237,7 +237,15 @@ lista_de_variaveis:
 
 variavel_inicializada: 
     variavel {$$ = NULL; }
-    | variavel TK_OC_LE literal {$$ = asd_new("<="); asd_add_child($$,$1); asd_add_child($$,$3);}; ;
+    | variavel TK_OC_LE literal {
+        $$ = asd_new("<="); 
+        asd_add_child($$,$1); 
+        asd_add_child($$,$3);
+        
+        $$->temp = gen_reg();
+    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
+        $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->label));
+        }; ;
 
 variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual, &offset);};
 
@@ -259,6 +267,7 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     $$ = asd_new("="); 
     asd_add_child($$, asd_new($1->valor)); 
     asd_add_child($$, $3);
+
 
     $$->temp = gen_reg();
     // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));

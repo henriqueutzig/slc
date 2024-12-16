@@ -2,6 +2,8 @@ main = a <- int | b <- int > int {
 
 int c <= 3;
 
+c = 2;
+
 {
     int d <= 4;
     d = 2;

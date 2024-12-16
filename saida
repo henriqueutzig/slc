@@ -1,0 +1,6 @@
+loadI 4 => r0
+storeAI r0 => rfp, 28
+loadI 2 => r2
+storeAI r2 => rfp, 20
+loadI 3 => r4
+storeAI r4 => rfp, 24

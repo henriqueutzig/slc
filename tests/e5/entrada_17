@@ -1,0 +1,14 @@
+main = a <- int | b <- int > int {
+
+int x;
+int y;
+
+{
+    int z;
+    z = 4;
+};
+
+x = 2;
+y = 3;
+
+}

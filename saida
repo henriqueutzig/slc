@@ -1,43 +1,23 @@
-loadI 1 => r0
+loadI 10 => r0
 storeAI r0 => rfp, 4
-loadI 0 => r2
-storeAI r2 => rfp, 8
-loadAI rfp, 4 => r5
-loadI 0 => r6
-cmp_GT r5, r6 => r7
-loadI 0 => r35
-cmp_EQ r7, r35 => r34
-cbr r34 => l10, l9
-l9: loadAI rfp, 4 => r9
-loadI 2 => r10
-cmp_LT r9, r10 => r11
-loadI 0 => r32
-cmp_EQ r11, r32 => r31
-cbr r31 => l7, l6
-l6: loadAI rfp, 4 => r13
-loadI 1 => r14
-cmp_EQ r13, r14 => r15
-loadI 0 => r29
-cmp_EQ r15, r29 => r28
-cbr r28 => l4, l3
-l3: loadAI rfp, 4 => r17
-loadI 0 => r18
-cmp_GT r17, r18 => r19
-loadI 0 => r26
-cmp_EQ r19, r26 => r25
-cbr r25 => l1, l0
-l0: loadAI rfp, 4 => r21
-loadI 1 => r22
-sub r21, r22 => r23
-storeAI r23 => rfp, 4
+loadAI rfp, 4 => r3
+loadI 1 => r4
+cmp_GT r3, r4 => r5
+loadI 0 => r19
+cmp_EQ r5, r19 => r18
+cbr r18 => l3, l2
+l2: loadAI rfp, 4 => r7
+loadI 0 => r8
+cmp_GT r7, r8 => r9
+loadI 0 => r16
+cmp_EQ r9, r16 => r15
+cbr r15 => l1, l0
+l0: loadAI rfp, 4 => r11
+loadI 1 => r12
+sub r11, r12 => r13
+storeAI r13 => rfp, 4
 jumpI => l2
 l1: nop
-jumpI => l5
+jumpI => l4
+l3: nop
 l4: nop
-l5: nop
-jumpI => l8
-l7: nop
-l8: nop
-jumpI => l11
-l10: nop
-l11: nop

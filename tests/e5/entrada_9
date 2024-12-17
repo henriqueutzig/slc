@@ -5,10 +5,27 @@ funcao_soma => int
     int z;
 
     y = 10;
-    if(y > 0){
-        // x = 1;
+    z = 10;
+    while(z>0){
+        z = z - 1;
+        if (y > 0) {
+            int f <= 10;
+            if (f == 10) {
+                int g <= 5;
+                if (g > f) {
+                    g = g + 1;
+                }else{
+                    int h <= 2;
+                    h = h + 1;
+                    g = h + 27;
+                    int a <= 2;
+                    while (a > 0) {
+                        a = a - 1;
+                        g = g + 1;
+                };
+            };
+        };
     };
-
-
+    };
     return y;
 }

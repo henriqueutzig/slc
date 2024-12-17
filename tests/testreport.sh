@@ -1,64 +1,59 @@
 #!/usr/bin/bash
 
-# Initialize counters and arrays
 PASSED=0
 FAILED=0
 FAILED_TESTS=()
 
-# Clear existing output and dot folders
 rm -rf output
 rm -rf dot
-mkdir -p output
-mkdir -p dot
+mkdir -p output/e5
+mkdir -p dot/e5
 
-# Loop through each sub-folder in the tests directory
-for subfolder in tests/*; do
-  if [ -d "$subfolder" ]; then
-    INPUTS=$(ls "$subfolder" | grep entrada_)
-    OUTPUT_DIR="output/$(basename "$subfolder")"
-    DOT_DIR="dot/$(basename "$subfolder")"
-    mkdir -p "$OUTPUT_DIR"
-    mkdir -p "$DOT_DIR"
+# Define the specific subfolder
+SUBFOLDER="tests/e5"
 
-    for file in $INPUTS; do
-      OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
-      DOT_FILE="$DOT_DIR/output_$file.dot"
+if [ -d "$SUBFOLDER" ]; then
+  INPUTS=$(ls "$SUBFOLDER" | grep entrada_)
+  OUTPUT_DIR="output/e5"
+  DOT_DIR="dot/e5"
 
-      # Clear the output file before writing to it
-      > "$OUTPUT_FILE"
+  for file in $INPUTS; do
+    OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
+    DOT_FILE="$DOT_DIR/output_$file.dot"
 
-      echo "Running test for: $subfolder/$file..."
+    > "$OUTPUT_FILE"
 
-      # Run the test and redirect both stdout and stderr to the output file
-      cat "$subfolder/$file" | ./etapa5 > "$OUTPUT_FILE" 2>&1
-      EXIT_CODE=$?
+    echo "Running test for: $SUBFOLDER/$file..."
 
-      # Check if the test should be marked as failed
-      if [ $EXIT_CODE -eq 139 ]; then
-        echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
-        FAILED=$((FAILED + 1))
-        FAILED_TESTS+=("$subfolder/$file")
-      elif grep -qi "erro" "$OUTPUT_FILE"; then
-        echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
-        FAILED=$((FAILED + 1))
-        FAILED_TESTS+=("$subfolder/$file")
-      else
-        echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
-        PASSED=$((PASSED + 1))
+    cat "$SUBFOLDER/$file" | ./etapa5 > "$OUTPUT_FILE" 2>&1
+    EXIT_CODE=$?
 
-        # Run output2dot.sh and save the output to the DOT file
-        sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
-        echo "DOT file generated: $DOT_FILE"
-      fi
-    done
-  fi
-done
+    if [ $EXIT_CODE -eq 139 ]; then
+      echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
+      FAILED=$((FAILED + 1))
+      FAILED_TESTS+=("$SUBFOLDER/$file")
+    elif grep -qi "erro" "$OUTPUT_FILE"; then
+      echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
+      FAILED=$((FAILED + 1))
+      FAILED_TESTS+=("$SUBFOLDER/$file")
+    else
+      echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
+      PASSED=$((PASSED + 1))
 
-# Calculate percentage of passed tests
+      sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
+      echo "DOT file generated: $DOT_FILE"
+
+      # python3 ilocsim.py -m < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"
+      # echo "Ilocsim result stored in: $OUTPUT_DIR/ilocsim_$file.txt"
+    fi
+  done
+else
+  echo -e "\033[1;31m[ERROR]\033[0m Subfolder $SUBFOLDER does not exist."
+fi
+
 TOTAL=$((PASSED + FAILED))
 PASS_PERCENTAGE=$((100 * PASSED / TOTAL))
 
-# Generate test summary report
 echo -e "\n==================== Test Summary ===================="
 echo -e "Total tests run: \033[1m$TOTAL\033[0m"
 echo -e "Tests passed: \033[1;32m$PASSED\033[0m (\033[1m$PASS_PERCENTAGE%\033[0m)"

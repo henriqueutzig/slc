@@ -1,9 +1,11 @@
 main = a <- int | b <- int > int {
 
 a = 222;
+b = 2;
 
 if(!a != b){
-    int c <= 2;
+    int c;  
+    c=2;
     return c;
 };
 

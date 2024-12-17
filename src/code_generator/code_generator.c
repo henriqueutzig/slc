@@ -161,6 +161,8 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
             }else{
                 label1 = body->code->inst->label;
             }
+        }else{
+            label1 = gen_label();
         }
 
 
@@ -181,8 +183,7 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
 
         bloco_if = append_inst_block(bloco_if, bloco_jump_condicional);
 
-        if(body != NULL){
-            body->code->inst->label = label1;
+        if(body != NULL && body->code != NULL){
             bloco_if = append_inst_block(bloco_if, body->code);
             bloco_if = append_inst_block(bloco_if, bloco_jump_sobre_else);
         }else{
@@ -192,10 +193,12 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
         }        
   
         
-        if(else_body != NULL){
-        else_body->code->inst->label = label2;
-        bloco_if = append_inst_block(bloco_if, else_body->code);
+        if(else_body != NULL ){
+            else_body->code->inst->label = label2;
+            bloco_if = append_inst_block(bloco_if, else_body->code);
         }else{
+            fprintf(stderr, "ELSE BODY NULL\n");
+            fprintf(stderr,"Label2: %s\n",label2);
             inst = create_inst(NOP, NULL, NULL, NULL, label2);
             inst_block_t *bloco_nop = create_inst_block(inst);
             bloco_if = append_inst_block(bloco_if, bloco_nop);

@@ -38,13 +38,18 @@ if [ -d "$SUBFOLDER" ]; then
       FAILED_TESTS+=("$SUBFOLDER/$file")
     else
       echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
-      PASSED=$((PASSED + 1))
 
       sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
       echo "DOT file generated: $DOT_FILE"
 
-      # python3 ilocsim.py -m < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"
-      # echo "Ilocsim result stored in: $OUTPUT_DIR/ilocsim_$file.txt"
+      if timeout 10s python3 ilocsim.py -m < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"; then
+        echo "Ilocsim result stored in: $OUTPUT_DIR/ilocsim_$file.txt"
+        PASSED=$((PASSED + 1))
+      else
+        FAILED=$((FAILED + 1))
+        FAILED_TESTS+=("$SUBFOLDER/$file")
+        echo -e "\033[1;31m[ERROR]\033[0m Ilocsim script failed or timed out after 10 seconds."
+      fi
     fi
   done
 else

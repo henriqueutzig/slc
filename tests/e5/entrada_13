@@ -1,22 +1,21 @@
 main = a <- int | b <- int > int {
+// a = 222;
+// b = 2;
 
-a = 222;
-b = 2;
+// if(!a != b){
+//     int c;  
+//     c=2;
+//     return c;
+// };
 
-if(!a != b){
-    int c;  
-    c=2;
-    return c;
-};
+// if(a + b/2){
+//     a = 333;
+// } else{
+//     int a <= 0;
 
-if(a + b/2){
-    a = 333;
-} else{
-    int a <= 0;
-
-    a = a + b;
-    return a;
-};
+//     a = a + b;
+//     return a;
+// };
 
 if(!a){
 

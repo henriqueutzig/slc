@@ -167,8 +167,10 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
 
 
         inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
+        
         inst_t *inst = create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL);
         inst_block_t *bloco_if = create_inst_block(inst);
+        
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
@@ -197,9 +199,7 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
             else_body->code->inst->label = label2;
             bloco_if = append_inst_block(bloco_if, else_body->code);
         }else{
-            // fprintf(stderr, "ELSE BODY NULL\n");
-            // fprintf(stderr,"Label2: %s\n",label2);
-            inst = create_inst(NOP, NULL, NULL, NULL, label2);
+            inst_t* inst = create_inst(NOP, NULL, NULL, NULL, label2);
             inst_block_t *bloco_nop = create_inst_block(inst);
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         };

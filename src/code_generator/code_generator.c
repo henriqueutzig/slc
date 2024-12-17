@@ -148,8 +148,6 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
         char *temp3 = gen_reg();
         char *temp4 = gen_reg();
 
-
-    
         char *label1;
         char *label2 = gen_label();
         char *label3 = gen_label();
@@ -168,20 +166,16 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
 
         inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
         
-        inst_t *inst = create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL);
-        inst_block_t *bloco_if = create_inst_block(inst);
+        inst_block_t *bloco_if = create_inst_block(create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL));
         
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst = create_inst(CBR, temp3, label2, label1, NULL);
-        inst_block_t *bloco_jump_condicional = create_inst_block(inst);
+        inst_block_t *bloco_jump_condicional = create_inst_block(create_inst(CBR, temp3, label2, label1, NULL));
         
-        inst = create_inst(NOP, NULL, NULL, NULL, label3);
-        inst_block_t *bloco_proxima_instr = create_inst_block(inst);
+        inst_block_t *bloco_proxima_instr = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label3));
 
-        inst = create_inst(JUMP_I, label3, NULL, NULL, NULL);
-        inst_block_t *bloco_jump_sobre_else = create_inst_block(inst);
+        inst_block_t *bloco_jump_sobre_else = create_inst_block(create_inst(JUMP_I, label3, NULL, NULL, NULL));
 
         bloco_if = append_inst_block(bloco_if, bloco_jump_condicional);
 
@@ -189,8 +183,7 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
             bloco_if = append_inst_block(bloco_if, body->code);
             bloco_if = append_inst_block(bloco_if, bloco_jump_sobre_else);
         }else{
-            inst = create_inst(NOP, NULL, NULL, NULL, label1);
-            inst_block_t *bloco_nop = create_inst_block(inst);
+            inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label1));
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         }        
   
@@ -199,8 +192,7 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
             else_body->code->inst->label = label2;
             bloco_if = append_inst_block(bloco_if, else_body->code);
         }else{
-            inst_t* inst = create_inst(NOP, NULL, NULL, NULL, label2);
-            inst_block_t *bloco_nop = create_inst_block(inst);
+            inst_block_t *bloco_nop = create_inst_block( create_inst(NOP, NULL, NULL, NULL, label2));
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         };
         
@@ -222,20 +214,16 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
     
         boolean_op->code->inst->label = label3;
         
-        inst_t *inst = create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL);
-        inst_block_t *bloco_if = create_inst_block(inst);
+        inst_block_t *bloco_if = create_inst_block(create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL));
         
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst = create_inst(CBR, temp3, label2, label1, NULL);
-        inst_block_t *bloco_jump_condicional = create_inst_block(inst);
+        inst_block_t *bloco_jump_condicional = create_inst_block(create_inst(CBR, temp3, label2, label1, NULL));
         
-        inst = create_inst(NOP, NULL, NULL, NULL, label2);
-        inst_block_t *bloco_proxima_instr = create_inst_block(inst);
+        inst_block_t *bloco_proxima_instr = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label2));
 
-        inst = create_inst(JUMP_I, label3, NULL, NULL, NULL);
-        inst_block_t *bloco_jump_sobre_else = create_inst_block(inst);
+        inst_block_t *bloco_jump_sobre_else = create_inst_block(create_inst(JUMP_I, label3, NULL, NULL, NULL));
         bloco_proxima_instr = append_inst_block(bloco_jump_sobre_else, bloco_proxima_instr);
         
 
@@ -245,8 +233,7 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
             body->code->inst->label = label1;
             bloco_if = append_inst_block(bloco_if, body->code);}
         else{
-            inst = create_inst(NOP, NULL, NULL, NULL, label1);
-            inst_block_t *bloco_nop = create_inst_block(inst);
+            inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label1));
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         }
         

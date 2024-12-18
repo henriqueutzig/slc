@@ -66,9 +66,21 @@ inst_block_t *generate_load_inner(asd_tree_t *node, char *temp, stackt_t *stack)
 }
 
 void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *op2, op_t operation,stackt_t *stack){
-        char *temp1 = gen_reg();
-        char *temp2 = gen_reg();
+        char *temp1;
+        if(op1->temp == NULL){
+            op1->temp = gen_reg();
+            temp1 = op1->temp;
+        }else{
+            temp1 = op1->temp;
+        }
 
+        char *temp2;
+        if(op2->temp == NULL){
+            op2->temp = gen_reg();
+            temp2 = op2->temp;
+        }else{
+            temp2 = op2->temp;
+        }
 
         inst_block_t *bloco_1 = generate_load_inner(op1, temp1, stack);
         inst_block_t *bloco_2 = generate_load_inner(op2, temp2, stack);

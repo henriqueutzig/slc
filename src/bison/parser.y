@@ -473,7 +473,9 @@ operando:
             yyerror("Null pointer in chamada_de_funcao");
             YYABORT;
         } $$ = $1;}
-    | '(' expressao ')' {$$ = $2;};
+    | '(' expressao ')' {
+        $$ = $2;
+        };
 
 /*
     Produções para gerência de tabelas de símbolos

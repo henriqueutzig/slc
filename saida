@@ -2,3 +2,7 @@ loadI 393 => r0
 storeAI r0 => rfp, 4
 loadAI rfp, 4 => r3
 storeAI r3 => rfp, 8
+loadAI rfp, 8 => r5
+loadI 1 => r4
+add r5, r4 => r6
+storeAI r6 => rfp, 8

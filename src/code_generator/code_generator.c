@@ -37,8 +37,6 @@ inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned 
 }
 
 inst_block_t* generate_atribuicao_variavel_para_variavel(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset, int source_offset) {
-    fprintf(stderr, "target_offset: %d\n", target_offset);
-    fprintf(stderr, "source_offset: %d\n", source_offset);
     char *temp = gen_reg();
     
     inst_block_t* load_source = generate_load_ident(expr, temp, source_offset);

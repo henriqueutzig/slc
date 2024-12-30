@@ -6,16 +6,17 @@ FAILED_TESTS=()
 
 rm -rf output
 rm -rf dot
-mkdir -p output/e5
-mkdir -p dot/e5
+mkdir -p output/e5-prof
+mkdir -p dot/e5-prof
 
 # Define the specific subfolder
 SUBFOLDER="tests/e5-prof"
 
 if [ -d "$SUBFOLDER" ]; then
-  INPUTS=$(ls "$SUBFOLDER" | grep entrada_)
-  OUTPUT_DIR="output/e5"
-  DOT_DIR="dot/e5"
+  # INPUTS=$(ls "$SUBFOLDER" | grep entrada_)
+  INPUTS=$(ls "$SUBFOLDER" )
+  OUTPUT_DIR="output/e5-prof"
+  DOT_DIR="dot/e5-prof"
 
   for file in $INPUTS; do
     OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
@@ -42,7 +43,7 @@ if [ -d "$SUBFOLDER" ]; then
       sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
       echo "DOT file generated: $DOT_FILE"
 
-      if timeout 10s python3 ilocsim.py -m < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"; then
+      if timeout 10s python3 ilocsim.py -s -x < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"; then
         echo "Ilocsim result stored in: $OUTPUT_DIR/ilocsim_$file.txt"
         PASSED=$((PASSED + 1))
       else

@@ -1,6 +1,18 @@
-loadI 1000 => r0
-loadI 1000 => r1
-add r0, r1 => r2
-loadI 2000 => r3
-sub r2, r3 => r4
-storeAI r4 => rfp, 20
+loadI 0 => r0
+loadI 3 => r1
+sub r0, r1 => r2
+storeAI r2 => rfp, 4
+loadI 234 => r4
+storeAI r4 => rfp, 8
+loadAI rfp, 4 => r7
+loadI 0 => r6
+cmp_GT r7, r6 => r8
+loadI 0 => r14
+cmp_EQ r8, r14 => r13
+cbr r13 => l0, l2
+l2: loadI 393 => r9
+storeAI r9 => rfp, 8
+jumpI => l1
+l0: loadI 432 => r11
+storeAI r11 => rfp, 8
+l1: nop

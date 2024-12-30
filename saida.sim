@@ -1,0 +1,33 @@
+count	instruction
+    6	loadI
+    3	storeAI
+    1	sub
+    1	loadAI
+    1	cmp_GT
+    1	cmp_EQ
+    1	cbr
+    1	nop
+
+instructions executed:   15
+register         read:   14 write:   25
+memory           read:    1 write:    3
+
+  register    value
+        r0        0
+        r1        3
+       r11      432
+       r13        1
+       r14        0
+        r2       -3
+        r4      234
+        r6        0
+        r7       -3
+        r8        0
+      rbss        0
+       rfp     1024
+       rpc       17
+       rsp     1024
+
+    memory    value
+00001028       -3
+00001032      432

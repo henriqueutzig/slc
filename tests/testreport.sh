@@ -27,7 +27,7 @@ if [ -d "$SUBFOLDER" ]; then
 
     echo "Running test for: $SUBFOLDER/$file..."
 
-    cat "$SUBFOLDER/$file" | ./etapa5 > "$OUTPUT_FILE" 2>&1
+    cat "$SUBFOLDER/$file" | ./etapa6 > "$OUTPUT_FILE" 2>&1
     EXIT_CODE=$?
 
     if [ $EXIT_CODE -eq 139 ]; then

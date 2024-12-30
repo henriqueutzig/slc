@@ -1,0 +1,6 @@
+loadI 1000 => r0
+loadI 1000 => r1
+add r0, r1 => r2
+loadI 2000 => r3
+sub r2, r3 => r4
+storeAI r4 => rfp, 20

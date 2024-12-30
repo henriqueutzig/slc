@@ -13,6 +13,8 @@
     #include "content.h"
     #include "symbol_table.h"
     #include "errors.h"
+    #include "iloc.h"
+    #include "code_generator.h"
 
     int yylex(void);
     void yyerror (char const *mensagem);
@@ -35,6 +37,7 @@
     stackt_t *stack = NULL;
     type_t tipo_atual = -1;
     bool just_created_function_scope = false;
+    unsigned int offset = 0;
 %}
 
 %define parse.error verbose
@@ -117,7 +120,10 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
+funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {
+    $$->code = $2->code;
+    asd_add_child($$,$2);
+    };};
 
 /* 
     O cabeçalho consiste no nome da função,
@@ -126,11 +132,11 @@ funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {asd_add_child($$,$2);};};
     função pode ser float ou int 
 */
 cabecalho: INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=' lista_de_parametros '>' tipos_de_variavel {
-    $$ = asd_new($2->valor); 
+    $$ = asd_new_func($2->valor); 
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);};
 | INIT_FUNCTION_SCOPE TK_IDENTIFICADOR '=''>' tipos_de_variavel {
     insert_symbol_to_global_scope(stack, $2, get_line_number(), tipo_atual);
-    $$ = asd_new($2->valor);};
+    $$ = asd_new_func($2->valor);};
 
 /* 
     A lista de parâmetros é composta por zero ou mais parâmetros de
@@ -143,7 +149,7 @@ lista_de_parametros: parametro {$$ = NULL; };
     Cada parâmetro é definido pelo seu nome seguido do 
     caractere menor ’<’, seguido do caractere menos ’-’, seguido do tipo.  
 */
-parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel DESTROY_CURRENT_TYPE {$$=NULL; insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
+parametro: TK_IDENTIFICADOR '<' '-' tipos_de_variavel DESTROY_CURRENT_TYPE {$$=NULL; insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual, &offset);};
 
 /*
     O tipo da função pode ser float ou int
@@ -180,6 +186,7 @@ comando: comando_simples ';' comando {
 
         if($3 != NULL) {
             asd_add_child($$, $3);
+            $$->code = append_inst_block($$->code, $3->code);
         }
 
         $$ = $1;
@@ -187,7 +194,10 @@ comando: comando_simples ';' comando {
         $$ = $3;
     }
     };
-    | comando_simples ';' {if($1 != NULL) {$$ = $1;};};
+    | comando_simples ';' {
+        if($1 != NULL) {
+            $$ = $1;
+        };};
 
 /*
     Os comandos simples da linguagem podem ser:
@@ -227,13 +237,25 @@ lista_de_variaveis:
 
 variavel_inicializada: 
     variavel {$$ = NULL; }
-    | variavel TK_OC_LE literal {$$ = asd_new("<="); asd_add_child($$,$1); asd_add_child($$,$3);}; ;
+    | variavel TK_OC_LE literal {
+        $$ = asd_new("<="); 
+        asd_add_child($$,$1); 
+        asd_add_child($$,$3);
+        
+        $$->temp = gen_reg();
+    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
+        $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->label));
+        }; ;
 
-variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual);};
+variavel: TK_IDENTIFICADOR {$$ = asd_new($1->valor); insert_symbol_to_scope(stack, $1, get_line_number(), tipo_atual, &offset);};
 
 literal: 
     TK_LIT_FLOAT {$$ = asd_new_typed($1->valor, FLOAT);}
-    | TK_LIT_INT {$$ = asd_new_typed($1->valor, INT);};
+    | TK_LIT_INT {
+        $$ = asd_new_typed($1->valor, INT);
+        $$->temp = gen_reg();
+        $$->code = generate_load_literal($1->valor, $$->temp);
+        };
 
 /*
     O comando de atribuição consiste em um identificador seguido 
@@ -241,7 +263,15 @@ literal:
 */
 atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     validate_attribution(stack, $1, $3->type, get_line_number());
-    $$ = asd_new("="); asd_add_child($$, asd_new($1->valor)); asd_add_child($$, $3);
+    
+    $$ = asd_new("="); 
+    asd_add_child($$, asd_new($1->valor)); 
+    asd_add_child($$, $3);
+
+
+    $$->temp = gen_reg();
+    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
+    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
     };
 
 /*
@@ -271,14 +301,40 @@ comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_chil
     obrigatório caso o else seja empregado.
 */
 fluxo_if: 
-    TK_PR_IF '(' expressao ')' bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }}
-    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {$$ = asd_new("if"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); } if($7 != NULL) { asd_add_child($$, $7); }};
+    TK_PR_IF '(' expressao ')' bloco_de_comandos {
+        $$ = asd_new("if"); 
+        asd_add_child($$, $3); 
+        if($5 != NULL) { 
+            asd_add_child($$, $5); 
+        }
+        generate_if($$, $3, $5, stack);
+    }
+    | TK_PR_IF '(' expressao ')' bloco_de_comandos TK_PR_ELSE bloco_de_comandos {
+        $$ = asd_new("if"); 
+        asd_add_child($$, $3); 
+        if($5 != NULL) { 
+            asd_add_child($$, $5); 
+        } 
+        if($7 != NULL) { 
+            asd_add_child($$, $7); 
+        }
+        
+        generate_if_with_else($$, $3, $5, $7, stack);
+        }
+        
 
 /*
     Temos apenas uma construção de repetição que é o token while seguido
     de uma expressão entre parênteses e de um bloco de comandos
 */
-fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("while"); asd_add_child($$, $3); if($5 != NULL) { asd_add_child($$, $5); }};
+fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {
+    $$ = asd_new("while"); 
+    asd_add_child($$, $3); 
+    if($5 != NULL) { 
+        asd_add_child($$, $5); 
+    }
+    generate_while($$, $3, $5, stack);
+    };
 
 /*
     Expressoes conforme definidas na tabela na especificaça da E2
@@ -286,39 +342,111 @@ fluxo_while: TK_PR_WHILE '(' expressao ')' bloco_de_comandos {$$ = asd_new("whil
     precedencia 6 é precedida por operaçoes do nivel 1
 */
 expressao: 
-    expressao TK_OC_OR expressao_precedencia_6 {$$ = asd_new_typed("|", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao TK_OC_OR expressao_precedencia_6 {
+        $$ = asd_new_typed("|", infer_node_type($1, $3)); 
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, OR, stack);
+        }
     | expressao_precedencia_6 {$$ = $1;};
 
 expressao_precedencia_6: 
-    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {$$ = asd_new_typed("&", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_6 TK_OC_AND expressao_precedencia_5 {
+        $$ = asd_new_typed("&", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, AND, stack);
+        }
     | expressao_precedencia_5 {$$ = $1;};
 
 expressao_precedencia_5: 
-    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {$$ = asd_new_typed("==", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {$$ = asd_new_typed("!=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_5 TK_OC_EQ expressao_precedencia_4 {
+        $$ = asd_new_typed("==", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_EQ, stack);
+        }
+    | expressao_precedencia_5 TK_OC_NE expressao_precedencia_4 {
+        $$ = asd_new_typed("!=", infer_node_type($1, $3)); 
+        asd_add_child($$, $1); 
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_NE, stack);
+        }
     | expressao_precedencia_4 {$$ = $1;};
 
 expressao_precedencia_4:
-    expressao_precedencia_4 '<' expressao_precedencia_3 {$$ = asd_new_typed("<", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 '>' expressao_precedencia_3 {$$ = asd_new_typed(">", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {$$ = asd_new_typed("<=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {$$ = asd_new_typed(">=", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_4 '<' expressao_precedencia_3 {
+        $$ = asd_new_typed("<", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_LT, stack);
+    }
+    | expressao_precedencia_4 '>' expressao_precedencia_3 {
+        $$ = asd_new_typed(">", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_GT, stack);
+    }
+    | expressao_precedencia_4 TK_OC_LE expressao_precedencia_3 {
+        $$ = asd_new_typed("<=", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_LE, stack);
+    }
+    | expressao_precedencia_4 TK_OC_GE expressao_precedencia_3 {
+        $$ = asd_new_typed(">=", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, CMP_GE, stack);
+    }
     | expressao_precedencia_3 {$$ = $1;};
 
 expressao_precedencia_3:
-    expressao_precedencia_3 '+' expressao_precedencia_2 {$$ = asd_new_typed("+", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_3 '-' expressao_precedencia_2 {$$ = asd_new_typed("-", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_3 '+' expressao_precedencia_2 {
+        $$ = asd_new_typed("+", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, ADD, stack);
+    }
+    | expressao_precedencia_3 '-' expressao_precedencia_2 {
+        $$ = asd_new_typed("-", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, SUB, stack);
+    }
     | expressao_precedencia_2 {$$ = $1;};
 
 expressao_precedencia_2: 
-    expressao_precedencia_2 '*' expressao_precedencia_1 {$$ = asd_new_typed("*", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '/' expressao_precedencia_1 {$$ = asd_new_typed("/", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
-    | expressao_precedencia_2 '%' expressao_precedencia_1 {$$ = asd_new_typed("%", infer_node_type($1, $3)); asd_add_child($$, $1); asd_add_child($$, $3);}
+    expressao_precedencia_2 '*' expressao_precedencia_1 {
+        $$ = asd_new_typed("*", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, MULT, stack);
+    }
+    | expressao_precedencia_2 '/' expressao_precedencia_1 {
+        $$ = asd_new_typed("/", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+        generate_expression_code($$, $1, $3, DIV, stack);
+    }
+    | expressao_precedencia_2 '%' expressao_precedencia_1 {
+        $$ = asd_new_typed("%", infer_node_type($1, $3));
+        asd_add_child($$, $1);
+        asd_add_child($$, $3);
+    }
     | expressao_precedencia_1 {$$ = $1;};
 
 expressao_precedencia_1: 
-    '-' expressao_precedencia_1 {$$ = asd_new_typed("-", infer_node_type($2, $2)); asd_add_child($$, $2);}
-    | '!' expressao_precedencia_1 {$$ = asd_new_typed("!", infer_node_type($2, $2)); asd_add_child($$, $2);}
+    '-' expressao_precedencia_1 {
+        $$ = asd_new_typed("-", infer_node_type($2, $2));
+        asd_add_child($$, $2);
+        generate_neg($$, $2, stack);
+    }
+    | '!' expressao_precedencia_1 {
+        $$ = asd_new_typed("!", infer_node_type($2, $2));
+        asd_add_child($$, $2);
+        generate_not($$, $2, stack);
+    }
     | operando {$$ = $1;};
 
 /*
@@ -327,24 +455,27 @@ tificadores, (b) literais e (c) chamada de função ou
 (d) outras expressões
 */
 operando: 
-    TK_IDENTIFICADOR    {
+    TK_IDENTIFICADOR  {
         validate_variable_use(stack, $1, get_line_number());
         if ($1 == NULL) {
             yyerror("Null pointer in TK_IDENTIFICADOR");
             YYABORT;
-        } $$ = asd_new($1->valor);}
-    | literal           {   if ($1 == NULL) {
+        }
+        $$ = asd_new($1->valor);
+        }
+    | literal {   if ($1 == NULL) {
             yyerror("Null pointer in literal");
             YYABORT;
-        } $$ = $1;}
+        }
+        $$ = $1;
+    }
     | chamada_de_funcao { if ($1 == NULL) {
             yyerror("Null pointer in chamada_de_funcao");
             YYABORT;
         } $$ = $1;}
-    | '('expressao')'   {if ($2 == NULL) {
-            yyerror("Null pointer in expressao");
-            YYABORT;
-        } $$ = $2;};
+    | '(' expressao ')' {
+        $$ = $2;
+        };
 
 /*
     Produções para gerência de tabelas de símbolos
@@ -367,13 +498,13 @@ INIT_LOCAL_SCOPE: %empty {
     // printf("\t>DEBUG: new LOCAL scope\n");
     if(just_created_function_scope){
         just_created_function_scope = false;
-    }else{
-    stack = push_symbol_table(stack, create_symbol_table());
+    } else {
+        stack = push_symbol_table(stack, create_symbol_table());
     }
 };
 
 INIT_FUNCTION_SCOPE: %empty {
-    // printf("\t>DEBUG: new LOCAL scope\n");
+    offset = 0;
     just_created_function_scope = true;
     stack = push_symbol_table(stack, create_symbol_table());
 };
@@ -381,7 +512,6 @@ INIT_FUNCTION_SCOPE: %empty {
 DESTROY_LOCAL_SCOPE: %empty {
     symbol_table_t *table = pop_symbol_table(stack);
     if (table != NULL) {
-        // fprintf(stderr, "Destroying local scope\n");
         destroy_symbol_table(table);
     }
 };
@@ -402,7 +532,25 @@ void _exporta(asd_tree_t *arvore) {
         return;
     }
 
-    fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
+    if (arvore->code == NULL) {
+        return;
+    }
+    //print nature
+
+    if(arvore->nature == FUNCTION){
+        print_inst_block(arvore->code);
+    }
+
+    for (int i = 0; i < arvore->number_of_children; i++) {
+        if (arvore->children[i] != NULL) {
+            _exporta(arvore->children[i]);
+    }
+    }
+
+
+    /* _exporta(arvore->children[arvore->number_of_children - 1]); */
+
+    /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
 
     for (int i = 0; i < arvore->number_of_children; i++) {
         if (arvore->children[i] == NULL) {
@@ -412,11 +560,12 @@ void _exporta(asd_tree_t *arvore) {
         fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
     }
 
+
     for (int i = 0; i < arvore->number_of_children; i++) {
         if (arvore->children[i] != NULL) {
             _exporta(arvore->children[i]);
         }
-    }
+    } */
 }
 
 void exporta (void *arvore){

@@ -1,0 +1,12 @@
+funcao_soma => int
+{
+    int y;
+    int x;
+
+    y = 2;
+    y = -y;
+
+    x = y + 3;
+
+    return y;
+}

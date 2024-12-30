@@ -1,0 +1,9 @@
+funcao_complexa = a <- int | b <- int > int
+{
+    // a = 2000;
+    // b = 1000;
+    int z;
+
+    z = (1000+1000) - 2000;
+    return z;
+}

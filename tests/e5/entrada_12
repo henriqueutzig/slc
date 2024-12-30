@@ -1,0 +1,13 @@
+main = a <- int | b <- int > int {
+
+    a = 222;
+
+while(2*2 != 0){
+    a = 2 + b;
+};
+
+b = 33;
+
+while(1){};
+
+}

@@ -90,7 +90,6 @@ symbol_table_t *pop_symbol_table(stackt_t *stack) {
     return table;
 }
 
-
 void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
     assert(stack != NULL);
     if (is_empty(stack)) {
@@ -104,11 +103,11 @@ void insert_symbol_to_global_scope(stackt_t *stack, lexema *lexema, int line, ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type, FUNCTION);
+    content_t *content = create_content(line, lexema, type, FUNCTION, GLOBAL_BASE_POINTER, get_offset(*stack->tables[0], type));
     insert_element(*stack->tables[0], lexema->valor, content);
 }
 
-void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type){
+void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t type, unsigned int *offset){
     assert(stack != NULL);
     if (is_empty(stack)) {
         printf("ERROR (insert_symbol_to_scope): stack is empty! Could not insert symbol '%s'\n", lexema->valor);
@@ -122,7 +121,9 @@ void insert_symbol_to_scope(stackt_t *stack, lexema *lexema, int line, type_t ty
         exit(ERR_DECLARED);
     }
 
-    content_t *content = create_content(line, lexema, type, VARIABLE);
+    unsigned int var_type_size = (type == INT ? INT_SIZE : FLOAT_SIZE);
+    *offset += var_type_size;
+    content_t *content = create_content(line, lexema, type, VARIABLE, LOCAL_BASE_POINTER, *offset);
     insert_element(*stack->tables[stack->top_index], lexema->valor, content);
 }
 
@@ -173,6 +174,22 @@ void validate_function_call(stackt_t *stack, lexema *lexema, int line){
         exit(ERR_UNDECLARED);
     }
 }
+
+unsigned int get_offset_from_stack(stackt_t *stack, char *valor){
+    assert(stack != NULL);
+    if (is_empty(stack)) {
+        printf("ERROR (get_offset): stack is empty!\n");
+        return 0;
+    }
+
+    content_t *symbol = search_all_tables(stack, valor);
+    if (symbol == NULL) {
+        printf("ERROR (get_offset): symbol %s not found!\n", valor);
+        return 0;
+    }
+    return symbol->offset;
+}
+
 
 // -====================
 /// DEBUG FUNC

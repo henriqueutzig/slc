@@ -6,7 +6,7 @@
 
 # Compilation commands
 CC = gcc
-CFLAGS = -I./src -I./src/errors -I./src/bison -I./src/asd -I./src/lexema -I./src/stack -I./src/symbol_table
+CFLAGS = -I./src -I./src/errors -I./src/bison -I./src/asd -I./src/lexema -I./src/stack -I./src/symbol_table -I./src/iloc -I./src/code_generator
 LEX = flex
 BISON = bison
 
@@ -16,6 +16,8 @@ BISON_SRC = $(SRC_DIR)/bison/parser.y
 LEX_SRC = $(SRC_DIR)/flex/scanner.l
 SRC_FILES = $(SRC_DIR)/main.c \
             $(SRC_DIR)/asd/asd.c \
+            $(SRC_DIR)/iloc/iloc.c \
+            $(SRC_DIR)/code_generator/code_generator.c \
             $(SRC_DIR)/lexema/lexema.c \
             $(SRC_DIR)/stack/stack.c \
             $(SRC_DIR)/symbol_table/symbol_table.c \
@@ -25,7 +27,7 @@ SRC_FILES = $(SRC_DIR)/main.c \
 OBJECTS = $(SRC_FILES:.c=.o)
 
 # Output files
-BINARY = etapa4
+BINARY = etapa5
 TAR_FILE = $(BINARY).tgz
 TEST_OUT = output/
 TEST = tests/testreport.sh
@@ -65,7 +67,7 @@ tar: $(BINARY)
 	cp -r ./tests temp_dir/
 	find ./temp_dir -name "*.o" -type f -delete
 	find temp_dir -name ".*" -exec rm -rf {} +
-	tar cvzf $(TAR_FILE) -C temp_dir .
+	tar cvzf $(TAR_FILE) --exclude="\..*" -C temp_dir .
 	rm -rf temp_dir
 
 # Run automated tests

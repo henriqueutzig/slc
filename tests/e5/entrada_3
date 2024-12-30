@@ -1,0 +1,8 @@
+funcao_soma => int
+{
+    int y;
+
+    y = 2 + 4;
+    
+    return y;
+}

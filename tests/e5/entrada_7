@@ -1,0 +1,20 @@
+funcao_soma => int
+{
+    int x;
+    int y;
+
+    x = 0;
+    y = 10;
+
+    while(y > 0){
+        y = y - 1;
+        x = x + 1;
+        int z;
+        z = 2;
+    };
+
+    int z;
+    z = 1;
+    
+    return y;
+}

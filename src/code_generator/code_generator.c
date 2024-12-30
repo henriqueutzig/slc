@@ -31,8 +31,23 @@ inst_block_t* generate_load_literal(char *valor, char *temp) {
 
 inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset) {
     inst_t *inst = create_inst(STORE_AI, expr->temp, "rfp",parse_unsigned_int(target_offset) ,NULL);
-    inst_block_t *block = create_inst_block(inst, NULL);    
+    inst_block_t *block = create_inst_block(inst, NULL); 
     block = append_inst_block(expr->code,block);
+    return block;
+}
+
+inst_block_t* generate_atribuicao_variavel_para_variavel(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset, int source_offset) {
+    fprintf(stderr, "target_offset: %d\n", target_offset);
+    fprintf(stderr, "source_offset: %d\n", source_offset);
+    char *temp = gen_reg();
+    
+    inst_block_t* load_source = generate_load_ident(expr, temp, source_offset);
+
+    
+    inst_t *inst = create_inst(STORE_AI, temp, "rfp",parse_unsigned_int(target_offset) ,NULL);
+    inst_block_t *block = create_inst_block(inst, NULL); 
+    
+    block = append_inst_block(load_source,block);
     return block;
 }
 

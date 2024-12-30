@@ -243,7 +243,6 @@ variavel_inicializada:
         asd_add_child($$,$3);
         
         $$->temp = gen_reg();
-    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
         $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->label));
         }; ;
 
@@ -268,10 +267,14 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     asd_add_child($$, asd_new($1->valor)); 
     asd_add_child($$, $3);
 
-
     $$->temp = gen_reg();
-    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
-    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
+
+    if($3->temp == NULL){
+        $$->code = generate_atribuicao_variavel_para_variavel($$,$3,get_offset_from_stack(stack, $1->valor),get_offset_from_stack(stack, $3->label));
+    }else{
+        $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
+    }
+
     };
 
 /*

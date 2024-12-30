@@ -1,0 +1,9 @@
+main = > int {
+  int z;
+  int a;
+  int b;
+  z = 923;
+  b = 456;
+  a = z + b;
+  return 0;
+}

@@ -10,7 +10,7 @@ mkdir -p output/e5
 mkdir -p dot/e5
 
 # Define the specific subfolder
-SUBFOLDER="tests/e5"
+SUBFOLDER="tests/e5-prof"
 
 if [ -d "$SUBFOLDER" ]; then
   INPUTS=$(ls "$SUBFOLDER" | grep entrada_)

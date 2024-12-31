@@ -557,7 +557,6 @@ void _exporta(asd_tree_t *arvore) {
 void generateAsm(asd_tree_t *root) {
     // Segmento de dados
     printf(".data\n");
-    printf("\t# Nenhuma variável global\n");
 
     // Segmento de texto
     printf(".text\n");

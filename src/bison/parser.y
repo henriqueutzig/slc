@@ -558,10 +558,11 @@ void generateAsm(asd_tree_t *root) {
     // Segmento de dados
     printf(".data\n");
 
-    // Segmento de texto
-    printf(".text\n");
-    printf("\t.global main\n");
+    printf("    .globl main\n");
+    printf("    .type main, @function\n");
     printf("main:\n");
+    printf("    pushq %%rbp\n");
+	printf("    movq %%rsp, %%rbp\n");
 
     // Percorrer a AST e gerar o código assembly correspondente
     if (root != NULL) {
@@ -581,7 +582,6 @@ void generateCodeFromAST(asd_tree_t *node) {
     if (node->code == NULL) {
         return;
     }
-
     if(node->nature == FUNCTION){
         print_inst_block(node->code);
     }
@@ -589,9 +589,7 @@ void generateCodeFromAST(asd_tree_t *node) {
 
     // Traduzir subárvores
     for (int i = 0; i < node->number_of_children; i++) {
-        if (node->children[i] != NULL) {
         generateCodeFromAST(node->children[i]);
-        }
     }
 }
 

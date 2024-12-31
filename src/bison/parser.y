@@ -21,6 +21,8 @@
     int get_line_number(void);
     int get_column_number(void);
     void print_symbol_table(symbol_table_t *table);
+    void generateAsm(asd_tree_t *root);
+    void generateCodeFromAST(asd_tree_t *node);
 
     extern void* arvore;
 
@@ -539,7 +541,6 @@ void _exporta(asd_tree_t *arvore) {
     if (arvore->code == NULL) {
         return;
     }
-    //print nature
 
     if(arvore->nature == FUNCTION){
         print_inst_block(arvore->code);
@@ -550,31 +551,55 @@ void _exporta(asd_tree_t *arvore) {
             _exporta(arvore->children[i]);
     }
     }
+}
+
+// Função para gerar diretamente o código assembly
+void generateAsm(asd_tree_t *root) {
+    // Segmento de dados
+    printf(".data\n");
+    printf("\t# Nenhuma variável global\n");
+
+    // Segmento de texto
+    printf(".text\n");
+    printf("\t.global main\n");
+    printf("main:\n");
+
+    // Percorrer a AST e gerar o código assembly correspondente
+    if (root != NULL) {
+        generateCodeFromAST(root);
+    }
+
+    // Retorno da função principal
+    printf("\tmov $0, %%rax\n");
+    printf("\tret\n");
+}
+
+// Função para traduzir nós da AST diretamente para assembly
+void generateCodeFromAST(asd_tree_t *node) {
+    if (node == NULL) return;
 
 
-    /* _exporta(arvore->children[arvore->number_of_children - 1]); */
+    if (node->code == NULL) {
+        return;
+    }
 
-    /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
-
-    for (int i = 0; i < arvore->number_of_children; i++) {
-        if (arvore->children[i] == NULL) {
-            fprintf(stdout, "Null child at index %d in _exporta\n", i);
-            continue;
-        }
-        fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
+    if(node->nature == FUNCTION){
+        print_inst_block(node->code);
     }
 
 
-    for (int i = 0; i < arvore->number_of_children; i++) {
-        if (arvore->children[i] != NULL) {
-            _exporta(arvore->children[i]);
+    // Traduzir subárvores
+    for (int i = 0; i < node->number_of_children; i++) {
+        if (node->children[i] != NULL) {
+        generateCodeFromAST(node->children[i]);
         }
-    } */
+    }
 }
+
 
 void exporta (void *arvore){
     if (arvore == NULL) {
         return;
     }
-    _exporta((asd_tree_t*)arvore);
+    generateAsm((asd_tree_t*)arvore);
 };

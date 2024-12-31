@@ -12,7 +12,7 @@ char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
-    sprintf(reg, "r%d", r++);
+    sprintf(reg, "r%%d", r++);
     return reg;
 }
 
@@ -20,7 +20,7 @@ char *gen_label() {
     static unsigned int l = 0;
     char *label = (char *)malloc(LABEL_SIZE * sizeof(char));
 
-    sprintf(label, "l%d", l++);
+    sprintf(label, "l%%d", l++);
     return label;
 }
 
@@ -98,104 +98,47 @@ void destroy_inst_block(inst_block_t *block) {
     }
 }
 
-
-// **************** DEBUG **************** 
-
-void print_inst(inst_t *inst) {
+void print_inst_block(inst_block_t *block){
+    inst_t *inst = block->inst;
     assert(inst != NULL);
     assert(inst->op != NULL);
 
-    switch (inst->inst)
-    {
-    case NOP:
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s", inst->op);
-        break;
-    case HALT:
-        printf("%s", inst->op);
+    if (inst->label != NULL) {
+        printf("%s:\n", inst->label);
+    }
+
+    switch (inst->inst) {
+    case LOAD_I:
+        printf("\tmov $%s, %s\n", inst->op1, inst->op2);
         break;
     case ADD:
+        printf("\tadd %s, %s\n", inst->op1, inst->op2);
+        printf("\tmov %s, %s\n", inst->op2, inst->op3);
+        break;
     case SUB:
+        printf("\tsub %s, %s\n", inst->op1, inst->op2);
+        printf("\tmov %s, %s\n", inst->op2, inst->op3);
+        break;
     case MULT:
+        printf("\timul %s, %s\n", inst->op1, inst->op2);
+        printf("\tmov %s, %s\n", inst->op2, inst->op3);
+        break;
     case DIV:
-    case ADD_I:
-    case SUB_I: 
-    case R_SUB_I:
-    case MULT_I:
-    case DIV_I:
-    case R_DIV_I:
-    case LSHIFT:
-    case LSHIFT_I:
-    case RSHIFT:
-    case RSHIFT_I:
-    case AND:   
-    case AND_I:
-    case OR:
-    case OR_I:
-    case XOR:
-    case XOR_I:
-    case LOAD_AI:
-    case LOAD_A0:
-    case CLOAD_AI:
-    case CLOAD_A0:
-    case CMP_LT:
-    case CMP_LE:
-    case CMP_EQ:
-    case CMP_GE:
-    case CMP_GT:
-    case CMP_NE:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        assert(inst->op3 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s, %s => %s", inst->op, inst->op1, inst->op2, inst->op3);
-        break;
-    case STORE_AI:
-    case STORE_AO:
-    case CSTORE_AI:
-    case CSTORE_AO:
-    case CBR:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        assert(inst->op3 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s => %s, %s", inst->op, inst->op1, inst->op2, inst->op3);
-        break;
-    case LOAD_I:
-    case LOAD:
-    case CLOAD:
-    case STORE:
-    case CSTORE:
-    case I2I:
-    case C2C:
-    case C2I:
-    case I2C:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s => %s", inst->op, inst->op1, inst->op2);
+        printf("\tmov %s, %%rax\n", inst->op1);
+        printf("\tcqo\n");
+        printf("\tidiv %s\n", inst->op2);
+        printf("\tmov %%rax, %s\n", inst->op3);
         break;
     case JUMP_I:
-    case JUMP:
-        assert(inst->op1 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s => %s", inst->op, inst->op1);
+        printf("\tjmp %s\n", inst->op1);
+        break;
+    case CBR:
+        printf("\tcmp $0, %s\n", inst->op1);
+        printf("\tje %s\n", inst->op2);
+        printf("\tjmp %s\n", inst->op3);
         break;
     default:
+        printf("\t# Unsupported operation: %s\n", inst->op);
         break;
-    }
-    printf("\n");
-}
-
-void print_inst_block(inst_block_t *block) {
-    inst_block_t *current = block;
-    while (current != NULL) {
-        print_inst(current->inst);
-        current = current->next;
     }
 }

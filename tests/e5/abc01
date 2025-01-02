@@ -8,5 +8,5 @@ main = > int {
   }else{
     b = 432;
   };
-  return 0;
+  return b;
 }

@@ -169,6 +169,9 @@ void print_inst(inst_t *inst) {
     case JUMP:
         printf("    jmp %s\n", inst->op1);
         break;
+      case JUMP_I:
+        printf("    jmp %s\n", inst->op1);
+        break;
     case LOAD_AI:
         printf("    movl -%s(%%rbp), %s\n",inst->op2,inst->op3);
         break;
@@ -176,6 +179,11 @@ void print_inst(inst_t *inst) {
         printf("    movl %s, %%eax\n",inst->op1);
         printf("    leave\n");
         printf("    ret\n");
+        break;
+    case CBR:
+        printf("    testl %s, %s\n", inst->op1, inst->op1);
+        printf("    je %s\n", inst->op2);
+        printf("    jmp %s\n", inst->op3);
         break;
     case CMP_GT:
         printf("    cmpl %s, %s\n", inst->op2, inst->op1);

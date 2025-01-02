@@ -271,12 +271,10 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
 void generate_return(asd_tree_t* target, asd_tree_t *source, stackt_t *stack) {
     char *temp;
     inst_block_t *bloco = NULL;
-    fprintf(stderr, "source->temp: %s\n", source->temp);
     if (source->temp == NULL) {
         source->temp = gen_reg();
         temp = source->temp;
         bloco = generate_load_inner(source, temp, stack);
-        fprintf(stderr, "Bloco gerado\n");
     } else {
         temp = source->temp;
     }

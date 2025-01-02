@@ -577,6 +577,7 @@ void generateCodeFromAST(asd_tree_t *node) {
     if (node->code == NULL) {
         return;
     }
+
     if(node->nature == FUNCTION){
         print_inst_block(node->code);
     }

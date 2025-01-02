@@ -177,8 +177,23 @@ void print_inst(inst_t *inst) {
         printf("    leave\n");
         printf("    ret\n");
         break;
+    case CMP_GT:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setg %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_EQ:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    sete %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_LT:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setl %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
     default:
-        printf("    # Unsupported operation: %s\n", inst->op);
+        fprintf(stderr,"    # Unsupported operation: %s\n", inst->op);
         break;
     }
 }

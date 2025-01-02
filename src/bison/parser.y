@@ -558,7 +558,6 @@ void _exporta(asd_tree_t *arvore) {
 }
 
 void generateAsm(asd_tree_t *root) {
-    printf(".data\n");
 
     printf("    .globl main\n");
     printf("    .type main, @function\n");

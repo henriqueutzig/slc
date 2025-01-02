@@ -1,0 +1,17 @@
+    .globl main
+    .type main, @function
+main:
+    pushq %rbp
+    movq %rsp, %rbp
+    movl $2, %ebx
+    movl %ebx, -4(%rbp)
+    movl -4(%rbp), %edx
+    movl $3, %ecx
+    movl %edx, %eax
+    addl %ecx, %eax
+    movl %eax, %esi
+    movl %esi, -4(%rbp)
+    movl -4(%rbp), %edi
+    movl %edi, %eax
+    leave
+    ret

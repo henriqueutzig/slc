@@ -7,20 +7,36 @@
 */
 
 #include "iloc.h"
+#define REG_SIZE 10
 
 char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
-    sprintf(reg, "r%d", r++);
+
+    switch (r) {
+        case 0: snprintf(reg, REG_SIZE, "%%ebx"); break;
+        case 1: snprintf(reg, REG_SIZE, "%%ecx"); break;
+        case 2: snprintf(reg, REG_SIZE, "%%edx"); break;
+        case 3: snprintf(reg, REG_SIZE, "%%esi"); break;
+        case 4: snprintf(reg, REG_SIZE, "%%edi"); break;
+        case 5: snprintf(reg, REG_SIZE, "%%r8d"); break;
+        case 6: snprintf(reg, REG_SIZE, "%%r9d"); break;
+        case 7: snprintf(reg, REG_SIZE, "%%r10d"); break;
+        case 8: snprintf(reg, REG_SIZE, "%%r11d"); break;
+        default: snprintf(reg, REG_SIZE, "r%u", r - 10); break;
+    }
+
+    r++;
     return reg;
 }
+
 
 char *gen_label() {
     static unsigned int l = 0;
     char *label = (char *)malloc(LABEL_SIZE * sizeof(char));
 
-    sprintf(label, "l%d", l++);
+    sprintf(label, ".L%d", l++);
     return label;
 }
 
@@ -98,6 +114,8 @@ void destroy_inst_block(inst_block_t *block) {
     }
 }
 
+
+
 void print_inst(inst_t *inst) {
     assert(inst != NULL);
     assert(inst->op != NULL);
@@ -109,19 +127,22 @@ void print_inst(inst_t *inst) {
     switch (inst->inst)
     {
     case NOP:
-        printf("    nop\n");
+        printf("    # No operation\n");
         break;
     case ADD:
-        printf("    addl %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    addl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
     case SUB:
-        printf("    subl %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    subl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
     case MULT:
-        printf("    imull %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    imull %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
     case DIV:
         printf("    movl %s, %%eax\n", inst->op1);
@@ -130,149 +151,34 @@ void print_inst(inst_t *inst) {
         printf("    movl %%eax, %s\n", inst->op3);
         break;
     case ADD_I:
-        printf("    addl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case SUB_I:
-        printf("    subl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case MULT_I:
-        printf("    imull $%s, %s\n", inst->op2, inst->op1);
-        break;
-    case DIV_I:
-        printf("    movl %s, %%eax\n", inst->op1);
-        printf("    cltd\n");
-        printf("    idivl $%s\n", inst->op2);
+        printf("    movl %s, %%eax\n", inst->op2);
+        printf("    addl $%s, %%eax\n", inst->op1);
         printf("    movl %%eax, %s\n", inst->op3);
         break;
-    case LSHIFT:
-        printf("    shll %s, %s\n", inst->op2, inst->op1);
-        printf("    movl %s, %s\n", inst->op1, inst->op3);
+    case SUB_I:
+        printf("    movl %s, %%eax\n", inst->op2);
+        printf("    subl $%s, %%eax\n", inst->op1);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
-    case LSHIFT_I:
-        printf("    shll $%s, %s\n", inst->op2, inst->op1);
+   case LOAD_I:
+        printf("    movl $%s, %s\n", inst->op1,inst->op2);
         break;
-    case RSHIFT:
-        printf("    shrl %s, %s\n", inst->op2, inst->op1);
-        printf("    movl %s, %s\n", inst->op1, inst->op3);
-        break;
-    case RSHIFT_I:
-        printf("    shrl $%s, %s\n", inst->op2, inst->op1);
-        break;
-    case AND:
-        printf("    andl %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
-        break;
-    case AND_I:
-        printf("    andl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case OR:
-        printf("    orl %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
-        break;
-    case OR_I:
-        printf("    orl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case XOR:
-        printf("    xorl %s, %s\n", inst->op1, inst->op2);
-        printf("    movl %s, %s\n", inst->op2, inst->op3);
-        break;
-    case XOR_I:
-        printf("    xorl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case LOAD_I:
-        printf("    movl $%s, %s\n", inst->op1, inst->op2);
-        break;
-    case LOAD:
-        printf("    movl (%s), %s\n", inst->op1, inst->op2);
-        break;
-    case LOAD_AI:
-        printf("    movl %s(%%rip), %s\n", inst->op1, inst->op3);
-        break;
-    case LOAD_A0:
-        printf("    movl %s, %s\n", inst->op1, inst->op3);
-        break;
-    case CLOAD:
-        printf("    movzbl (%s), %s\n", inst->op1, inst->op2);
-        break;
-    case CLOAD_AI:
-        printf("    movzbl %s(%%rip), %s\n", inst->op1, inst->op3);
-        break;
-    case CLOAD_A0:
-        printf("    movzbl %s, %s\n", inst->op1, inst->op3);
-        break;
-    case STORE:
-        printf("    movl %s, (%s)\n", inst->op1, inst->op2);
-        break;
-    case STORE_AI:
-        printf("    movl %s, %s(%%rip)\n", inst->op1, inst->op2);
-        break;
-    case STORE_AO:
-        printf("    movl %s, %s(%s)\n", inst->op1, inst->op2, inst->op3);
-        break;
-    case CSTORE:
-        printf("    movb %s, (%s)\n", inst->op1, inst->op2);
-        break;
-    case CSTORE_AI:
-        printf("    movb %s, %s(%%rip)\n", inst->op1, inst->op2);
-        break;
-    case CSTORE_AO:
-        printf("    movb %s, %s(%s)\n", inst->op1, inst->op2, inst->op3);
-        break;
-    case I2I:
-        printf("    movl %s, %s\n", inst->op1, inst->op2);
-        break;
-    case C2C:
-        printf("    movb %s, %s\n", inst->op1, inst->op2);
-        break;
-    case C2I:
-        printf("    movzbl %s, %s\n", inst->op1, inst->op2);
-        break;
-    case I2C:
-        printf("    movb %s, %s\n", inst->op1, inst->op2);
-        break;
-    case JUMP_I:
-        printf("    jmp %s\n", inst->op1);
+   case STORE_AI:
+        printf("    movl %s, -%s(%%rbp)\n",inst->op1,inst->op3);
         break;
     case JUMP:
-        printf("    jmp *%s\n", inst->op1);
+        printf("    jmp %s\n", inst->op1);
         break;
-    case CBR:
-        printf("    cmpl $0, %s\n", inst->op1);
-        printf("    je %s\n", inst->op2);
-        printf("    jmp %s\n", inst->op3);
+    case LOAD_AI:
+        printf("    movl -%s(%%rbp), %s\n",inst->op2,inst->op3);
         break;
-    case CMP_LT:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    setl %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
-        break;
-    case CMP_LE:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    setle %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
-        break;
-    case CMP_EQ:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    sete %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
-        break;
-    case CMP_GE:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    setge %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
-        break;
-    case CMP_GT:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    setg %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
-        break;
-    case CMP_NE:
-        printf("    cmpl %s, %s\n", inst->op1, inst->op2);
-        printf("    setne %%al\n");
-        printf("    movzbl %%al, %s\n", inst->op3);
+    case RET:
+        printf("    movl $0, %%eax\n");
+        printf("    leave\n");
+        printf("    ret\n");
         break;
     default:
-        printf("    # Unsupported operation , operation is %s\n", inst->op);
+        printf("    # Unsupported operation: %s\n", inst->op);
         break;
     }
 }

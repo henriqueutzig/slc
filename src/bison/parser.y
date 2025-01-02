@@ -553,9 +553,7 @@ void _exporta(asd_tree_t *arvore) {
     }
 }
 
-// Função para gerar diretamente o código assembly
 void generateAsm(asd_tree_t *root) {
-    // Segmento de dados
     printf(".data\n");
 
     printf("    .globl main\n");
@@ -564,17 +562,14 @@ void generateAsm(asd_tree_t *root) {
     printf("    pushq %%rbp\n");
 	printf("    movq %%rsp, %%rbp\n");
 
-    // Percorrer a AST e gerar o código assembly correspondente
     if (root != NULL) {
         generateCodeFromAST(root);
     }
 
-    // Retorno da função principal
     printf("\tmov $0, %%rax\n");
     printf("\tret\n");
 }
 
-// Função para traduzir nós da AST diretamente para assembly
 void generateCodeFromAST(asd_tree_t *node) {
     if (node == NULL) return;
 
@@ -587,7 +582,6 @@ void generateCodeFromAST(asd_tree_t *node) {
     }
 
 
-    // Traduzir subárvores
     for (int i = 0; i < node->number_of_children; i++) {
         generateCodeFromAST(node->children[i]);
     }

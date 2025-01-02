@@ -1,7 +1,11 @@
 int main(){
   int a;
-  a = 3;
   int b;
-  b = a;
+
+  a = 2;
+  b = 20;
+
+  b = a + b;
+
   return 0;
 }

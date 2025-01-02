@@ -4,9 +4,13 @@
 main:
     pushq %rbp
     movq %rsp, %rbp
-    movl $3, r0
-    movl r0, rfp(%rip)
-    movl rfp(%rip), r1
-    movl r1, rfp(%rip)
+    movl $2, %ebx
+    movl %ebx, -4(%rbp)
+    movl -4(%rbp), %edx
+    movl $3, %ecx
+    movl %edx, %eax
+    addl %ecx, %eax
+    movl %eax, %esi
+    movl %esi, -4(%rbp)
 	mov $0, %rax
 	ret

@@ -160,30 +160,20 @@ void print_inst(inst_t *inst) {
         printf("    subl $%s, %%eax\n", inst->op1);
         printf("    movl %%eax, %s\n", inst->op3);
         break;
-   case LOAD_I:
-        printf("    movl $%s, %s\n", inst->op1,inst->op2);
+    case LOAD_I:
+        printf("    movl $%s, %s\n", inst->op1, inst->op2);
         break;
-   case STORE_AI:
-        printf("    movl %s, -%s(%%rbp)\n",inst->op1,inst->op3);
+    case STORE_AI:
+        printf("    movl %s, -%s(%%rbp)\n", inst->op1, inst->op3);
         break;
     case JUMP:
         printf("    jmp %s\n", inst->op1);
         break;
-      case JUMP_I:
+    case JUMP_I:
         printf("    jmp %s\n", inst->op1);
         break;
     case LOAD_AI:
-        printf("    movl -%s(%%rbp), %s\n",inst->op2,inst->op3);
-        break;
-    case RET:
-        printf("    movl %s, %%eax\n",inst->op1);
-        printf("    leave\n");
-        printf("    ret\n");
-        break;
-    case CBR:
-        printf("    testl %s, %s\n", inst->op1, inst->op1);
-        printf("    je %s\n", inst->op2);
-        printf("    jmp %s\n", inst->op3);
+        printf("    movl -%s(%%rbp), %s\n", inst->op2, inst->op3);
         break;
     case CMP_GT:
         printf("    cmpl %s, %s\n", inst->op2, inst->op1);
@@ -200,11 +190,22 @@ void print_inst(inst_t *inst) {
         printf("    setl %%al\n");
         printf("    movzbl %%al, %s\n", inst->op3);
         break;
+    case CBR:
+        printf("    testl %s, %s\n", inst->op1, inst->op1);
+        printf("    je %s\n", inst->op2);
+        printf("    jmp %s\n", inst->op3);
+        break;
+    case RET:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    leave\n");
+        printf("    ret\n");
+        break;
     default:
-        fprintf(stderr,"    # Unsupported operation: %s\n", inst->op);
+        fprintf(stderr, "    # Unsupported operation: %s\n", inst->op);
         break;
     }
 }
+
 
 
 void print_inst_block(inst_block_t *block) {

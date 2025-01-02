@@ -24,6 +24,7 @@ void generate_if(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, s
 void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, asd_tree_t *else_body, stackt_t *stack);
 void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body, stackt_t *stack);
 inst_block_t* generate_atribuicao_variavel_para_variavel(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset, int source_offset);
+void generate_return(asd_tree_t* target, asd_tree_t *source, stackt_t *stack);
 
 
 

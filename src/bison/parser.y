@@ -296,7 +296,11 @@ argumento:
 /*
     Trata-se do token return seguido de uma expressão
 */
-comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_child($$, $2);};
+comando_de_retorno: TK_PR_RETURN expressao {
+    $$ = asd_new("return"); 
+    asd_add_child($$, $2);
+    generate_return($$,$2,stack);
+    };
 
 /*
     A condicional consiste no token if seguido de uma 
@@ -565,9 +569,6 @@ void generateAsm(asd_tree_t *root) {
     if (root != NULL) {
         generateCodeFromAST(root);
     }
-
-    printf("\tmov $0, %%rax\n");
-    printf("\tret\n");
 }
 
 void generateCodeFromAST(asd_tree_t *node) {

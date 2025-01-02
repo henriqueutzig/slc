@@ -117,7 +117,8 @@ static const char *op_t_str[] = {
     "cmp_EQ",
     "cmp_GE",
     "cmp_GT",
-    "cmp_NE"
+    "cmp_NE",
+    "ret" 
 };
 
 typedef struct inst_t

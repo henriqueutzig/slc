@@ -7,5 +7,5 @@ int main(){
 
   b = a + b;
 
-  return 0;
+  return a;
 }

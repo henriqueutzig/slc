@@ -173,7 +173,7 @@ void print_inst(inst_t *inst) {
         printf("    movl -%s(%%rbp), %s\n",inst->op2,inst->op3);
         break;
     case RET:
-        printf("    movl $0, %%eax\n");
+        printf("    movl %s, %%eax\n",inst->op1);
         printf("    leave\n");
         printf("    ret\n");
         break;

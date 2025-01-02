@@ -12,5 +12,7 @@ main:
     addl %ecx, %eax
     movl %eax, %esi
     movl %esi, -4(%rbp)
-	mov $0, %rax
-	ret
+    movl -4(%rbp), %edi
+    movl %edi, %eax
+    leave
+    ret

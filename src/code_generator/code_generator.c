@@ -267,3 +267,27 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
         target->temp = gen_reg();
         target->code = bloco_if;
 }
+
+void generate_return(asd_tree_t* target, asd_tree_t *source, stackt_t *stack) {
+    char *temp;
+    inst_block_t *bloco;
+    if (source->temp == NULL) {
+        source->temp = gen_reg();
+        temp = source->temp;
+        bloco = generate_load_inner(source, temp, stack);
+    } else {
+        temp = source->temp;
+    }
+
+    inst_t *inst = create_inst(RET, temp, NULL, NULL, NULL);
+
+    target->code = create_inst_block(inst, NULL);
+
+    if(bloco != NULL){
+        target->code = append_inst_block(bloco,target->code);
+    }
+
+    if(source->code != NULL){
+        target->code = append_inst_block(source->code, target->code);
+    }
+}

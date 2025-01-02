@@ -23,7 +23,7 @@ char *gen_reg() {
         case 6: snprintf(reg, REG_SIZE, "%%r9d"); break;
         case 7: snprintf(reg, REG_SIZE, "%%r10d"); break;
         case 8: snprintf(reg, REG_SIZE, "%%r11d"); break;
-        default: snprintf(reg, REG_SIZE, "r%ud", r+3); break;
+        default: snprintf(reg, REG_SIZE, "%%r%ud", r+3); break;
     }
 
     r++;

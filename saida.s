@@ -16,11 +16,11 @@ main:
     cmpl %edi, %r8d
     setg %al
     movzbl %al, %r9d
-    movl $0, r13d
-    cmpl r13d, %r9d
+    movl $0, %r13d
+    cmpl %r13d, %r9d
     sete %al
-    movzbl %al, r12d
-    testl r12d, r12d
+    movzbl %al, %r12d
+    testl %r12d, %r12d
     je .L0
     jmp .L2
 .L2:
@@ -32,7 +32,7 @@ main:
     movl %r11d, -8(%rbp)
 .L1:
     # No operation
-    movl -8(%rbp), r15d
-    movl r15d, %eax
+    movl -8(%rbp), %r15d
+    movl %r15d, %eax
     leave
     ret

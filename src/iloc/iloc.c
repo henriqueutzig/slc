@@ -116,9 +116,12 @@ void destroy_inst_block(inst_block_t *block) {
 
 
 void print_inst(inst_t *inst) {
-    if(inst != NULL || inst->op !=NULL){
-        fprintf(stderr,"Return for label %s!\n",inst->label);
+    if(inst == NULL && inst->op ==NULL){
         return;
+    }
+
+    if(inst->label != NULL){
+        printf("%s:\n", inst->label);
     }
 
     switch (inst->inst)

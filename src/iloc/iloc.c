@@ -13,7 +13,6 @@ char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
-
     switch (r) {
         case 0: snprintf(reg, REG_SIZE, "%%ebx"); break;
         case 1: snprintf(reg, REG_SIZE, "%%ecx"); break;
@@ -24,7 +23,7 @@ char *gen_reg() {
         case 6: snprintf(reg, REG_SIZE, "%%r9d"); break;
         case 7: snprintf(reg, REG_SIZE, "%%r10d"); break;
         case 8: snprintf(reg, REG_SIZE, "%%r11d"); break;
-        default: snprintf(reg, REG_SIZE, "r%u", r - 10); break;
+        default: snprintf(reg, REG_SIZE, "r%ud", r+3); break;
     }
 
     r++;
@@ -118,6 +117,7 @@ void destroy_inst_block(inst_block_t *block) {
 
 void print_inst(inst_t *inst) {
     if(inst != NULL || inst->op !=NULL){
+        fprintf(stderr,"Return for label %s!\n",inst->label);
         return;
     }
 

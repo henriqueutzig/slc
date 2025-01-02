@@ -1,11 +1,15 @@
 int main(){
   int a;
   int b;
+  a = 0 - 3;
+  b = 234;
 
-  a = 2;
-  b = 20;
+  int c = a>0;
 
-  b = a + b;
-
-  return a;
+  if (a > 0) {
+    b = 393;
+  }else{
+    b = 432;
+  }
+  return b;
 }

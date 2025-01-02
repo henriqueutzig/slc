@@ -7,7 +7,6 @@ FAILED_TESTS=()
 rm -rf output
 rm -rf dot
 mkdir -p output/e5
-mkdir -p dot/e5
 
 # Define the specific subfolder
 SUBFOLDER="tests/e5"
@@ -15,43 +14,41 @@ SUBFOLDER="tests/e5"
 if [ -d "$SUBFOLDER" ]; then
   INPUTS=$(ls "$SUBFOLDER")
   OUTPUT_DIR="output/e5"
-  DOT_DIR="dot/e5"
 
   for file in $INPUTS; do
-    STACK=$(($RANDOM + 100000))
-    DATA=$(($STACK / 2))
-    OUTPUT_FILE="$OUTPUT_DIR/output_$file.txt"
-    DOT_FILE="$DOT_DIR/output_$file.dot"
+    OUTPUT_FILE="$OUTPUT_DIR/$file.s"
+    EXECUTABLE_FILE="$OUTPUT_DIR/$file"
 
     > "$OUTPUT_FILE"
 
     echo "Running test for: $SUBFOLDER/$file..."
 
-    cat "$SUBFOLDER/$file" | ./etapa6 > "$OUTPUT_FILE" 2>&1
-    EXIT_CODE=$?
+    # Step 1: Generate assembly file
+    if ./etapa6 < "$SUBFOLDER/$file" > "$OUTPUT_FILE"; then
+      echo "Assembly generated for $file."
 
-    if [ $EXIT_CODE -eq 139 ]; then
-      echo -e "\n\033[1;31m[ERROR]\033[0m Segmentation fault occurred in $file." | tee -a "$OUTPUT_FILE"
-      FAILED=$((FAILED + 1))
-      FAILED_TESTS+=("$SUBFOLDER/$file")
-    elif grep -Eqi "erro|failed" "$OUTPUT_FILE"; then
-      echo -e "\n\033[1;31m[ERROR]\033[0m The word 'Erro' was found in the output of $file." | tee -a "$OUTPUT_FILE"
-      FAILED=$((FAILED + 1))
-      FAILED_TESTS+=("$SUBFOLDER/$file")
-    else
-      echo -e "\033[1;32m[SUCCESS]\033[0m Test passed for $file.\n"
+      # Step 2: Compile assembly to executable
+      if gcc "$OUTPUT_FILE" -o "$EXECUTABLE_FILE"; then
+        echo "Executable compiled for $file."
 
-      sh output2dot.sh < "$OUTPUT_FILE" > "$DOT_FILE"
-      echo "DOT file generated: $DOT_FILE"
-
-      if timeout 3s python3 ilocsim.py --stack $STACK --data $DATA -s -x < "$OUTPUT_FILE" > "$OUTPUT_DIR/ilocsim_$file.txt"; then
-        echo "Ilocsim result stored in: $OUTPUT_DIR/ilocsim_$file.txt"
-        PASSED=$((PASSED + 1))
+        # Step 3: Execute the compiled program
+        if ./$EXECUTABLE_FILE > "$OUTPUT_DIR/run_output_$file.txt"; then
+          echo "Program executed successfully for $file." | tee -a "$OUTPUT_FILE"
+          PASSED=$((PASSED + 1))
+        else
+          echo -e "\033[1;31m[ERROR]\033[0m Execution failed for $file." | tee -a "$OUTPUT_FILE"
+          FAILED=$((FAILED + 1))
+          FAILED_TESTS+=("$SUBFOLDER/$file")
+        fi
       else
+        echo -e "\033[1;31m[ERROR]\033[0m GCC compilation failed for $file." | tee -a "$OUTPUT_FILE"
         FAILED=$((FAILED + 1))
         FAILED_TESTS+=("$SUBFOLDER/$file")
-        echo -e "\033[1;31m[ERROR]\033[0m Ilocsim script failed or timed out after 10 seconds."
       fi
+    else
+      echo -e "\033[1;31m[ERROR]\033[0m etapa6 failed for $file." | tee -a "$OUTPUT_FILE"
+      FAILED=$((FAILED + 1))
+      FAILED_TESTS+=("$SUBFOLDER/$file")
     fi
   done
 else

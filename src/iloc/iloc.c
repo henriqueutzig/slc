@@ -7,20 +7,41 @@
 */
 
 #include "iloc.h"
+#define REG_SIZE 10
 
 char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
-    sprintf(reg, "r%d", r++);
+    //Para evitar estourar o limite de registradores,estavamos com problema quando chegava em r16d, que nao existe
+    if (r > 11)
+    {
+        r = 0;
+    }
+    
+
+    switch (r) {
+        case 0: snprintf(reg, REG_SIZE, "%%ebx"); break;
+        case 1: snprintf(reg, REG_SIZE, "%%ecx"); break;
+        case 2: snprintf(reg, REG_SIZE, "%%esi"); break;
+        case 3: snprintf(reg, REG_SIZE, "%%edi"); break;
+        case 4: snprintf(reg, REG_SIZE, "%%r8d"); break;
+        case 5: snprintf(reg, REG_SIZE, "%%r9d"); break;
+        case 6: snprintf(reg, REG_SIZE, "%%r10d"); break;
+        case 7: snprintf(reg, REG_SIZE, "%%r11d"); break;
+        default: snprintf(reg, REG_SIZE, "%%r%ud", r+4); break;
+    }
+
+    r++;
     return reg;
 }
+
 
 char *gen_label() {
     static unsigned int l = 0;
     char *label = (char *)malloc(LABEL_SIZE * sizeof(char));
 
-    sprintf(label, "l%d", l++);
+    sprintf(label, ".L%d", l++);
     return label;
 }
 
@@ -99,97 +120,124 @@ void destroy_inst_block(inst_block_t *block) {
 }
 
 
-// **************** DEBUG **************** 
-
 void print_inst(inst_t *inst) {
-    assert(inst != NULL);
-    assert(inst->op != NULL);
+
+    if (inst == NULL || inst->op == NULL) {
+        return;
+    }
+
+    if (inst->label != NULL) {
+        printf("%s:\n", inst->label);
+    }
 
     switch (inst->inst)
     {
     case NOP:
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s", inst->op);
-        break;
-    case HALT:
-        printf("%s", inst->op);
+        printf("    # No operation\n");
         break;
     case ADD:
-    case SUB:
-    case MULT:
-    case DIV:
-    case ADD_I:
-    case SUB_I: 
-    case R_SUB_I:
-    case MULT_I:
-    case DIV_I:
-    case R_DIV_I:
-    case LSHIFT:
-    case LSHIFT_I:
-    case RSHIFT:
-    case RSHIFT_I:
-    case AND:   
-    case AND_I:
-    case OR:
-    case OR_I:
-    case XOR:
-    case XOR_I:
-    case LOAD_AI:
-    case LOAD_A0:
-    case CLOAD_AI:
-    case CLOAD_A0:
-    case CMP_LT:
-    case CMP_LE:
-    case CMP_EQ:
-    case CMP_GE:
-    case CMP_GT:
-    case CMP_NE:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        assert(inst->op3 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s, %s => %s", inst->op, inst->op1, inst->op2, inst->op3);
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    addl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
-    case STORE_AI:
-    case STORE_AO:
-    case CSTORE_AI:
-    case CSTORE_AO:
-    case CBR:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        assert(inst->op3 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s => %s, %s", inst->op, inst->op1, inst->op2, inst->op3);
+    case SUB:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    subl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case MULT:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    imull %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case DIV:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    cltd\n");
+        printf("    idivl %s\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case ADD_I:
+        printf("    movl %s, %%eax\n", inst->op2);
+        printf("    addl $%s, %%eax\n", inst->op1);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case SUB_I:
+        printf("    movl %s, %%eax\n", inst->op2);
+        printf("    subl $%s, %%eax\n", inst->op1);
+        printf("    movl %%eax, %s\n", inst->op3);
         break;
     case LOAD_I:
-    case LOAD:
-    case CLOAD:
-    case STORE:
-    case CSTORE:
-    case I2I:
-    case C2C:
-    case C2I:
-    case I2C:
-        assert(inst->op1 != NULL);
-        assert(inst->op2 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s %s => %s", inst->op, inst->op1, inst->op2);
+        printf("    movl $%s, %s\n", inst->op1, inst->op2);
         break;
-    case JUMP_I:
+    case STORE_AI:
+        printf("    movl %s, -%s(%%rbp)\n", inst->op1, inst->op3);
+        break;
     case JUMP:
-        assert(inst->op1 != NULL);
-        if (inst->label != NULL) 
-            printf("%s: ", inst->label);
-        printf("%s => %s", inst->op, inst->op1);
+    case JUMP_I:
+        printf("    jmp %s\n", inst->op1);
+        break;
+    case LOAD_AI:
+        printf("    movl -%s(%%rbp), %s\n", inst->op2, inst->op3);
+        break;
+    case CMP_GT:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setg %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_EQ:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    sete %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_LT:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setl %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_GE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setge %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_LE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setle %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_NE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setne %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case MULT_I:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    imull $%s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case AND:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    andl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case OR:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    orl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case CBR:
+        printf("    testl %s, %s\n", inst->op1, inst->op1);
+        printf("    je %s\n", inst->op2);
+        printf("    jmp %s\n", inst->op3);
+        break;
+    case RET:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    leave\n");
+        printf("    ret\n");
         break;
     default:
+        fprintf(stderr, "    # Unsupported operation: %s\n", inst->op);
         break;
     }
-    printf("\n");
 }
 
 void print_inst_block(inst_block_t *block) {

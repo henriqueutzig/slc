@@ -1,8 +1,0 @@
-funcao_soma => int
-{
-    int z;
-
-    z = !1;
-
-    return z;
-}

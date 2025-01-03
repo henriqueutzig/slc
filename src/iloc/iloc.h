@@ -65,7 +65,8 @@ typedef enum {
     CMP_EQ,
     CMP_GE,
     CMP_GT,
-    CMP_NE
+    CMP_NE,
+    RET
 } op_t;
 
 static const char *op_t_str[] = {
@@ -116,7 +117,8 @@ static const char *op_t_str[] = {
     "cmp_EQ",
     "cmp_GE",
     "cmp_GT",
-    "cmp_NE"
+    "cmp_NE",
+    "ret" 
 };
 
 typedef struct inst_t

@@ -21,6 +21,8 @@
     int get_line_number(void);
     int get_column_number(void);
     void print_symbol_table(symbol_table_t *table);
+    void generateAsm(asd_tree_t *root);
+    void generateCodeFromAST(asd_tree_t *node);
 
     extern void* arvore;
 
@@ -120,9 +122,10 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {
-    $$->code = $2->code;
-    asd_add_child($$,$2);
+funcao: cabecalho corpo {$$ = $1; 
+    if ($2!=NULL) {
+        $$->code = $2->code;
+        asd_add_child($$,$2);
     };};
 
 /* 
@@ -242,8 +245,7 @@ variavel_inicializada:
         asd_add_child($$,$1); 
         asd_add_child($$,$3);
         
-        $$->temp = gen_reg();
-    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
+        // $$->temp = gen_reg();
         $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->label));
         }; ;
 
@@ -268,10 +270,15 @@ atribuicao_variavel: TK_IDENTIFICADOR '=' expressao {
     asd_add_child($$, asd_new($1->valor)); 
     asd_add_child($$, $3);
 
+    // $$->temp = gen_reg();
 
-    $$->temp = gen_reg();
-    // fprintf(stderr, "Offset de identificador %s: %d\n", $1->valor, get_offset_from_stack(stack, $1->valor));
-    $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
+
+    if($3->temp == NULL){
+        $$->code = generate_atribuicao_variavel_para_variavel($$,$3,get_offset_from_stack(stack, $1->valor),get_offset_from_stack(stack, $3->label));
+    }else{
+        $$->code = generate_atribuicao($$,$3,get_offset_from_stack(stack, $1->valor));
+    }
+
     };
 
 /*
@@ -290,7 +297,11 @@ argumento:
 /*
     Trata-se do token return seguido de uma expressão
 */
-comando_de_retorno: TK_PR_RETURN expressao {$$ = asd_new("return"); asd_add_child($$, $2);};
+comando_de_retorno: TK_PR_RETURN expressao {
+    $$ = asd_new("return"); 
+    asd_add_child($$, $2);
+    generate_return($$,$2,stack);
+    };
 
 /*
     A condicional consiste no token if seguido de uma 
@@ -535,7 +546,6 @@ void _exporta(asd_tree_t *arvore) {
     if (arvore->code == NULL) {
         return;
     }
-    //print nature
 
     if(arvore->nature == FUNCTION){
         print_inst_block(arvore->code);
@@ -546,31 +556,43 @@ void _exporta(asd_tree_t *arvore) {
             _exporta(arvore->children[i]);
     }
     }
+}
+
+void generateAsm(asd_tree_t *root) {
+
+    printf("    .globl main\n");
+    printf("    .type main, @function\n");
+    printf("main:\n");
+    printf("    pushq %%rbp\n");
+	printf("    movq %%rsp, %%rbp\n");
+
+    if (root != NULL) {
+        generateCodeFromAST(root);
+    }
+}
+
+void generateCodeFromAST(asd_tree_t *node) {
+    if (node == NULL) return;
 
 
-    /* _exporta(arvore->children[arvore->number_of_children - 1]); */
+    if (node->code == NULL) {
+        return;
+    }
 
-    /* fprintf(stdout, "%p [label=\"%s\"];\n", (void *)arvore, arvore->label);
-
-    for (int i = 0; i < arvore->number_of_children; i++) {
-        if (arvore->children[i] == NULL) {
-            fprintf(stdout, "Null child at index %d in _exporta\n", i);
-            continue;
-        }
-        fprintf(stdout, "%p, %p\n", (void *)arvore, (void *)arvore->children[i]);
+    if(node->nature == FUNCTION){
+        print_inst_block(node->code);
     }
 
 
-    for (int i = 0; i < arvore->number_of_children; i++) {
-        if (arvore->children[i] != NULL) {
-            _exporta(arvore->children[i]);
-        }
-    } */
+    for (int i = 0; i < node->number_of_children; i++) {
+        generateCodeFromAST(node->children[i]);
+    }
 }
+
 
 void exporta (void *arvore){
     if (arvore == NULL) {
         return;
     }
-    _exporta((asd_tree_t*)arvore);
+    generateAsm((asd_tree_t*)arvore);
 };

@@ -3,36 +3,41 @@
 main:
     pushq %rbp
     movq %rsp, %rbp
-    movl $0, %ebx
-    movl $3, %ecx
-    movl %ebx, %eax
-    subl %ecx, %eax
-    movl %eax, %edx
-    movl %edx, -4(%rbp)
-    movl $234, %esi
+    movl $234, %ebx
+    movl %ebx, -4(%rbp)
+    movl $456, %ecx
+    movl %ecx, -12(%rbp)
+    movl $98, %edx
+    movl %edx, -16(%rbp)
+    movl $1, %esi
     movl %esi, -8(%rbp)
-    movl -4(%rbp), %r8d
+    movl -8(%rbp), %r8d
     movl $0, %edi
     cmpl %edi, %r8d
     setg %al
     movzbl %al, %r9d
-    movl $0, %r13d
-    cmpl %r13d, %r9d
+    movl $0, %r15d
+    cmpl %r15d, %r9d
     sete %al
-    movzbl %al, %r12d
-    testl %r12d, %r12d
+    movzbl %al, %r14d
+    testl %r14d, %r14d
     je .L0
     jmp .L2
 .L2:
-    movl $393, %r10d
-    movl %r10d, -8(%rbp)
+    movl $123, %r10d
+    movl %r10d, -16(%rbp)
+    movl -4(%rbp), %r11d
+    movl -16(%rbp), %r12d
+    movl %r11d, %eax
+    addl %r12d, %eax
+    movl %eax, %r13d
+    movl %r13d, -12(%rbp)
     jmp .L1
 .L0:
-    movl $432, %r11d
-    movl %r11d, -8(%rbp)
+    # No operation
 .L1:
     # No operation
-    movl -8(%rbp), %r15d
-    movl %r15d, %eax
+    movl $0, %ecx
+    movl %ecx, %eax
     leave
     ret

@@ -92,6 +92,8 @@ void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *o
             op1->temp = gen_reg();
             temp1 = op1->temp;
         }else{
+            // fprintf(stderr, "Generating temp for %s\n", op1->label);
+            // fprintf(stderr, "Temp is %s\n", op1->temp);
             temp1 = op1->temp;
         }
 
@@ -100,6 +102,8 @@ void generate_expression_code(asd_tree_t* target, asd_tree_t *op1, asd_tree_t *o
             op2->temp = gen_reg();
             temp2 = op2->temp;
         }else{
+            // fprintf(stderr, "Generating temp for %s\n", op2->label);
+            // fprintf(stderr, "Temp is %s\n", op2->temp);
             temp2 = op2->temp;
         }
 

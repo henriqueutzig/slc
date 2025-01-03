@@ -14,7 +14,7 @@ char *gen_reg() {
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
     //Para evitar estourar o limite de registradores,estavamos com problema quando chegava em r16d, que nao existe
-    if (r > 12)
+    if (r > 11)
     {
         r = 0;
     }
@@ -23,14 +23,13 @@ char *gen_reg() {
     switch (r) {
         case 0: snprintf(reg, REG_SIZE, "%%ebx"); break;
         case 1: snprintf(reg, REG_SIZE, "%%ecx"); break;
-        case 2: snprintf(reg, REG_SIZE, "%%edx"); break;
-        case 3: snprintf(reg, REG_SIZE, "%%esi"); break;
-        case 4: snprintf(reg, REG_SIZE, "%%edi"); break;
-        case 5: snprintf(reg, REG_SIZE, "%%r8d"); break;
-        case 6: snprintf(reg, REG_SIZE, "%%r9d"); break;
-        case 7: snprintf(reg, REG_SIZE, "%%r10d"); break;
-        case 8: snprintf(reg, REG_SIZE, "%%r11d"); break;
-        default: snprintf(reg, REG_SIZE, "%%r%ud", r+3); break;
+        case 2: snprintf(reg, REG_SIZE, "%%esi"); break;
+        case 3: snprintf(reg, REG_SIZE, "%%edi"); break;
+        case 4: snprintf(reg, REG_SIZE, "%%r8d"); break;
+        case 5: snprintf(reg, REG_SIZE, "%%r9d"); break;
+        case 6: snprintf(reg, REG_SIZE, "%%r10d"); break;
+        case 7: snprintf(reg, REG_SIZE, "%%r11d"); break;
+        default: snprintf(reg, REG_SIZE, "%%r%ud", r+4); break;
     }
 
     r++;

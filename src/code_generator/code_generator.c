@@ -8,6 +8,13 @@
 
 #include "code_generator.h"
 
+void print_block_info(char *title, inst_block_t *if_load_zero_for_comp) {
+    fprintf(stderr, "%s\n", title);
+    fprintf(stderr, "Block is %p\n", if_load_zero_for_comp);
+    fprintf(stderr, "Inst is %p\n", if_load_zero_for_comp->inst);
+    fprintf(stderr, "Inst label is %s\n", if_load_zero_for_comp->inst->label);
+}
+
 char *parse_unsigned_int(unsigned int value) {
     char *str = (char *)malloc(12);
     sprintf(str, "%d", value);
@@ -26,7 +33,8 @@ int is_integer(const char *str) {
 
 inst_block_t* generate_load_literal(char *valor, char *temp) {
     inst_t *inst = create_inst(LOAD_I, valor, temp, NULL, NULL);
-    return create_inst_block(inst, NULL);
+    inst_block_t *block = create_inst_block(inst, NULL);
+    return block;
 }
 
 inst_block_t* generate_atribuicao(asd_tree_t *target, asd_tree_t *expr,unsigned int target_offset) {
@@ -190,40 +198,53 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
 
 
         inst_block_t *if_load_zero_for_comp = generate_load_literal("0", temp4);
+
+ 
+
         
-        inst_block_t *bloco_if = create_inst_block(create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL));
+        inst_block_t *bloco_if = create_inst_block(create_inst(CMP_EQ, boolean_op->temp, temp4,temp3, NULL),NULL);
         
+      
+
+
         bloco_if = append_inst_block(if_load_zero_for_comp, bloco_if);
         bloco_if = append_inst_block(boolean_op->code, bloco_if);
 
-        inst_block_t *bloco_jump_condicional = create_inst_block(create_inst(CBR, temp3, label2, label1, NULL));
-        
-        inst_block_t *bloco_proxima_instr = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label3));
+     
 
-        inst_block_t *bloco_jump_sobre_else = create_inst_block(create_inst(JUMP_I, label3, NULL, NULL, NULL));
+
+        inst_block_t *bloco_jump_condicional = create_inst_block(create_inst(CBR, temp3, label2, label1, NULL),NULL);
+        
+        inst_block_t *bloco_proxima_instr = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label3),NULL);
+
+        inst_block_t *bloco_jump_sobre_else = create_inst_block(create_inst(JUMP_I, label3, NULL, NULL, NULL),NULL);
 
         bloco_if = append_inst_block(bloco_if, bloco_jump_condicional);
+
+
 
         if(body != NULL && body->code != NULL){
             bloco_if = append_inst_block(bloco_if, body->code);
             bloco_if = append_inst_block(bloco_if, bloco_jump_sobre_else);
         }else{
-            inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label1));
+            inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label1),NULL);
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         }        
+
+
+     
   
         
         if(else_body != NULL ){
             else_body->code->inst->label = label2;
             bloco_if = append_inst_block(bloco_if, else_body->code);
         }else{
-            inst_block_t *bloco_nop = create_inst_block( create_inst(NOP, NULL, NULL, NULL, label2));
+            inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label2),NULL);
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         };
         
         bloco_if = append_inst_block(bloco_if, bloco_proxima_instr);
 
-        fprintf(stderr,"Block is %p\n",bloco_if);
 
         target->temp = gen_reg();
         target->code = bloco_if;

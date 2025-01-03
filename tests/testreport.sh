@@ -36,7 +36,7 @@ if [ -d "$SUBFOLDER" ]; then
           echo "Program executed successfully for $file." | tee -a "$OUTPUT_FILE"
           PASSED=$((PASSED + 1))
         else
-          echo -e "\033[1;31m[ERROR]\033[0m Execution failed for $file." | tee -a "$OUTPUT_FILE"
+          # echo -e "\033[1;31m[ERROR]\033[0m Execution failed for $file." | tee -a "$OUTPUT_FILE"
           FAILED=$((FAILED + 1))
           FAILED_TESTS+=("$SUBFOLDER/$file")
         fi

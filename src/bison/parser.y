@@ -124,9 +124,6 @@ lista_de_funcoes:
 */
 funcao: cabecalho corpo {$$ = $1; 
     if ($2!=NULL) {
-        fprintf(stderr, "Adding child\n");
-        fprintf(stderr, "Child: %s\n", $2->label);
-        fprintf(stderr,"Code is %p\n", $2->code);
         $$->code = $2->code;
         asd_add_child($$,$2);
     };};

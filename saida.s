@@ -3,41 +3,23 @@
 main:
     pushq %rbp
     movq %rsp, %rbp
-    movl $234, %ebx
-    movl %ebx, -4(%rbp)
-    movl $456, %ecx
-    movl %ecx, -12(%rbp)
-    movl $98, %edx
-    movl %edx, -16(%rbp)
-    movl $1, %esi
-    movl %esi, -8(%rbp)
-    movl -8(%rbp), %r8d
-    movl $0, %edi
-    cmpl %edi, %r8d
-    setg %al
-    movzbl %al, %r9d
-    movl $0, %r15d
-    cmpl %r15d, %r9d
-    sete %al
-    movzbl %al, %r14d
-    testl %r14d, %r14d
-    je .L0
-    jmp .L2
-.L2:
-    movl $123, %r10d
-    movl %r10d, -16(%rbp)
-    movl -4(%rbp), %r11d
-    movl -16(%rbp), %r12d
-    movl %r11d, %eax
-    addl %r12d, %eax
-    movl %eax, %r13d
-    movl %r13d, -12(%rbp)
-    jmp .L1
-.L0:
-    # No operation
-.L1:
-    # No operation
     movl $0, %ecx
-    movl %ecx, %eax
+    movl $0, %edi
+    cmpl %edi, %ecx
+    sete %al
+    movzbl %al, %esi
+    testl %esi, %esi
+    je .L1
+    jmp .L0
+.L0:
+    movl $1, %edx
+    jmp .L2
+.L1:
+    movl $0, %edx
+.L2:
+    # No operation
+    movl %edx, -4(%rbp)
+    movl -4(%rbp), %r8d
+    movl %r8d, %eax
     leave
     ret

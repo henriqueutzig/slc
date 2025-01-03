@@ -121,14 +121,13 @@ void destroy_inst_block(inst_block_t *block) {
 }
 
 
-
 void print_inst(inst_t *inst) {
 
-    if(inst == NULL && inst->op ==NULL){
+    if (inst == NULL || inst->op == NULL) {
         return;
     }
 
-    if(inst->label != NULL){
+    if (inst->label != NULL) {
         printf("%s:\n", inst->label);
     }
 
@@ -175,8 +174,6 @@ void print_inst(inst_t *inst) {
         printf("    movl %s, -%s(%%rbp)\n", inst->op1, inst->op3);
         break;
     case JUMP:
-        printf("    jmp %s\n", inst->op1);
-        break;
     case JUMP_I:
         printf("    jmp %s\n", inst->op1);
         break;
@@ -198,6 +195,36 @@ void print_inst(inst_t *inst) {
         printf("    setl %%al\n");
         printf("    movzbl %%al, %s\n", inst->op3);
         break;
+    case CMP_GE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setge %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_LE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setle %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case CMP_NE:
+        printf("    cmpl %s, %s\n", inst->op2, inst->op1);
+        printf("    setne %%al\n");
+        printf("    movzbl %%al, %s\n", inst->op3);
+        break;
+    case MULT_I:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    imull $%s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case AND:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    andl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
+    case OR:
+        printf("    movl %s, %%eax\n", inst->op1);
+        printf("    orl %s, %%eax\n", inst->op2);
+        printf("    movl %%eax, %s\n", inst->op3);
+        break;
     case CBR:
         printf("    testl %s, %s\n", inst->op1, inst->op1);
         printf("    je %s\n", inst->op2);
@@ -213,8 +240,6 @@ void print_inst(inst_t *inst) {
         break;
     }
 }
-
-
 
 void print_inst_block(inst_block_t *block) {
     inst_block_t *current = block;

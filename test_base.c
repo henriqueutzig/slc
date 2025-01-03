@@ -4,7 +4,8 @@ int main(){
   a = 0 - 3;
   b = 234;
 
-  int c = a>0;
+  int c = a > 0;
+  
 
   if (a > 0) {
     b = 393;

@@ -223,6 +223,8 @@ void generate_if_with_else(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_
         
         bloco_if = append_inst_block(bloco_if, bloco_proxima_instr);
 
+        fprintf(stderr,"Block is %p\n",bloco_if);
+
         target->temp = gen_reg();
         target->code = bloco_if;
 }
@@ -261,6 +263,7 @@ void generate_while(asd_tree_t* target, asd_tree_t *boolean_op, asd_tree_t *body
             inst_block_t *bloco_nop = create_inst_block(create_inst(NOP, NULL, NULL, NULL, label1));
             bloco_if = append_inst_block(bloco_if, bloco_nop);
         }
+
         
         bloco_if = append_inst_block(bloco_if, bloco_proxima_instr);
 

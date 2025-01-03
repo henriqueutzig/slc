@@ -122,9 +122,13 @@ lista_de_funcoes:
 /* 
     Cada função é definida por um cabeçalho e um corpo.
 */
-funcao: cabecalho corpo {$$ = $1; if ($2!=NULL) {
-    $$->code = $2->code;
-    asd_add_child($$,$2);
+funcao: cabecalho corpo {$$ = $1; 
+    if ($2!=NULL) {
+        fprintf(stderr, "Adding child\n");
+        fprintf(stderr, "Child: %s\n", $2->label);
+        fprintf(stderr,"Code is %p\n", $2->code);
+        $$->code = $2->code;
+        asd_add_child($$,$2);
     };};
 
 /* 

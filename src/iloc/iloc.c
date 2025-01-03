@@ -116,6 +116,8 @@ void destroy_inst_block(inst_block_t *block) {
 
 
 void print_inst(inst_t *inst) {
+    fprintf(stderr, "    # %s\n", inst->op);
+
     if(inst == NULL && inst->op ==NULL){
         return;
     }

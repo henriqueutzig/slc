@@ -13,8 +13,8 @@ char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
-    //Para evitar estourar o limite de registradores,estavamos com problema quando chegava em r17d, que nao existe
-    if (r > 13)
+    //Para evitar estourar o limite de registradores,estavamos com problema quando chegava em r16d, que nao existe
+    if (r > 12)
     {
         r = 0;
     }

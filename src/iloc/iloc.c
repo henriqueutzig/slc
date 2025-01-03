@@ -13,6 +13,13 @@ char *gen_reg() {
     static unsigned int r = 0;
     char *reg = (char *)malloc(REG_SIZE * sizeof(char));
 
+    //Para evitar estourar o limite de registradores,estavamos com problema quando chegava em r17d, que nao existe
+    if (r > 13)
+    {
+        r = 0;
+    }
+    
+
     switch (r) {
         case 0: snprintf(reg, REG_SIZE, "%%ebx"); break;
         case 1: snprintf(reg, REG_SIZE, "%%ecx"); break;

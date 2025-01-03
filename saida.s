@@ -37,7 +37,7 @@ main:
     # No operation
 .L1:
     # No operation
-    movl $0, %r17d
-    movl %r17d, %eax
+    movl $0, %ebx
+    movl %ebx, %eax
     leave
     ret
